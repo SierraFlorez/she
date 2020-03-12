@@ -20,7 +20,9 @@ Registrar Horas Extras
             <label data-error="wrong" data-success="right" for="orangeForm-name">Funcionario:</label>
             <select class="form-control validate" id="id_user_h" name="select_user_h">
               <option value=""></option>
+              
               @foreach ($funcionarios as $funcionario)
+
               <option value="{{$funcionario->id}}">{{$funcionario->nombres}} {{$funcionario->apellidos}}</option>
               @endforeach
             </select>
@@ -43,10 +45,10 @@ Registrar Horas Extras
             <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de horas:</label>
             <select class="form-control validate" id="tipohoras_h" name="tipohoras_h">
               <option value="">Seleccionar tipo de hora </option>
-              <option value="Diurnas">Diurnas </option>
-              <option value="Nocturnas">Nocturnas </option>
-              <option value="Dominicales y Festivos">Dominicales y Festivos </option>
-              <option value="Recargo Nocturno">Recargo Nocturno </option>
+              <option value="1">Diurnas </option>
+              <option value="2">Nocturnas </option>
+              <option value="3">Dominicales y Festivos </option>
+              <option value="4">Recargo Nocturno </option>
             </select>
           </div>
         </div>

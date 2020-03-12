@@ -476,7 +476,9 @@ function crearCargo() {
 
 }
 
-// Guarda la información de un cargo nuevo
+// -------MODULO DE HORAS EXTRAS
+
+// Guarda las horas extras
 function guardarHoras() {
     var url = "horas/guardar";
     $funcionario = $("[name = 'select_user_h']").children("option:selected").val();
@@ -486,11 +488,11 @@ function guardarHoras() {
     $horaFin = $("#hora_fin").val();
   
     var obj = new Object();
-    obj.Funcionario = $funcionario;
+    obj.Id = $funcionario;
     obj.Fecha = $fecha;
-    obj.TipoHora = $tipoHora;
     obj.Inicio = $horaInicio;
     obj.Fin = $horaFin;
+    obj.TipoHora = $tipoHora;
 
     var datos = JSON.stringify(obj);
     console.log(datos);
