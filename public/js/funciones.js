@@ -476,7 +476,7 @@ function crearCargo() {
 
 }
 
-// -------MODULO DE HORAS EXTRAS
+// ------------MODULO DE HORAS EXTRAS
 
 // Guarda las horas extras
 function guardarHoras() {
@@ -497,35 +497,28 @@ function guardarHoras() {
     var datos = JSON.stringify(obj);
     console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
-        if (Number(data)) {
+        console.log(data);
+        if (data==1) {
             Swal.fire(
                 'Completado!',
                 "Se han Guardado las Horas Extras correctamente",
                 'success'
             )
+        $("#tipohoras_h").val("");
+        $("#date").val("");
+        $("#alt").val("");
+        $("#hora_inicio").val("");
+        $("#hora_fin").val("");
+
         } else {
             Swal.fire(
                 'Error!',
-                "Error al Guardar Horas Extras",
+                data,
                 'error'
             )
 
         }
-        $("#table_div_cargos").load(" #dtCargos", function () {
-            $('#dtCargos')
-                .addClass('table-striped table-bordered')
-                .dataTable({
-                    "language": {
-                        "url": "DataTables/Spanish.json"
-                    },
-                    destroy: true,
-                    responsive: true,
-                    dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
-                    buttons: [
-                        'copy', 'excel', 'csv'
-                    ]
-                });
-        });
+        
 
     });
 

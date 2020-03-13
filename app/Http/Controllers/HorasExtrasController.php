@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 // <Modelos>
-use App\User;
-use App\CargoUser;
 use App\Hora;
+use App\User;
 
 // </Modelos>
 use Illuminate\Http\Request;
+use Validator;
 
 class horasExtrasController extends Controller
 {
@@ -21,11 +21,13 @@ class horasExtrasController extends Controller
     // Lleva a la vista los usuarios que sean funcionarios, tengan estado activo, y tengan un CargoUsuario activo
     public function registrar()
     {
-        $funcionarios = User::join('cargo_user','cargo_user.user_id','=','users.id')->
-        where([['users.estado', '=', 1], ['role_id', '=', 2],['cargo_user.estado','=','1']])->get();
-
+        $funcionarios = User::join('cargo_user', 'cargo_user.user_id', '=', 'users.id')->
+            where([['users.estado', '=', 1], ['role_id', '=', 2], ['cargo_user.estado', '=', '1']])->get();
         // dd($funcionarios);
-        return view('horasExtras.registrarHoras', compact('funcionarios'));
+        $fecha=date('Y-m-d');
+        $fecha=date('Y-m-d',strtotime('+1 days',strtotime($fecha)));
+        // dd($fecha);
+        return view('horasExtras.registrarHoras', compact('funcionarios','fecha'));
 
     }
 
@@ -38,15 +40,44 @@ class horasExtrasController extends Controller
         $horasextras['hora_inicio'] = $dato["Inicio"];
         $horasextras['hora_fin'] = $dato["Fin"];
         $horasextras['tipo_hora'] = $dato["TipoHora"];
-
-
-        $validador = $this->validatorCargoSave($cargo);
+        $validador = $this->validatorHoraGuardar($horasextras);
         if ($validador->fails()) {
-            return (0);
-        } else {
+            return ('Todos los Campos son obligatorios');
+        }
+        $horaExistente = Hora::where([['id_user_cargo', '=', $horasextras['id_user_cargo']],
+            ['fecha', '=', $horasextras['fecha']], ['hora_inicio', '=', $horasextras['hora_inicio']], 
+            ['hora_fin', '=', $horasextras['hora_fin']]])->first();
+        if($horaExistente==!NULL){
+            // Valido si existe un registro con la misma fecha, en la misma hora para el mismo usuario
+            $msg="Ya existe esa misma hora en esa misma fecha";
+            return ($msg);
+        }
+        $horasYaTrabajadas= Hora::where([['id_user_cargo', '=', $horasextras['id_user_cargo']],['fecha','=',$horasextras['fecha']]])->get();
+        foreach ($horasYaTrabajadas as $horasNoDisponibles){
+            if(($horasextras['hora_inicio']>$horasNoDisponibles['hora_inicio']) && ($horasextras['hora_fin']<$horasNoDisponibles['hora_inicio'])){
+                return ('Estimado Usuario; esas horas ya se encuentran registradas.');
+            }
+        }
+        $totalHoras = $horasextras['hora_fin'] - $horasextras['hora_inicio'];
+        if ($totalHoras >= 10 || $totalHoras <= 0) {
+            // En caso que supere 10 horas o no hayan nigunas
+            $msg="La cantidad de horas supera a 10";
+            return ($msg);
+        }
+        
             Hora::create($horasextras);
             return (1);
-        }
+    }
+    // Valida la información de la hora extra
+    public function validatorHoraGuardar(array $data)
+    {
+        return Validator::make($data, [
+            'id_user_cargo' => 'required',
+            'fecha' => 'required',
+            'hora_inicio' => 'required',
+            'hora_fin' => 'required',
+            'tipo_hora' => 'required',
+        ]);
     }
 
     public function update(Request $request, $id)

@@ -36,7 +36,7 @@ Registrar Horas Extras
             <label data-error="wrong" data-success="right" for="orangeForm-name">Día en que se realizo horas
               extras:</label>
             <br>
-            <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="2021-01-01">
+            <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="{{$fecha}}">
             <input class="form-control date-input-fallback" id="alt" type="text" placeholder="Seleccione una fecha">
             <div id="picker" hidden></div>
           </div>
@@ -59,7 +59,7 @@ Registrar Horas Extras
           <div class="col">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Hora de inicio:
             </label>
-            <input class="form-control" type="time" id="hora_inicio">
+            <input class="form-control bfh-timepicker" type="time" id="hora_inicio">
           </div>
           {{-- Input de tipo de hora --}}
           <div class="col">
