@@ -18,14 +18,14 @@ Inicio
                 <div class="panel-body">
                     <form class="form-horizontal" method="POST" action="{{ route('login') }}">
                         {{ csrf_field() }}
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('documento') ? ' has-error' : '' }}">
                             <label for="email" class="col-md-4 control-label">Documento</label>
                             <div class="col-md-12">
                                 <input id="documento" autocomplete="off" type="text" class="form-control"
                                     name="documento" value="{{ old('email') }}" required autofocus>
-                                @if ($errors->has('email'))
+                                @if ($errors->has('documento'))
                                 <span class="help-block">
-                                    <strong>{{ $errors->first('email') }}</strong>
+                                    <strong>{{ $errors->first('documento') }}</strong>
                                 </span>
                                 @endif
                             </div>

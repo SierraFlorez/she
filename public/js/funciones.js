@@ -10,7 +10,7 @@ function notificacionCorreo() {
     )
 }
 
-// DATATABLES
+//---------------DATATABLES
 
 // Datatable Usuarios
 $(document).ready(function () {
@@ -57,13 +57,13 @@ $(document).ready(function () {
             ]
         });
 })
-//------ MODULO DE USUARIOS
+//--------- MODULO DE USUARIOS
 
 // Función para el modal de detalles
 function detallesUsuario(id) {
     var url = "usuarios/detalle";
     $.post(url + "/" + id).done(function (data) {
-        console.log(data);
+        // console.log(data);
         $("#documento_user_d").val(data.usuario.documento);
         $("#nombres_user_d").val(data.usuario.nombres);
         $("#apellidos_user_d").val(data.usuario.apellidos);
@@ -77,6 +77,7 @@ function detallesUsuario(id) {
         $("#update").attr('onclick', 'updateUsuario(' + data.usuario.id + ')');
     });
 }
+
 // Función para actualizar usuario ajax
 function updateUsuario(id) {
     var url = "usuarios/actualizar";
@@ -106,7 +107,7 @@ function updateUsuario(id) {
 
 
     var datos = JSON.stringify(obj);
-    console.log(datos);
+    // console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
         $("#documento_user_d").val(data.documento);
         $("#nombres_user_d").val(data.nombres);
@@ -120,7 +121,7 @@ function updateUsuario(id) {
         $('#tipoDocumento_user_d').val(data.tipo_documento);
         $("#modalDetalle").modal('hide');//ocultamos el modal 
         // console.log(data);
-        if (Number(data)) {
+        if (data==1) {
             Swal.fire(
                 'Completado!',
                 "Se editado el Usuario correctamente",
@@ -129,7 +130,7 @@ function updateUsuario(id) {
         } else {
             Swal.fire(
                 'Error!',
-                "Error al editar Usuario",
+                "Error al el editar Usuario, "+ data+'.',
                 'error'
             )
 
@@ -153,9 +154,71 @@ function updateUsuario(id) {
     });
 
 }
+// Muestra la información del cargo del usuario
+function detallesUsuarioCargo(id) {
+    var url = "usuarios/detalleCargo";
+    $.post(url + "/" + id).done(function (data) {
+        // console.log(data.cargo);
+        $("#cargov_d").val(data.cargo.nombre);
+        $("#sueldov_d").val(data.cargo.sueldo);
+        $("#diurna_d").val(data.cargo.valor_diurna);
+        $("#nocturna_d").val(data.cargo.valor_nocturna);
+        $("#dominical_d").val(data.cargo.valor_dominical);
+        $("#nocturno_d").val(data.cargo.valor_recargo);
+        $('#cargov').val('');
+        $("#updatecv").attr('onclick', 'cambiarCargo(' + data.usuario.id + ')');
+
+    });
+}
+// Cambia el cargo de un usuario, solo puede tener uno vigente por usuario
+function cambiarCargo(id) {
+    var url = "usuarios/cambiarCargo";
+
+    $cambioCargo = $('#cargov').val();
+
+    var obj = new Object();
+    obj.Id = id;
+    obj.Cargo = $cambioCargo;
+    var datos = JSON.stringify(obj);
+    // console.log(datos);
+
+    $.post(url + "/" + datos).done(function (data) {
+        $("#modalCargo").modal('hide');//ocultamos el modal 
+        if (data==1) {
+        Swal.fire(
+            'Completado!',
+            "Se cambio el cargo del usuario correctamente.",
+            'success'
+        )
+        }else{
+            Swal.fire(
+                'Error!',
+                "Error al cambiar el cargo, "+ data,
+                'error'
+            )
+        }
+
+        $("#table_div_user").load(" #dtUsuarios", function () {
+            $('#dtUsuarios')
+                .addClass('table-striped table-bordered')
+                .dataTable({
+                    "language": {
+                        "url": "DataTables/Spanish.json"
+                    },
+                    destroy: true,
+                    responsive: true,
+                    dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+                    buttons: [
+                        'copy', 'excel', 'csv'
+                    ]
+                });
+        });
+
+    });
+}
+
 // Activa el estado del Usuario
-function activar(id, color) {
-    var estado = $(color).html();
+function activar(id) {
     var url = "usuarios/activar";
     $.post(url + "/" + id).done(function (data) {
 
@@ -185,8 +248,7 @@ function activar(id, color) {
 }
 
 // Inactiva el estado del usuario
-function inactivar(id, color) {
-    var estado = $(color).html();
+function inactivar(id) {
     var url = "usuarios/inactivar";
     $.post(url + "/" + id).done(function (data) {
 
@@ -249,7 +311,7 @@ function crearUsuario() {
     obj.cargo = $cargo;
 
     var datos = JSON.stringify(obj);
-    console.log(datos);
+    // console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
         $("#documento_user").val(data.documento);
         $("#nombres_user").val(data.nombres);
@@ -261,7 +323,7 @@ function crearUsuario() {
         $('#rol_user').val(data.rol_id);
         $("#modalRegistrarUsuario").modal('hide');//ocultamos el modal 
         // console.log(data);
-        if (Number(data)) {
+        if (data==1) {
             Swal.fire(
                 'Completado!',
                 "Se ha guardado exitosamente a " + $nombres,
@@ -270,7 +332,7 @@ function crearUsuario() {
         } else {
             Swal.fire(
                 'Error!',
-                "Error al guardar el Usuario",
+                "Error al guardar el Usuario, " +data+'.',
                 'error'
             )
 
@@ -293,6 +355,7 @@ function crearUsuario() {
 
     });
 }
+// Cambia la clave del usuario
 $("#passReset").click(function () {
     var url = "passreset";
     var id = $("#userid").val();
@@ -332,7 +395,7 @@ $("#passReset").click(function () {
 
 });
 
-// MODULO CARGOS
+// ------------MODULO CARGOS
 
 // Función para el modal de detalles
 function detallesCargo(id) {
@@ -380,7 +443,7 @@ function updateCargo(id) {
         $("#nocturno_cargo_d").val(data.valor_recargo);
         $("#modalDetalleCargo").modal('hide');//ocultamos el modal 
         // console.log(data);
-        if (Number(data)) {
+        if (data==1) {
             Swal.fire(
                 'Completado!',
                 "Se editado el Cargo correctamente",
@@ -389,7 +452,7 @@ function updateCargo(id) {
         } else {
             Swal.fire(
                 'Error!',
-                "Error al editar Cargo",
+                "Error al editar Cargo, "+data+'.',
                 'error'
             )
 
@@ -432,17 +495,18 @@ function crearCargo() {
     obj.Nocturno = $nocturno;
 
     var datos = JSON.stringify(obj);
-    console.log(datos);
+    // console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
-        $("#nombre_cargo_d").val(data.nombre);
-        $("#sueldo_cargo_d").val(data.sueldo);
-        $("#diurna_cargo_d").val(data.valor_diurna);
-        $("#nocturna_cargo_d").val(data.valor_nocturna);
-        $("#dominical_cargo_d").val(data.valor_dominical);
-        $("#nocturno_cargo_d").val(data.valor_recargo);
+        
         $("#modalRegistrarCargo").modal('hide');//ocultamos el modal 
         // console.log(data);
         if (Number(data)) {
+            $("#nombre_cargo_g").val('');
+            $("#sueldo_cargo_g").val('');
+            $("#diurna_cargo_g").val('');
+            $("#nocturna_cargo_g").val('');
+            $("#dominical_cargo_g").val('');
+            $("#nocturno_cargo_g").val('');
             Swal.fire(
                 'Completado!',
                 "Se ha Guardado el Cargo correctamente",
@@ -451,7 +515,7 @@ function crearCargo() {
         } else {
             Swal.fire(
                 'Error!',
-                "Error al Guardar Cargo",
+                "Error al Guardar Cargo, "+data+'.',
                 'error'
             )
 
@@ -495,9 +559,9 @@ function guardarHoras() {
     obj.TipoHora = $tipoHora;
 
     var datos = JSON.stringify(obj);
-    console.log(datos);
+    // console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
-        console.log(data);
+        // console.log(data);
         if (data==1) {
             Swal.fire(
                 'Completado!',

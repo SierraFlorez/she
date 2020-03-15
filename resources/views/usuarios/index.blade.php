@@ -13,8 +13,8 @@ Consultar usuarios
             <center>
                 <h1> Lista De Usuarios </h1>
             </center><br>
-            <div style="padding-left: 3%;">
-                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="" class="btn btn-outline-success">
+            <div style="padding-left: 2%;">
+                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-outline-success">
                     Registrar Usuario </a>
             </div>
             <div class="card-header" id="table_div_user">
@@ -26,7 +26,7 @@ Consultar usuarios
                             <th class="th-sm">Nombre</th>
                             <th class="th-sm">Apellidos</th>
                             <th class="th-sm">Estado</th>
-                            <th class="th-sm">Acción</th>
+                            <th class="th-sm"><center>Acción</center></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,8 +43,11 @@ Consultar usuarios
                             <td><button class="btn btn-danger" onclick="activar({{ $usuario->id}},this)">Inactivo
                                 </button></td>
                             @endif
-                            <td><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalle"
+                            <td>
+                                <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalle"
                                     onclick="detallesUsuario({{ $usuario->id}})">Ver Detalles</button>
+                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalCargo"
+                                    onclick="detallesUsuarioCargo({{ $usuario->id}})">Ver Cargo</button> </center>
                             </td>
                         </tr>
                         @endforeach
@@ -55,5 +58,6 @@ Consultar usuarios
     </div>
 </div>
 @include('usuarios.modalVerDetalles')
+@include('usuarios.modalVerDetalleCargo')
 @include('usuarios.modalRegistrarUsuario')
 @endsection

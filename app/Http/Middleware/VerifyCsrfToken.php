@@ -16,6 +16,8 @@ class VerifyCsrfToken extends BaseVerifier
         // Usuarios
         '/logout',
         '/usuarios/detalle/*',
+        '/usuarios/detalleCargo/*',
+        '/usuarios/cambiarCargo/*',
         '/usuarios/actualizar/*',
         '/usuarios/activar/*',
         '/usuarios/inactivar/*',

@@ -13,7 +13,7 @@ Consultar Cargos
             <center>
                 <h1> Lista De Cargos </h1>
             </center><br>
-            <div style="padding-left: 3%;">
+            <div style="padding-left: 2%;">
                 <a data-toggle="modal" data-target="#modalRegistrarCargo" id="" class="btn btn-outline-success">
                     Registrar Cargo</a>
             </div>

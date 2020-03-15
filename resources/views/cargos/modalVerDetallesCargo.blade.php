@@ -2,7 +2,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header text-center" style="background: #29913A;">
-        <h4 class="modal-title w-100 font-weight-bold" style="color: white">Editar Cargos</h4>
+        <h4 class="modal-title w-100 font-weight-bold" style="color: white">Detalle Del Cargo</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" style="color: white">&times;</span>
         </button>
@@ -10,37 +10,37 @@
       <div class="modal-body mx-3">
          {{-- Input del nombre --}}
         <div class="md-form mb-4">
-          <i class="fas fa-id-card"></i>
+          <i class="fas fa-file-alt"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Descripción</label>
           <input required type="text" id="nombre_cargo_d" class="form-control validate">
         </div>
         {{-- Input del sueldo --}}
         <div class="md-form mb-4">
-          <i class="fas fa-id-card"></i>
+          <i class="fas fa-dollar-sign"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Sueldo</label>
           <input required type="number" id="sueldo_cargo_d" class="form-control validate">
         </div>
         {{-- Input diurno --}}
         <div class="md-form mb-4">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-dollar-sign"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-email">Valor Hora Diurna</label>
           <input required type="number" id="diurna_cargo_d" class="form-control validate">
         </div>
         {{-- Input nocturno  --}}
         <div class="md-form mb-4">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-dollar-sign"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-email">Valor Hora Nocturna</label>
           <input required type="number" id="nocturna_cargo_d" class="form-control validate">
         </div>
         {{-- Input dominical  --}}
         <div class="md-form mb-4">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-dollar-sign"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-email">Valor Hora Dominical</label>
           <input required type="number" id="dominical_cargo_d" class="form-control validate">
         </div>
         {{-- Input nocturno  --}}
         <div class="md-form mb-4">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-dollar-sign"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-email">Valor Hora Recargo Nocturno</label>
           <input required type="number" id="nocturno_cargo_d" class="form-control validate">
         </div>

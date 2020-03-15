@@ -29,6 +29,12 @@ Route::get('/usuarios', 'UsuariosController@index')->name('/usuarios')->middlewa
 // RETORNA LA VISTA DEL MODAL CON LA INFORMACIÓN DEL USUARIO
 Route::post('/usuarios/detalle/{id}', 'UsuariosController@detalle')->name('/usuarios/detalle/{id}')->middleware('auth');
 
+// CAMBIA EL CARGO DEL USUARIO
+Route::post('/usuarios/cambiarCargo/{id}', 'UsuariosController@cambiarCargo')->name('/usuarios/cambiarCargo/{id}')->middleware('auth');
+
+// RETORNA LA VISTA DEL MODAL CON LA INFORMACIÓN DEL CARGO VIGENTE DEL USUARIO
+Route::post('/usuarios/detalleCargo/{id}', 'UsuariosController@cargo')->name('/usuarios/Cargo/{id}')->middleware('auth');
+
 // ACTUALIZA LA INFORMACIÓN DEL USUARIO
 Route::post('/usuarios/actualizar/{id}', 'UsuariosController@update')->name('/usuarios/update/{id}')->middleware('auth');
 
