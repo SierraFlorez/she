@@ -50,7 +50,7 @@ class CargosController extends Controller
             'nombre' => 'required|max:50|unique:cargos,nombre,'.$cargo['id'],
             'sueldo' => 'required|numeric|max:10000000|min:1000000',
             'valor_diurna' => 'required|numeric|min:1000|max:100000',
-            'valor_diurna' => 'rrequired|numeric|min:1000|max:100000',
+            'valor_diurna' => 'required|numeric|min:1000|max:100000',
             'valor_nocturna' => 'required|numeric|min:1000|max:100000',
             'valor_dominical' => 'required|numeric|min:1000|max:100000',
             'valor_recargo' => 'required|numeric|min:1000|max:100000',

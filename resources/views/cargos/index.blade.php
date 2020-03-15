@@ -19,7 +19,6 @@ Consultar Cargos
             </div>
             <div class="card-header" id="table_div_cargos">
                 <table id="dtCargos" class="table table-hover table-dark" cellspacing="0" width="100%">
-
                     <thead class="thead-dark">
                         <tr>
                             <th class="th-sm">ID</th>

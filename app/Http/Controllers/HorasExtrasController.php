@@ -9,13 +9,27 @@ use App\User;
 // </Modelos>
 use Illuminate\Http\Request;
 use Validator;
+use Illuminate\Support\Facades\Auth;
 
 class horasExtrasController extends Controller
 {
     // Retorna la vista de horas del usuario
     public function index()
     {
-        return view('horasExtras.inicio');
+        if (Auth::User()->role_id==1){
+            $horas=Hora::join('cargo_user','cargo_user.id','=','horas.id_user_cargo')
+                ->join('users','users.id','=','cargo_user.user_id')->join('cargos','cargos.id','=','cargo_user.cargo_id')->orderBy('id_user_cargo','asc')
+                ->orderBy('fecha','asc')->orderBy('hora_inicio','asc')->get();
+                // dd($horas);
+            return view('horasExtras.index', compact('horas'));
+        }
+        else{
+            $id=Auth::User()->cargos()->id;
+            $horas=Hora::where('id_user_cargo',$id)->orderBy('fecha','asc')
+            ->orderBy('hora_inicio','asc')->raw('hora_inicio','-','hora_fin')->get();
+            return view('horasExtras.index',compact('horas'));
+
+        }
     }
 
     // Lleva a la vista los usuarios que sean funcionarios, tengan estado activo, y tengan un CargoUsuario activo

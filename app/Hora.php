@@ -11,6 +11,6 @@ class Hora extends Model
 
     public function users()
     {
-        return $this->belongsTo('App\User', 'id_user');
+        return $this->belongsTo('App\CargoUser', 'id_user_cargo');
     }
 }
