@@ -11,7 +11,6 @@ Route::get('/inicio', 'HomeController@index')->name('/inicio');
 Route::get('/home', 'HomeController@index')->name('/home');
 Route::get('/', 'HomeController@index')->name('/');
 
-
 /*
 |--------------------------------------------------------------------------
 | RUTAS PRIVADAS
@@ -19,7 +18,6 @@ Route::get('/', 'HomeController@index')->name('/');
 |
 */
 Auth::routes();
-
 
 // ----------- MODULO USUARIO -----------------------------------------
 
@@ -88,5 +86,8 @@ Route::post('/cargos/guardar/{id}', 'CargosController@save')->name('/cargos/save
 
 // RETORNA LA VISTA DE GENERAR REPORTES
 Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
+
+// DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
+Route::post('/reportes/solicitudAutorizacion/{id}', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
 
 

@@ -145,7 +145,6 @@ class UsuariosController extends Controller
         $cargosAntiguos = CargoUser::where('user_id', $cargoVigente['user_id'])->get();
         foreach ($cargosAntiguos as $cargoAntiguo) {
             if ($cargoAntiguo->estado == 1) {
-
                 $cargoInactivo['estado'] = 0;
                 $cargoAntiguo->update($cargoInactivo);
             }
