@@ -70,9 +70,11 @@ class ReportesController extends Controller
         $escritor = IOFactory::load($pathTemplate);
         $worksheet = $escritor->getActiveSheet(0);
         $escritor->getActiveSheet()->setShowGridLines(false);
-       
-        // $worksheet->getCell('B7')->setValue($horas[0]->nombres );
-        // $escritor->getActiveSheet()->getStyle('B7')->applyFromArray($styleArray);
+        foreach ($horas as $hora){
+            
+        }
+        $worksheet->getCell('B7')->setValue($horas[0]->nombres );
+        $escritor->getActiveSheet()->getStyle('B7')->applyFromArray($styleArray);
         // dd($escritor);
         $file="Reporte_Aprendices_Pendientes_SACER_.xlsx";//Nombre del archivo
         
