@@ -14,6 +14,7 @@ Consultar usuarios
         <h1> Generar Excel</h1>
       </center><br>
       <div class="card-header">
+        <form action="{{url('/reportes/solicitudAutorizacion/')}}" method="GET">
         <label data-error="wrong" data-success="right" for="orangeForm-name">Usuario</label>
         <select class="form-control validate" id="select_f" name="select_f">
           <option value=""> Seleccione un Funcionario </option>
@@ -39,8 +40,10 @@ Consultar usuarios
           <option value="12">Diciembre</option>
         </select>
         <br>
-        <a style="color:white" class="btn btn-success" onclick="solicitudAutorizacion()">Solicitud de Autorización</a>
-        <a style="color:white" class="btn btn-success" onclick="legalizacion()">Formato de Legalización</a>
+        <input class="btn btn-success" type="submit" value="Solicitud Autorizacion">
+      </form>
+        {{-- <a style="color:white" class="btn btn-success" onclick="solicitudAutorizacion()" href="{{url('/reportes/solicitudAutorizacion/5/03')}}">Solicitud de Autorización</a>
+        <a style="color:white" class="btn btn-success" onclick="legalizacion()">Formato de Legalización</a> --}}
       </div>
     </div>
   </div>

@@ -598,23 +598,9 @@ function solicitudAutorizacion() {
     obj.Id = $funcionario;
     obj.Mes = $mes;
     var datos = JSON.stringify(obj);
-    $.post(url + "/" + datos).done(function (data) {
+    $.get(url + "/" + datos).done(function (data) {
         console.log(data);
-        if (data == 1) {
-            Swal.fire(
-                'Completado!',
-                "Se han Guardado las Horas Extras correctamente",
-                'success'
-            )
-
-        }
-        else{
-            Swal.fire(
-                'Error!',
-                data,
-                'error'
-            )
-        }
+        
 
 
     });

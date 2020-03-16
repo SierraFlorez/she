@@ -88,6 +88,6 @@ Route::post('/cargos/guardar/{id}', 'CargosController@save')->name('/cargos/save
 Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
 
 // DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
-Route::post('/reportes/solicitudAutorizacion/{id}', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
 
 

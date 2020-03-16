@@ -27,11 +27,11 @@ class ReportesController extends Controller
     }
 
     // Descarga el reporte de solicitud de autorización
-    public function solicitudAutorizacion($data)
+    public function solicitudAutorizacion(Request $request)
     {
-        $dato = json_decode($data, true);
-        $id=$dato['Id'];
-        $mes=$dato['Mes'];
+        $dato = $request->all();
+        $id=$dato['select_f'];
+        $mes=$dato['select_mes'];
         $inicio='2020-'.$mes.'-01';
         $fin= date("Y-m-t", strtotime($inicio));
         if(($id=='') || ($mes=='')){
@@ -63,20 +63,33 @@ class ReportesController extends Controller
         
        
         //Carga la plantilla para generar el reporte
-        // $get=getcwd();
-        // dd($get);
         $pathTemplate = getcwd().'\formatos\GTH_F_061_SOLICITUD_DE_AUTORIZACION_DE_HORAS_EXTRAS.xlsx';
         //Selecciona la hoja en la que va a escribir el reporte
         $escritor = IOFactory::load($pathTemplate);
         $worksheet = $escritor->getActiveSheet(0);
+        // dd($horas);
         $escritor->getActiveSheet()->setShowGridLines(false);
+        $usuario=[];
+        $consolidado=[];
         foreach ($horas as $hora){
-            
+            $usuario['nombre_completo']=$hora->nombres.' '.$hora->apellidos;
+            $usuario['documento']=$hora->documento;
+            $usuario['cargo']=$hora->nombre;
+            $usuario['centro']=$hora->centro;
+            $consolidado[]=$usuario;
+            break;
         }
-        $worksheet->getCell('B7')->setValue($horas[0]->nombres );
-        $escritor->getActiveSheet()->getStyle('B7')->applyFromArray($styleArray);
+        $worksheet->getCell('B7')->setValue($consolidado[0]['nombre_completo']);
+
+        $worksheet->getCell('D7')->setValue($consolidado[0]['documento']);
+
+        $worksheet->getCell('G7')->setValue($consolidado[0]['centro']);
+
+        $worksheet->getCell('I7')->setValue($consolidado[0]['cargo']);
+
+        
         // dd($escritor);
-        $file="Reporte_Aprendices_Pendientes_SACER_.xlsx";//Nombre del archivo
+        $file="legalizacionHorasExtras-".$consolidado[0]['nombre_completo'].'-'.$mes.".xlsx";//Nombre del archivo
         
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($escritor, 'Xlsx');
 
