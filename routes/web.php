@@ -60,13 +60,13 @@ Route::post('/passreset/{id}', 'UsuariosController@cambiar_password')->name('/re
 // ----------- MODULO HORAS EXTRAS -------------------------------------
 
 // RETORNA LA VISTA DE HORAS EXTRAS DEL USUARIO
-Route::get('/horasExtras', 'horasExtrasController@index')->name('/horasExtras')->middleware('auth');
+Route::get('/horasExtras', 'HorasExtrasController@index')->name('/horasExtras')->middleware('auth');
 
 // RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
-Route::get('/registrar/horasExtras', 'horasExtrasController@registrar')->name('/registrar/horas')->middleware('auth');
+Route::get('/registrar/horasExtras', 'HorasExtrasController@registrar')->name('/registrar/horas')->middleware('auth');
 
 // GUARDA LAS HORAS EXTRAS
-Route::post('/registrar/horas/guardar/{id}', 'horasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
+Route::post('/registrar/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
 
 
 // ----------- MODULO CARGOS -------------------------------------
@@ -83,5 +83,10 @@ Route::post('/cargos/update/{id}', 'CargosController@update')->name('/cargos/upd
 // GUARDA EL CARGO
 Route::post('/cargos/guardar/{id}', 'CargosController@save')->name('/cargos/save')->middleware('auth');
 
+
+// ------------- MODULO DE REPORTES -------------------------------
+
+// RETORNA LA VISTA DE GENERAR REPORTES
+Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
 
 

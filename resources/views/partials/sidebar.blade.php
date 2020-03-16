@@ -4,19 +4,15 @@
     {{-- style="background-image: url(images/sidebar.png); background-repeat: no-repeat;background-position: center center; display: block;" #29913A !important --}}
     <div class="menu-list">
         <a class="navbar-brand" href="{{ url("/") }}" style="color: white">SHE</a>
-
         <nav class="navbar navbar-expand-lg navbar-light">
-
             <a class="d-xl-none d-lg-none" href="#"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column">
-
-                    
+                    {{-- Gestion de Usuarios --}}
                     @if (Auth::user() && (Auth::user()->role_id==1))
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
@@ -25,6 +21,7 @@
                                 class="badge badge-success"></span>
                         </a>
                     </li>
+                    {{-- Gestion de Cargos --}}
                     <br>
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/cargos") }}" data-target="#submenu-1"
@@ -33,19 +30,21 @@
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                    {{-- <br>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="{{ url("/registrar") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white; margin-bottom: 10px;">
-                            <i class="fas fa-address-card" style="color: white;"></i>Registrar Usuarios<span
-                                class="badge badge-success">6</span>
-                        </a>
-                    </li> --}}
+                    {{-- Gestion de Horas Extras --}}
                     <br>
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horasExtras") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
                             <i class="fas fa-address-card" style="color: white;"></i>Gestionar Horas Extras<span
+                                class="badge badge-success">6</span>
+                        </a>
+                    </li>
+                    {{-- Reportes --}}
+                    <br>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/reportes") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
+                            <i class="fas fa-address-card" style="color: white;"></i>Generar Reportes<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
