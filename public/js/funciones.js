@@ -42,6 +42,20 @@ $(document).ready(function () {
             ]
         });
 })
+// Datatable Solicitud horas extras
+$(document).ready(function () {
+    $('#dtsolicitudhorasExtras')
+        .addClass('table-striped table-sm table-hover table-dark table table-bordered')
+        .dataTable({
+            "language": {
+                "url": "DataTables/Spanish.json"
+            },
+            responsive: true,
+            dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+            buttons: [
+            ]
+        });
+})
 // Datatable cargos
 $(document).ready(function () {
     $('#dtCargos')
@@ -58,6 +72,42 @@ $(document).ready(function () {
         });
 })
 //--------- MODULO DE USUARIOS --------------------
+
+// Función para el modal de detalles de la cuenta iniciada
+function detallesUsuarioSesion(id) {
+    var url = "usuarios/detalle";
+    $.post(url + "/" + id).done(function (data) {
+        console.log(data);
+        $("#documento_user").val(data.usuario.documento);
+        $("#nombres_user").val(data.usuario.nombres);
+        $("#apellidos_user").val(data.usuario.apellidos);
+        $("#cargo_user").val(data.cargo.nombre);
+        $("#centro_user").val(data.usuario.centro);
+        $("#regional_user").val(data.usuario.regional);
+        $("#sueldo_user").val(data.cargo.sueldo);
+        $("#email_user").val(data.usuario.email);
+        $("#telefono_user").val(data.usuario.telefono);
+        $('#tipoDocumento_user').val(data.usuario.tipo_documento);
+        $("#update").attr('onclick', 'updateUsuario(' + data.usuario.id + ')');
+    });
+}
+
+// Muestra la información del cargo del usuario de la cuenta iniciada
+function detallesUsuarioCargoSesion(id) {
+    var url = "usuarios/detalleCargo";
+    $.post(url + "/" + id).done(function (data) {
+        // console.log(data.cargo);
+        $("#cargov_s").val(data.cargo.nombre);
+        $("#sueldov_s").val(data.cargo.sueldo);
+        $("#diurna_s").val(data.cargo.valor_diurna);
+        $("#nocturna_s").val(data.cargo.valor_nocturna);
+        $("#dominical_s").val(data.cargo.valor_dominical);
+        $("#nocturno_s").val(data.cargo.valor_recargo);
+        // $('#cargov').val('');
+        // $("#updatecv_s").attr('onclick', 'cambiarCargo(' + data.usuario.id + ')');
+
+    });
+}
 
 // Función para el modal de detalles
 function detallesUsuario(id) {
@@ -170,6 +220,7 @@ function detallesUsuarioCargo(id) {
 
     });
 }
+
 // Cambia el cargo de un usuario, solo puede tener uno vigente por usuario
 function cambiarCargo(id) {
     var url = "usuarios/cambiarCargo";
@@ -433,7 +484,7 @@ function updateCargo(id) {
     obj.Recargo = $recargo;
 
     var datos = JSON.stringify(obj);
-    console.log(datos);
+    // console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
         $("#nombre_cargo_d").val(data.nombre);
         $("#sueldo_cargo_d").val(data.sueldo);
@@ -545,18 +596,20 @@ function crearCargo() {
 // Guarda las horas extras
 function guardarHoras() {
     var url = "horas/guardar";
-    $funcionario = $("[name = 'select_user_h']").children("option:selected").val();
+    $funcionario = $("#funcionario_cargo_user").val();
     $fecha = $("#date").val();
     $tipoHora = $("[name = 'tipohoras_h']").children("option:selected").val();
     $horaInicio = $("#hora_inicio").val();
     $horaFin = $("#hora_fin").val();
-
+    $justificacion = $("#justificacion").val();
+    
     var obj = new Object();
     obj.Id = $funcionario;
     obj.Fecha = $fecha;
     obj.Inicio = $horaInicio;
     obj.Fin = $horaFin;
     obj.TipoHora = $tipoHora;
+    obj.Justificacion = $justificacion;
 
     var datos = JSON.stringify(obj);
     // console.log(datos);
@@ -573,17 +626,16 @@ function guardarHoras() {
             $("#alt").val("");
             $("#hora_inicio").val("");
             $("#hora_fin").val("");
+            $("#justificacion").val("");
 
         } else {
             Swal.fire(
                 'Error!',
-                data,
+                "Error al Guardar Horas extras, " + data + '.',
                 'error'
             )
 
         }
-
-
     });
 
 }
@@ -599,9 +651,75 @@ function solicitudAutorizacion() {
     obj.Mes = $mes;
     var datos = JSON.stringify(obj);
     $.get(url + "/" + datos).done(function (data) {
-        console.log(data);
+        // console.log(data);
         
-
-
     });
 }
+
+
+
+// ---------- MODULO TIPO DE HORAS ---------
+
+// Función para el modal de detalles
+function detallesTipoHora(id) {
+    var url = "tipo_horas/detalle";
+    $.post(url + "/" + id).done(function (data) {
+        $("#nombre_hora_t").val(data.nombre_hora);
+        $("#hora_inicio_t").val(data.hora_inicio);
+        $("#hora_fin_t").val(data.hora_fin);
+        $("#updateCargo").attr('onclick', 'updateTipoHora(' + data.id + ')');
+    });
+}
+
+// Función para actualizar tipo de hora
+function updateTipoHora(id) {
+    var url = "tipo_horas/update";
+    $nombre = $("#nombre_hora_t").val();
+    $inicio = $("hora_inicio_t").val();
+    $fin = $("#hora_fin_t").val();
+
+    var obj = new Object();
+    obj.Id = id;
+    obj.Nombre = $nombre;
+    obj.Inicio = $inicio;
+    obj.Fin = $fin;
+
+    var datos = JSON.stringify(obj);
+    // console.log(datos);
+    $.post(url + "/" + datos).done(function (data) {
+        $("#modalDetalleTipoHora").modal('hide');//ocultamos el modal 
+        // console.log(data);
+        if (data == 1) {
+            Swal.fire(
+                'Completado!',
+                "Se editado el Tipo de Hora correctamente",
+                'success'
+            )
+        } else {
+            Swal.fire(
+                'Error!',
+                "Error al editar el Tipo de Hora, " + data + '.',
+                'error'
+            )
+
+        }
+        $("#table_div_tipoHoras").load(" #dtTipoHoras", function () {
+            $('#dtTipoHoras')
+                .addClass('table-striped table-bordered')
+                .dataTable({
+                    "language": {
+                        "url": "DataTables/Spanish.json"
+                    },
+                    destroy: true,
+                    responsive: true,
+                    dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+                    buttons: [
+                        'copy', 'excel', 'csv'
+                    ]
+                });
+        });
+
+    });
+
+}
+

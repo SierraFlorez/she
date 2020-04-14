@@ -61,10 +61,10 @@ Route::post('/passreset/{id}', 'UsuariosController@cambiar_password')->name('/re
 Route::get('/horasExtras', 'HorasExtrasController@index')->name('/horasExtras')->middleware('auth');
 
 // RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
-Route::get('/registrar/horasExtras', 'HorasExtrasController@registrar')->name('/registrar/horas')->middleware('auth');
+Route::get('/horasExtras_registro', 'HorasExtrasController@registrar')->name('/horasExtras_registro')->middleware('auth');
 
 // GUARDA LAS HORAS EXTRAS
-Route::post('/registrar/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
+Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
 
 
 // ----------- MODULO CARGOS -------------------------------------
@@ -89,5 +89,26 @@ Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->m
 
 // DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
 Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+
+// ----------- MODULO SOLICITUDES -------------------------------------
+
+// RETORNA LA VISTA DE SOLICITUDES
+Route::get('/solicitudes', 'SolicitudesController@index')->name('/solicitudes')->middleware('auth');
+
+// RETORNA LA VISTA DE CREAR SOLICITUD
+Route::get('/solicitudes/crear_solicitud', 'SolicitudesController@crear_solicitud')->name('/solicitudes/crear_solicitud')->middleware('auth');
+
+// ------------- MODULO DE TIPO DE HORAS -------------------------------
+
+// RETORNA LA VISTA DE TIPO DE HORAS
+Route::get('/tipo_horas', 'TipoHorasController@index')->name('/tipo_horas')->middleware('auth');
+
+// RETORNA EL MODAL DE TIPO DE HORAS
+Route::post('/tipo_horas/detalle/{id}', 'TipoHorasController@detalle')->name('/tipo_horas/detalle/{id}')->middleware('auth');
+
+// RETORNA EL MODAL DE TIPO DE HORAS
+Route::post('/tipo_horas/update/{id}', 'TipoHorasController@update')->name('/tipo_horas/update/{id}')->middleware('auth');
+
+
 
 

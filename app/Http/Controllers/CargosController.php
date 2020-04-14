@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+// <modelos>
 use App\Cargo;
 use Validator;
+// </modelos>
 
 class CargosController extends Controller
 {

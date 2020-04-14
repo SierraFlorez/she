@@ -17,6 +17,7 @@ Registrar Horas Extras
         {{--  --}}
         <center>
             <div class="form-row mb-6">
+                @foreach($funcionarios as $funcionario)
                 <div class="col-md-4">
                     <h5>Funcionario:</h5> &nbsp;{{$funcionario->nombres.' '.$funcionario->apellidos}}
                     <hr style="width:300%;border-color:darkgrey">
@@ -24,28 +25,43 @@ Registrar Horas Extras
                 <div class="col-md-4">
                     <h5>Documento:</h5> &nbsp;{{$funcionario->documento}}
                 </div>
+                @endforeach
+                @foreach($cargos1 as $cargo)
                 <div class="col-md-4">
-                    <h5>Cargo Actual:</h5> &nbsp;{{$funcionario->nombre}}
+                    <h5>Cargo Actual:</h5> &nbsp;{{$cargo->nombre}}
                 </div>
+                @endforeach
             </div>
         </center>
         <div class="form-row mb-6">
           {{-- Input de mes --}}
           <div class="col">
-          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha de Solicitud:</label>
-        <br>
-        <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="{{$fecha}}">
-        <input class="form-control date-input-fallback" id="alt" type="text" placeholder="Seleccione una fecha">
-        <div id="picker" hidden></div>
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Mes de Solicitud:</label>
+            <select class="form-control validate" id="tipohoras_solicitud" name="tipohoras_solicitud">
+              <option value="">Seleccione mes </option>
+              <option value="1">Enero </option>
+              <option value="2">Febrero </option>
+              <option value="3">Marzo</option>
+              <option value="4">Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
           </div>
           {{-- Input de tipo de hora --}}
           <div class="col">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de horas:</label>
-            <select class="form-control validate" id="tipohoras_h" name="tipohoras_h">
+            <select class="form-control validate" id="tipohoras_solicitud" name="tipohoras_solicitud">
               <option value="">Seleccione tipo de hora </option>
-              @foreach($tipoHoras as $tipoHora)
-              <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
-              @endforeach
+              <option value="1">Diurnas </option>
+              <option value="2">Nocturnas </option>
+              <option value="3">Dominicales y Festivos </option>
+              <option value="4">Recargo Nocturno </option>
             </select>
           </div>
         </div>
@@ -66,9 +82,11 @@ Registrar Horas Extras
             <label data-error="wrong" data-success="right" for="orangeForm-name">Justificación:</label>
             <textarea class="form-control" id="justificacion" style="height: 120px;"></textarea>
           </div>
+          @foreach($cargos as $cargouser)
             <div class="col-md-6">
-                <input class="form-control" type="hidden" value="{{$funcionario->id}}" id="funcionario_cargo_user">
+                <input class="form-control" type="hidden" value="{{$cargouser->id}}" name="cargo_user_id_solicitud">
             </div>
+          @endforeach
         </div><br>
         <button class="btn btn-success" onclick="guardarHoras()"> Guardar </button>
       </div><br>

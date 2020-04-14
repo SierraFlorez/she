@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class CargoUser extends Model
 {
     protected $table='cargo_user';
-    protected $fillable = ['user_id','cargo_id','estado']; 
+    protected $primaryKey = 'id';
+    protected $fillable = ['id','user_id','cargo_id','estado']; 
 
     public function users()
     {

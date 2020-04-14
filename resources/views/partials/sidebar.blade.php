@@ -22,7 +22,7 @@
                         </a>
                     </li>
                     {{-- Gestion de Cargos --}}
-                    <br>
+                    
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/cargos") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="margin-bottom: 10px; color:white;">
@@ -31,7 +31,7 @@
                         </a>
                     </li>
                     {{-- Gestion de Horas Extras --}}
-                    <br>
+                    
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horasExtras") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
@@ -39,12 +39,31 @@
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
+                    {{-- Solicitud Autrizacion Horas Extras --}}
+                    
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/solicitudes") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
+                            <i class="fas fa-address-card" style="color: white;"></i>Solicitud de Horas Extras<span
+                                class="badge badge-success">6</span>
+                        </a>
+                    </li>
                     {{-- Reportes --}}
-                    <br>
+                    
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/reportes") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
                             <i class="fas fa-address-card" style="color: white;"></i>Generar Reportes<span
+                                class="badge badge-success">6</span>
+                        </a>
+                    </li>
+
+                     {{-- Tipo de Horas --}}
+                    
+                     <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/tipo_horas") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
+                            <i class="fas fa-address-card" style="color: white;"></i>Gestionar Tipo de Horas<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>

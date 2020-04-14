@@ -28,9 +28,11 @@ class VerifyCsrfToken extends BaseVerifier
         '/cargos/update/*',
         '/cargos/guardar/*',
         // Horas Extras
-        '/registrar/horas/guardar/*',
+        '/horas/guardar/*',
         // Reportes
         '/reportes/solicitudAutorizacion/*',
+        // Tipo Horas
+        '/tipo_horas/detalle/*'
 
     ];
 }

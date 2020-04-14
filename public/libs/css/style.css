@@ -1923,6 +1923,26 @@ Sidebar Page Navigations
     background: #efeff6;
 }
 
+.dropdown-itemv {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #3d405c;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.dropdown-itemv:hover {
+    color: #f0346e;
+    background: #efeff6;
+}
+
+
+
 .page-section {}
 
 .dropdown-item.active,

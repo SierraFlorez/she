@@ -9,6 +9,7 @@
 </div>
 @if (Auth::User())
 @include('partials.modalCambiarContrasena')
-{{-- @include('partials.modalCuenta') --}}
+@include('partials.modalCuenta')
+@include('partials.modalCuentaCargo')
 
 @endif

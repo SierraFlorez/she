@@ -12,7 +12,7 @@ Consultar Horas Extras
                 <center><h1> Gestionar Horas Extras </h1></center><br>
                 <div style="padding-left: 2%;">
 
-                <a class="btn btn-success" href="{{ url("/registrar/horasExtras") }}" >Registrar Horas Extras </a>
+                <a class="btn btn-success" href="{{ url("/horasExtras_registro") }}" >Registrar Horas Extras </a>
                 </div>
                 <div class="card-header" id="div_horas">
                     
