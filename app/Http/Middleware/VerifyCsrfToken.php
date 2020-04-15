@@ -32,7 +32,12 @@ class VerifyCsrfToken extends BaseVerifier
         // Reportes
         '/reportes/solicitudAutorizacion/*',
         // Tipo Horas
-        '/tipo_horas/detalle/*'
+        '/tipo_horas/detalle/*',
+        '/tipo_horas/update/*',
+        // Fechas especiales
+        '/fechas_especiales/detalle/*',
+        '/fechas_especiales/update/*'
+
 
     ];
 }

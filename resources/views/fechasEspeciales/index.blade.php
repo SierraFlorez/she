@@ -2,7 +2,7 @@
 @extends('app')
 {{-- da un nombre al titulo de la pestaña--}}
 @section('htmlheader_title')
-Consultar Tipo de Horas
+Consultar Fechas Especiales
 @endsection
 {{-- contenido de la pagina principal (solo ventana) --}}
 @section('main-content')
@@ -11,33 +11,33 @@ Consultar Tipo de Horas
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card" style="margin-top: 5%">
             <center>
-                <h1> Tipo de Horas </h1>
+                <h1> Fechas Especiales </h1>
             </center><br>
-            {{-- <div style="padding-left: 2%;">
+            <div style="padding-left: 2%;">
                 <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-outline-success">
-                    Registrar Tipo Hora</a>
-            </div> --}}
-            <div class="card-header" id="table_div_tipoHoras">
-                <table id="dtTipoHoras" class="table table-hover table-dark" cellspacing="0" width="100%">
+                    Registrar Fecha</a>
+            </div>
+            <div class="card-header" id="table_div_fechas">
+                <table id="dtFechas" class="table table-hover table-dark" cellspacing="0" width="100%">
                     <thead class="thead-dark">
                         <tr>
                             <th class="th-sm">ID</th>
-                            <th class="th-sm">Nombre</th>
-                            <th class="th-sm">Hora inicio</th>
-                            <th class="th-sm">Hora fin</th>
+                            <th class="th-sm">Descripcion</th>
+                            <th class="th-sm">Fecha inicio</th>
+                            <th class="th-sm">Fecha fin</th>
                             <th class="th-sm"><center>Acción</center></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($tipoHoras as $tipoHora)
+                        @foreach($fechas as $fecha)
                         <tr>
-                            <td>{{ $tipoHora->id}}</td>
-                            <td>{{ $tipoHora->nombre_hora}}</td>
-                            <td>{{ $tipoHora->hora_inicio}}</td>
-                            <td>{{ $tipoHora->hora_fin}}</td>
+                            <td>{{ $fecha->id}}</td>
+                            <td>{{ $fecha->descripcion}}</td>
+                            <td>{{ $fecha->fecha_inicio}}</td>
+                            <td>{{ $fecha->fecha_fin}}</td>
                             <td>
-                                <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalleTipoHora"
-                                    onclick="detallesTipoHora({{ $tipoHora->id}})">Editar</button>
+                                <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalleFecha"
+                                    onclick="detallesFecha({{$fecha->id}})">Editar</button>
                                 </center>
                             </td>
                         </tr>
@@ -48,6 +48,6 @@ Consultar Tipo de Horas
         </div>
     </div>
 </div>
-@include('tipoHora.modalVerDetallesTipoHora')
+@include('fechasEspeciales.modalVerDetallesFecha')
 
 @endsection

@@ -13,7 +13,7 @@ class TipoHorasController extends Controller
     // Vista de la lista de tipo horas
     public function index()
     {
-        $tipoHoras=TipoHora::all();
+        $tipoHoras = TipoHora::all();
         return view('tipoHora.index', compact('tipoHoras'));
     }
 
@@ -28,6 +28,7 @@ class TipoHorasController extends Controller
     {
         $dato = json_decode($data, true);
         $hora = TipoHora::find($dato['Id']);
+        $tipoHora['id'] = $dato["Id"];
         $tipoHora['nombre_hora'] = $dato["Nombre"];
         $tipoHora['hora_inicio'] = $dato["Inicio"];
         $tipoHora['hora_fin'] = $dato["Fin"];
@@ -35,7 +36,7 @@ class TipoHorasController extends Controller
         if ($ok->fails()) {
             return $ok->errors()->all();;
         } else {
-            $tipoHora->update($hora);
+            $hora->update($tipoHora);
             return (1);
         }
     }
@@ -48,5 +49,4 @@ class TipoHorasController extends Controller
             'hora_fin' => 'required',
         ]);
     }
-  
 }

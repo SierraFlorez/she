@@ -8,6 +8,7 @@ class User extends Authenticatable
     use Notifiable;
     protected $table='Users';
     protected $primaryKey = 'id';
+    public $incrementing = true;
     protected $fillable = [
         'nombres','apellidos', 'email', 'password','tipo_documento','documento','regional','centro','telefono','estado','role_id'
     ];

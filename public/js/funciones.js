@@ -71,6 +71,38 @@ $(document).ready(function () {
             ]
         });
 })
+
+// Datatable Tipo Horas
+$(document).ready(function () {
+    $('#dtTipoHoras')
+        .addClass('table-striped table-sm table-hover table-dark table table-bordered')
+        .dataTable({
+            "language": {
+                "url": "DataTables/Spanish.json"
+            },
+            responsive: true,
+            dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+            buttons: [
+                'copy', 'excel', 'csv'
+            ]
+        });
+})
+
+// Datatable Fechas
+$(document).ready(function () {
+    $('#dtFechas')
+        .addClass('table-striped table-sm table-hover table-dark table table-bordered')
+        .dataTable({
+            "language": {
+                "url": "DataTables/Spanish.json"
+            },
+            responsive: true,
+            dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+            buttons: [
+                'copy', 'excel', 'csv'
+            ]
+        });
+})
 //--------- MODULO DE USUARIOS --------------------
 
 // Función para el modal de detalles de la cuenta iniciada
@@ -656,8 +688,6 @@ function solicitudAutorizacion() {
     });
 }
 
-
-
 // ---------- MODULO TIPO DE HORAS ---------
 
 // Función para el modal de detalles
@@ -667,7 +697,7 @@ function detallesTipoHora(id) {
         $("#nombre_hora_t").val(data.nombre_hora);
         $("#hora_inicio_t").val(data.hora_inicio);
         $("#hora_fin_t").val(data.hora_fin);
-        $("#updateCargo").attr('onclick', 'updateTipoHora(' + data.id + ')');
+        $("#updateTipoHora").attr('onclick', 'updateTipoHora(' + data.id + ')');
     });
 }
 
@@ -675,7 +705,7 @@ function detallesTipoHora(id) {
 function updateTipoHora(id) {
     var url = "tipo_horas/update";
     $nombre = $("#nombre_hora_t").val();
-    $inicio = $("hora_inicio_t").val();
+    $inicio = $("#hora_inicio_t").val();
     $fin = $("#hora_fin_t").val();
 
     var obj = new Object();
@@ -685,14 +715,14 @@ function updateTipoHora(id) {
     obj.Fin = $fin;
 
     var datos = JSON.stringify(obj);
-    // console.log(datos);
+    console.log(datos);
     $.post(url + "/" + datos).done(function (data) {
         $("#modalDetalleTipoHora").modal('hide');//ocultamos el modal 
         // console.log(data);
         if (data == 1) {
             Swal.fire(
                 'Completado!',
-                "Se editado el Tipo de Hora correctamente",
+                "Se ha editado el Tipo de Hora correctamente",
                 'success'
             )
         } else {
@@ -722,4 +752,158 @@ function updateTipoHora(id) {
     });
 
 }
+
+// ------------MODULO DE REPORTES ----------------
+
+function solicitudAutorizacion() {
+    var url = "reportes/solicitudAutorizacion";
+    $funcionario = $("[name = 'select_f']").children("option:selected").val();
+    $mes = $("[name = 'select_mes']").children("option:selected").val();
+    var obj = new Object();
+    obj.Id = $funcionario;
+    obj.Mes = $mes;
+    var datos = JSON.stringify(obj);
+    $.get(url + "/" + datos).done(function (data) {
+        // console.log(data);
+        
+    });
+}
+
+// ---------- MODULO DE FECHAS ---------
+
+// Función para el modal de detalles
+function detallesFecha(id) {
+    var url = "fechas_especiales/detalle";
+    $.post(url + "/" + id).done(function (data) {
+        $("#nombre_fecha_t").val(data.descripcion);
+        $("#fecha_inicio_t").val(data.fecha_inicio);
+        $("#fecha_fin_t").val(data.fecha_fin);
+        $("#updateFecha").attr('onclick', 'updateFecha(' + data.id + ')');
+    });
+}
+
+// Función para actualizar fecha
+function updateFecha(id) {
+    var url = "fechas_especiales/update";
+    $nombre = $("#nombre_fecha_t").val();
+    $inicio = $("#fecha_inicio_t").val();
+    $fin = $("#fecha_fin_t").val();
+
+    var obj = new Object();
+    obj.Id = id;
+    obj.Nombre = $nombre;
+    obj.Inicio = $inicio;
+    obj.Fin = $fin;
+
+    var datos = JSON.stringify(obj);
+    // console.log(datos);
+    $.post(url + "/" + datos).done(function (data) {
+        $("#modalDetalleFecha").modal('hide');//ocultamos el modal 
+        // console.log(data);
+        if (data == 1) {
+            Swal.fire(
+                'Completado!',
+                "Se ha editado la fecha correctamente correctamente",
+                'success'
+            )
+        } else {
+            Swal.fire(
+                'Error!',
+                "Error al editar la fecha, " + data + '.',
+                'error'
+            )
+
+        }
+        $("#table_div_fechas").load(" #dtFechas", function () {
+            $('#dtFechas')
+                .addClass('table-striped table-bordered')
+                .dataTable({
+                    "language": {
+                        "url": "DataTables/Spanish.json"
+                    },
+                    destroy: true,
+                    responsive: true,
+                    dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+                    buttons: [
+                        'copy', 'excel', 'csv'
+                    ]
+                });
+        });
+
+    });
+
+}
+
+// Guarda la fecha
+function saveFecha() {
+    var url = "fechas_especiales/save";
+    $documento = $("#documento_user_g").val();
+    $nombres = $("#nombres_user_g").val();
+    $apellidos = $("#apellidos_user_g").val();
+    $correo = $("#email_user_g").val();
+    $telefono = $("#telefono_user_g").val();
+    $tipoDocumento = $("[name = 'select_tipoDocumento_g']").children("option:selected").val();
+    $rol = $("[name = 'select_rol_g']").children("option:selected").val();
+    $centro = $("[name = 'select_centro_g']").children("option:selected").val();
+    $regional = $("[name = 'select_regional_g']").children("option:selected").val();
+    $cargo = $("[name = 'select_cargo_g']").children("option:selected").val();
+
+    var obj = new Object();
+    obj.Documento = $documento;
+    obj.Nombres = $nombres;
+    obj.Apellidos = $apellidos;
+    obj.Correo = $correo;
+    obj.Telefono = $telefono;
+    obj.TipoDocumento = $tipoDocumento;
+    obj.Rol = $rol;
+    obj.Centro = $centro;
+    obj.Regional = $regional;
+    obj.cargo = $cargo;
+
+    var datos = JSON.stringify(obj);
+    // console.log(datos);
+    $.post(url + "/" + datos).done(function (data) {
+        $("#documento_user").val(data.documento);
+        $("#nombres_user").val(data.nombres);
+        $("#apellidos_user").val(data.apellidos);
+        $("#email_user").val(data.email);
+        $("#eps_user").val(data.eps);
+        $("#telefono_user").val(data.telefono);
+        $('#tipoDocumento_user').val(data.tipo_documento);
+        $('#rol_user').val(data.rol_id);
+        $("#modalRegistrarUsuario").modal('hide');//ocultamos el modal 
+        // console.log(data);
+        if (data == 1) {
+            Swal.fire(
+                'Completado!',
+                "Se ha guardado exitosamente a " + $nombres,
+                'success'
+            )
+        } else {
+            Swal.fire(
+                'Error!',
+                "Error al guardar el Usuario, " + data + '.',
+                'error'
+            )
+
+        }
+        $("#table_div_user").load(" #dtUsuarios", function () {
+            $('#dtUsuarios')
+                .addClass('table-striped table-bordered')
+                .dataTable({
+                    "language": {
+                        "url": ".DataTables/Spanish.json"
+                    },
+                    destroy: true,
+                    responsive: true,
+                    dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+                    buttons: [
+                        'copy', 'excel', 'csv'
+                    ]
+                });
+        });
+
+    });
+}
+
 

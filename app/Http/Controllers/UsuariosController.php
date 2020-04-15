@@ -65,12 +65,7 @@ class UsuariosController extends Controller
             'regional' => 'required',
         ]);
     }
-    // Vista para registrar nuevo usuario
-    public function registrar()
-    {
-        return view('usuarios.registrar');
-    }
-
+   
     // Trae toda la información del usuario para el modal detalle
     public function detalle($id)
     {

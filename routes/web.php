@@ -106,8 +106,23 @@ Route::get('/tipo_horas', 'TipoHorasController@index')->name('/tipo_horas')->mid
 // RETORNA EL MODAL DE TIPO DE HORAS
 Route::post('/tipo_horas/detalle/{id}', 'TipoHorasController@detalle')->name('/tipo_horas/detalle/{id}')->middleware('auth');
 
-// RETORNA EL MODAL DE TIPO DE HORAS
+// ACTUALIZA EL TIPO DE HORAS
 Route::post('/tipo_horas/update/{id}', 'TipoHorasController@update')->name('/tipo_horas/update/{id}')->middleware('auth');
+
+// ------------- MODULO DIÁS ESPECIALES -------------------------------
+
+// RETORNA LA VISTA DE TIPO DE HORAS
+Route::get('/fechas_especiales', 'FechasEspecialesController@index')->name('/fechas_especiales')->middleware('auth');
+
+// RETORNA EL MODAL DE FECHA ESPECIAL
+Route::post('/fechas_especiales/detalle/{id}', 'FechasEspecialesController@detalle')->name('/fechas_especiales/detalle/{id}')->middleware('auth');
+
+// ACTUALIZA LA FECHA ESPECIAL
+Route::post('/fechas_especiales/update/{id}', 'FechasEspecialesController@update')->name('/fechas_especiales/update/{id}')->middleware('auth');
+
+// GUARDA LA FECHA ESPECIAL
+Route::post('/fechas_especiales/save/{id}', 'FechasEspecialesController@save')->name('/fechas_especiales/save/{id}')->middleware('auth');
+
 
 
 

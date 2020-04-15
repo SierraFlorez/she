@@ -68,6 +68,16 @@
                         </a>
                     </li>
 
+                    {{-- Fechas especiales --}}
+                    
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/fechas_especiales") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
+                            <i class="fas fa-address-card" style="color: white;"></i>Fechas Especiales<span
+                                class="badge badge-success">6</span>
+                        </a>
+                    </li>
+
                         @endif
                     
                     @if (Auth::user())
