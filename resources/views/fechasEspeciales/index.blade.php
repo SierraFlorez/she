@@ -14,7 +14,7 @@ Consultar Fechas Especiales
                 <h1> Fechas Especiales </h1>
             </center><br>
             <div style="padding-left: 2%;">
-                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-outline-success">
+                <a  class="btn btn-success" style="color:white" data-toggle="modal" data-target="#modalRegistrarFecha" id="modal">
                     Registrar Fecha</a>
             </div>
             <div class="card-header" id="table_div_fechas">
@@ -31,10 +31,10 @@ Consultar Fechas Especiales
                     <tbody>
                         @foreach($fechas as $fecha)
                         <tr>
-                            <td>{{ $fecha->id}}</td>
-                            <td>{{ $fecha->descripcion}}</td>
-                            <td>{{ $fecha->fecha_inicio}}</td>
-                            <td>{{ $fecha->fecha_fin}}</td>
+                            <td>{{$fecha->id}}</td>
+                            <td>{{$fecha->descripcion}}</td>
+                            <td>{{$fecha->fecha_inicio}}</td>
+                            <td>{{$fecha->fecha_fin}}</td>
                             <td>
                                 <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalleFecha"
                                     onclick="detallesFecha({{$fecha->id}})">Editar</button>
@@ -49,5 +49,6 @@ Consultar Fechas Especiales
     </div>
 </div>
 @include('fechasEspeciales.modalVerDetallesFecha')
+@include('fechasEspeciales.modalRegistrarFecha')
 
 @endsection

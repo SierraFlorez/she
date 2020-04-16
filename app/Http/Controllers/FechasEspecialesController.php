@@ -28,44 +28,25 @@ class FechasEspecialesController extends Controller
     public function save($data)
     {
         $dato = json_decode($data, true);
-        $usuario['nombres'] = $dato["Nombres"];
-        $usuario['apellidos'] = $dato["Apellidos"];
-        $usuario['documento'] = $dato["Documento"];
-        $usuario['estado'] = '1';
-        $usuario['telefono'] = $dato["Telefono"];
-        $usuario['email'] = $dato["Correo"];
-        $usuario['role_id'] = $dato["Rol"];
-        $usuario['tipo_documento'] = $dato["TipoDocumento"];
-        $usuario['centro'] = $dato['Centro'];
-        $usuario['regional'] = $dato['Regional'];
-        $usuario['password'] = '$2y$10$vhKmPbvJOEwosRqFUIyV2eu7.gjOI7KVFJlJRxpbmqdHtPQuKdKp6';
-        $validador = $this->validatorSave($usuario);
+        $fecha['descripcion'] = $dato["Nombre"];
+        $fecha['fecha_inicio'] = $dato["Inicio"];
+        $fecha['fecha_fin'] = $dato["Fin"];
+        $validador = $this->validatorSave($fecha);
         if ($validador->fails()) {
             return $validador->errors()->all();
-        } else {
-            $usuariog = User::create($usuario);
-            $cargoUsuario = [];
-            $cargoUsuario['user_id'] = $usuariog->id;
-            $cargoUsuario['cargo_id'] = $dato['cargo'];
-            $cargoUsuario['estado'] = 1;
-            CargoUser::create($cargoUsuario);
-
-            return (1);
+        } elseif ($fecha['fecha_inicio'] > $fecha['fecha_fin']) {
+            return ('La fecha inicio es mayor que la final');
         }
+        FechaEspecial::create($fecha);
+        return (1);
     }
-    // Valida la información del usuario que quiere registrar
+    // Valida la información de la fecha que quiere registrar
     public function validatorSave(array $data)
     {
         return Validator::make($data, [
-            'nombres' => 'required|max:70',
-            'apellidos' => 'required|max:70',
-            'tipo_documento' => 'required',
-            'documento' => 'required|max:15|unique:users,documento',
-            'email' => 'required|email|max:255|unique:users,email',
-            'telefono' => 'required|max:70',
-            'role_id' => 'required',
-            'centro' => 'required',
-            'regional' => 'required',
+            'descripcion' => 'required|max:70',
+            'fecha_inicio' => 'required',
+            'fecha_fin' => 'required',
         ]);
     }
 

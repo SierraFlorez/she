@@ -3,7 +3,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header text-center" style="background: #29913A;">
-        <h4 class="modal-title w-100 font-weight-bold" style="color: white">Detalles Del Cargo Vigente</h4>
+        <h4 class="modal-title w-100 font-weight-bold" style="color: white">Detalles del Cargo Vigente</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" style="color: white">&times;</span>
         </button>

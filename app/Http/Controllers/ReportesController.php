@@ -37,10 +37,10 @@ class ReportesController extends Controller
             $msg="Verifique si esta seleccionando un mes y un funcionario";
             return redirect()->back()->with('warning', $msg);
         }
-        $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.id_user_cargo')
+        $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                      ->join('users', 'users.id', '=', 'cargo_user.user_id')
                      ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
-                     ->where('id_user_cargo', $id)->where('fecha', '>=', $inicio)->where('fecha', '<=', $fin)->get();
+                     ->where('cargo_user_id', $id)->where('fecha', '>=', $inicio)->where('fecha', '<=', $fin)->get();
         // dd($horas);
         if (count($horas) > 0) {
 

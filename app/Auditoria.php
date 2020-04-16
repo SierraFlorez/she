@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Auditoria extends Model
 {
     protected $table='auditoria';
-    protected $fillable = ['id_user','id_user_cargo','fecha','diurnas','nocturnas','dominicales','nocturno']; 
+    protected $fillable = ['id_user','cargo_user_id','fecha','diurnas','nocturnas','dominicales','nocturno']; 
 
     public function users()
     {
@@ -15,6 +15,6 @@ class Auditoria extends Model
     }
     public function userscargos()
     {
-        return $this->belongsTo('App\User_cargo', 'id_user_cargo');
+        return $this->belongsTo('App\User_cargo', 'cargo_user_id');
     }
 }

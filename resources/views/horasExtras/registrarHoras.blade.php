@@ -34,7 +34,7 @@ Registrar Horas Extras
           <div class="col">
           <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha de Solicitud:</label>
         <br>
-        <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="{{$fecha}}">
+        <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="2021-01-30">
         <input class="form-control date-input-fallback" id="alt" type="text" placeholder="Seleccione una fecha">
         <div id="picker" hidden></div>
           </div>

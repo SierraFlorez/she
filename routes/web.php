@@ -66,6 +66,12 @@ Route::get('/horasExtras_registro', 'HorasExtrasController@registrar')->name('/h
 // GUARDA LAS HORAS EXTRAS
 Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
 
+// MUESTRA LA INFORMACIÓN DE LAS HORAS
+Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/horas/detalle/{id}')->middleware('auth');
+
+// AUTORIZA LAS HORAS
+Route::post('/horas/autorizar/{id}', 'HorasExtrasController@autorizar')->name('/horas/autorizar/{id}')->middleware('auth');
+
 
 // ----------- MODULO CARGOS -------------------------------------
 

@@ -14,7 +14,7 @@ Consultar usuarios
                 <h1> Lista De Usuarios </h1>
             </center><br>
             <div style="padding-left: 2%;">
-                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-outline-success">
+                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-success" style="color: white">
                     Registrar Usuario </a>
             </div>
             <div class="card-header" id="table_div_user">
