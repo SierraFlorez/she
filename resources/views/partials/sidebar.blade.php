@@ -1,5 +1,4 @@
 <!-- left sidebar -->
-<!-- ============================================================== -->
 <div class="nav-left-sidebar sidebar-dark">
     {{-- style="background-image: url(images/sidebar.png); background-repeat: no-repeat;background-position: center center; display: block;" #29913A !important --}}
     <div class="menu-list">
@@ -17,39 +16,35 @@
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="margin-bottom: 10px; color:white;">
-                            <i class="fas fa-address-card" style="color:white;"></i>Gestionar Usuarios<span
+                            <i class="fas fa-address-card" style="color:white;"></i>Gestión de Usuarios<span
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                    {{-- Gestion de Cargos --}}
-                    
+                    {{-- Gestion de Cargos --}} 
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/cargos") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="margin-bottom: 10px; color:white;">
-                            <i class="fas fa-address-card" style="color:white;"></i>Gestionar Cargos<span
+                            <i class="fas fa-address-card" style="color:white;"></i>Gestión de Cargos<span
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                    {{-- Gestion de Horas Extras --}}
-                    
+                    {{-- Gestion de Horas Extras --}} 
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horasExtras") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestionar Horas Extras<span
+                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Horas Extras<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-                    {{-- Solicitud Autrizacion Horas Extras --}}
-                    
+                    {{-- Presupuestos --}}
                     <li class="nav-item ">
-                        <a class="nav-link" href="{{ url("/solicitudes") }}" data-target="#submenu-1"
+                        <a class="nav-link" href="{{ url("/presupuestos") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Solicitud de Horas Extras<span
+                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Presupuestos<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-                    {{-- Reportes --}}
-                    
+                    {{-- Reportes --}}              
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/reportes") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
@@ -57,29 +52,23 @@
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-
                      {{-- Tipo de Horas --}}
-                    
                      <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/tipo_horas") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestionar Tipo de Horas<span
+                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Tipo de Horas<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-
                     {{-- Fechas especiales --}}
-                    
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/fechas_especiales") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Fechas Especiales<span
+                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Fechas Especiales<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-
                         @endif
-                    
                     @if (Auth::user())
                     <br>
                     <li class="nav-item">
@@ -110,5 +99,4 @@
     </nav>
 </div>
 </div>
-<!-- ============================================================== -->
 <!-- end left sidebar -->

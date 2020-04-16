@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Hora extends Model
 {
     protected $table='horas';
-    protected $fillable = ['cargo_user_id','fecha','hora_inicio','hora_fin','tipo_hora','justificacion','autorizacion','ejecucion']; 
+    protected $fillable = ['cargo_user_id','fecha','hi_solicitada','hf_solicitada','tipo_hora','justificacion','autorizacion','hi_ejecutada','hf_ejecutada','presupuesto_id']; 
 
     public function users()
     {
@@ -21,5 +21,9 @@ class Hora extends Model
     public function autorizo()
     {
         return $this->belongsTo('App\Users', 'autorizacion');
+    }
+    public function presupuesto()
+    {
+        return $this->belongsTo('App\Presupuesto', 'presupuesto_id');
     }
 }

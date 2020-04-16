@@ -31,6 +31,7 @@ class VerifyCsrfToken extends BaseVerifier
         '/horas/guardar/*',
         '/horas/autorizar/*',
         '/horas/detalle/*',
+        '/horas/update/*',
         // Reportes
         '/reportes/solicitudAutorizacion/*',
         // Tipo Horas
@@ -40,6 +41,9 @@ class VerifyCsrfToken extends BaseVerifier
         '/fechas_especiales/detalle/*',
         '/fechas_especiales/update/*',
         '/fechas_especiales/save/*',
+        // Presupuesto
+        '/presupuesto/save/*',
+
 
 
     ];

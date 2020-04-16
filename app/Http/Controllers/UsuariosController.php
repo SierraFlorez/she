@@ -17,7 +17,7 @@ class UsuariosController extends Controller
     public function index()
     {
         $cargos = Cargo::all();
-        $usuarios = User::select('id', 'nombres', 'apellidos', 'documento', 'estado')->get();
+        $usuarios = User::select('id', 'nombres', 'apellidos', 'documento', 'estado')->where('id','!=',0)->get();
         $roles = Role::orderBy('id', 'DESC')->get();
         return view('usuarios.index', compact('usuarios', 'cargos', 'roles'));
     }

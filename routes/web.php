@@ -70,6 +70,9 @@ Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/hora
 Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/horas/detalle/{id}')->middleware('auth');
 
 // AUTORIZA LAS HORAS
+Route::post('/horas/update/{id}', 'HorasExtrasController@update')->name('/horas/update/{id}')->middleware('auth');
+
+// AUTORIZA LAS HORAS
 Route::post('/horas/autorizar/{id}', 'HorasExtrasController@autorizar')->name('/horas/autorizar/{id}')->middleware('auth');
 
 
@@ -96,13 +99,13 @@ Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->m
 // DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
 Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
 
-// ----------- MODULO SOLICITUDES -------------------------------------
+// ----------- MODULO DE PRESUPUESTO -------------------------------------
 
-// RETORNA LA VISTA DE SOLICITUDES
-Route::get('/solicitudes', 'SolicitudesController@index')->name('/solicitudes')->middleware('auth');
+// RETORNA LA VISTA DE PRESUPUESTO
+Route::get('/presupuestos', 'PresupuestosController@index')->name('/presupuesto')->middleware('auth');
 
-// RETORNA LA VISTA DE CREAR SOLICITUD
-Route::get('/solicitudes/crear_solicitud', 'SolicitudesController@crear_solicitud')->name('/solicitudes/crear_solicitud')->middleware('auth');
+// GUARDA EL PRESUPUESTO
+Route::post('/presupuesto/save/{id}', 'PresupuestosController@guardar')->name('/presupuestos/save/{id}')->middleware('auth');
 
 // ------------- MODULO DE TIPO DE HORAS -------------------------------
 
@@ -128,8 +131,5 @@ Route::post('/fechas_especiales/update/{id}', 'FechasEspecialesController@update
 
 // GUARDA LA FECHA ESPECIAL
 Route::post('/fechas_especiales/save/{id}', 'FechasEspecialesController@save')->name('/fechas_especiales/save/{id}')->middleware('auth');
-
-
-
 
 

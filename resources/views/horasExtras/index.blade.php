@@ -33,11 +33,11 @@ Consultar Horas Extras
                             <tr>
                             <td>{{$hora->nombres}} {{$hora->apellidos}}</td>
                             <td>{{$hora->nombre}}</td>
-                                <td>{{$hora->fecha}}</td>
-                                <td>{{$hora->hora_inicio}}</td>
-                                <td>{{$hora->hora_fin}} </td>
-                                <td>@php echo $hora->hora_fin - $hora->hora_inicio @endphp</td>
-                                <td>{{$hora->nombre_hora}} </td>
+                            <td>{{$hora->fecha}}</td>
+                            <td>{{$hora->hi_solicitada}}</td>
+                            <td>{{$hora->hf_solicitada}}</td>
+                            <td>@php echo $hora->hf_solicitada - $hora->hi_solicitada @endphp</td>
+                            <td>{{$hora->nombre_hora}} </td>
                                 @if ($hora->autorizacion==0 && $hora->ejecucion==0)
                                 <td><button class="btn btn-danger" onclick="autorizar({{$hora->id}},{{Auth::User()->id}},this)">No autorizado
                                     </button>

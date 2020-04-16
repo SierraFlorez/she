@@ -58,9 +58,9 @@ $(document).ready(function () {
       buttons: ["copy", "excel", "csv"],
     });
 });
-// Datatable Solicitud horas extras
+// Datatable Presupuestos
 $(document).ready(function () {
-  $("#dtsolicitudhorasExtras")
+  $("#dtPresupuestos")
     .addClass(
       "table-striped table-sm table-hover table-dark table table-bordered"
     )
@@ -137,7 +137,65 @@ function detallesUsuarioSesion(id) {
     $("#email_user").val(data.usuario.email);
     $("#telefono_user").val(data.usuario.telefono);
     $("#tipoDocumento_user").val(data.usuario.tipo_documento);
-    $("#update").attr("onclick", "updateUsuario(" + data.usuario.id + ")");
+    $("#updateSesion").attr("onclick", "updateUsuarioSesion(" + data.usuario.id + ")");
+  });
+}
+
+// Función para actualizar usuario sesion ajax
+function updateUsuarioSesion(id) {
+  var url = "usuarios/actualizar";
+  $documento = $("#documento_user").val();
+  $nombres = $("#nombres_user").val();
+  $apellidos = $("#apellidos_user").val();
+  $cargo = $("#cargo_user").val();
+  $centro = $("#centro_user").val();
+  $regional = $("#regional_user").val();
+  $sueldo = $("#sueldo_user").val();
+  $correo = $("#email_user").val();
+  $telefono = $("#telefono_user").val();
+  $tipoDocumento = $("#tipoDocumento_user").val();
+
+  var obj = new Object();
+  obj.Id = id;
+  obj.Documento = $documento;
+  obj.Nombres = $nombres;
+  obj.Apellidos = $apellidos;
+  obj.Cargo = $cargo;
+  obj.Regional = $regional;
+  obj.Centro = $centro;
+  obj.Sueldo = $sueldo;
+  obj.Correo = $correo;
+  obj.Telefono = $telefono;
+  obj.TipoDocumento = $tipoDocumento;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#documento_user_d").val(data.documento);
+    $("#modalCuenta").modal("hide"); //ocultamos el modal
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire(
+        "Completado!",
+        "Se editado el Usuario correctamente",
+        "success"
+      );
+    } else {
+      Swal.fire("Error!", "Error al el editar Usuario, " + data + ".", "error");
+    }
+    $("#table_div_user").load(" #dtUsuarios", function () {
+      $("#dtUsuarios")
+        .addClass("table-striped table-bordered")
+        .dataTable({
+          language: {
+            url: "DataTables/Spanish.json",
+          },
+          destroy: true,
+          responsive: true,
+          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+          buttons: ["copy", "excel", "csv"],
+        });
+    });
   });
 }
 
@@ -626,12 +684,13 @@ function detallesHora(id) {
     $("#funcionario_h").val(data.user.nombres + " " + data.user.apellidos);
     $("#cargo_h").val(data.cargo.nombre);
     $("#fecha_h").val(data.hora.fecha);
-    $("#th_h").val(data.tipoHora.nombre_hora);
-    $("#hora_inicio_h").val(data.hora.hora_inicio);
-    $("#hora_fin_h").val(data.hora.hora_fin);
+    $("#th_h").val(data.tipoHora.id);
+    $("#hora_inicio_h").val(data.hora.hi_solicitada);
+    $("#hora_fin_h").val(data.hora.hf_solicitada);
     $("#horas_h").val(data.cantidadHoras);
     $("#valor_hora_h").val(data.valor);
     $("#valor_total_h").val(data.valorTotal);
+    $("#cargo_user_h").val(data.cargoUser.id);
     $("#justificacion_h").val(data.hora.justificacion);
     if (data.autorizado === 0) {
       $("#autorizado_h").val("No ha sido autorizado");
@@ -640,7 +699,58 @@ function detallesHora(id) {
         data.autorizado.nombres + " " + data.autorizado.apellidos
       );
     }
-    $("#updateCargo").attr("onclick", "updateCargo(" + data.id + ")");
+    $("#update_h").attr("onclick", "updateHoras(" + data.hora.id + ")");
+  });
+}
+
+// Función para actualizar cargo ajax
+function updateHoras(id) {
+  var url = "horas/update";
+  $fecha = $("#fecha_h").val();
+  $th = $("#th_h").val();
+  $hora_inicio = $("#hora_inicio_h").val();
+  $hora_fin = $("#hora_fin_h").val();
+  $cargoUser = $("#cargo_user_h").val();
+  console.log($th);
+
+  $justificacion = $("#justificacion_h").val();
+
+  var obj = new Object();
+  obj.Id = id;
+  obj.Fecha = $fecha;
+  obj.Th = $th;
+  obj.CargoUser = $cargoUser;
+  obj.Inicio = $hora_inicio;
+  obj.Fin = $hora_fin;
+  obj.Justificacion = $justificacion;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#modalDetallesHora").modal("hide"); //ocultamos el modal
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire(
+        "Completado!",
+        "Se ha editado correctamente las Horas Extras ",
+        "success"
+      );
+    } else {
+      Swal.fire("Error!", "Error al editar horas; " + data + ".", "error");
+    }
+    $("#div_horas").load(" #dthorasExtras", function () {
+      $("#dthorasExtras")
+        .addClass("table-striped table-bordered")
+        .dataTable({
+          language: {
+            url: "DataTables/Spanish.json",
+          },
+          destroy: true,
+          responsive: true,
+          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+          buttons: ["copy", "excel", "csv"],
+        });
+    });
   });
 }
 
@@ -867,6 +977,53 @@ function saveFecha() {
     }
     $("#table_div_fechas").load(" #dtFechas", function () {
       $("#dtFechas")
+        .addClass("table-striped table-bordered")
+        .dataTable({
+          language: {
+            url: ".DataTables/Spanish.json",
+          },
+          destroy: true,
+          responsive: true,
+          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+          buttons: ["copy", "excel", "csv"],
+        });
+    });
+  });
+}
+
+// ----------- MODULO DE PRESUPUESTO ------------------
+
+// Guarda el presupuesto
+function savePresupuesto() {
+  var url = "presupuesto/save";
+  $presupuesto = $("#presupuesto_p").val();
+  $mes = $("#mes_p").val();
+  $año = $("#año_p").val();
+
+  var obj = new Object();
+  obj.Presupuesto = $presupuesto;
+  obj.Mes = $mes;
+  obj.Año = $año;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#modalRegistrarPresupuesto").modal("hide"); //ocultamos el modal
+    // console.log(data);
+    if (data == 1) {
+      $("#presupuesto_p").val("");
+      $("#mes_p").val("");
+      $("#año_p").val("");
+      Swal.fire(
+        "Completado!",
+        "se ha guardado exitosamente el presupuesto.",
+        "success"
+      );
+    } else {
+      Swal.fire("Error!", "Error al guardar el presupuesto; " + data + ".", "error");
+    }
+    $("#div_presupuesto").load(" #dtPresupuesto", function () {
+      $("#dtPresupuesto")
         .addClass("table-striped table-bordered")
         .dataTable({
           language: {

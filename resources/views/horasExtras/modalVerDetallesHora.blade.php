@@ -37,7 +37,11 @@
             <div class="col">
               <i class="fas fa-moon"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Tipo de Hora</label>
-              <input type="text" id="th_h" class="form-control validate">
+              <select class="form-control validate" id="th_h" name="tipohoras_h">
+                @foreach($tipoHoras as $tipoHora)
+                <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
+                @endforeach
+              </select>
             </div>
           </div>
         </div>
@@ -93,6 +97,7 @@
            <div class="col" style="margin-top:">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Justificación:</label>
             <textarea class="form-control" id="justificacion_h" style="height:100%;"></textarea>
+            <input hidden type="text" id="cargo_user_h" class="form-control validate">
           </div>
         </div>
         </div>
@@ -100,15 +105,8 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-secondary" id="update">Editar</button>
+        <button class="btn btn-secondary" id="update_h">Editar</button>
       </div>
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
-</script>
