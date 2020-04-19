@@ -15,13 +15,14 @@ Gestión de Presupuesto
                 </div>
                 <br>
                 <div style="padding-left: 2%;padding-right: 2%">
-                <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar</label>
-                <select class="form-control validate" id="mes_p" name="">
-                    <option value=""></option>
+                <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Presupuesto</label>
+                <select class="form-control validate" id="seleccionar_presupuesto" name="" onchange="tabla_de_presupuestos();">
+                    <option value="0"></option>
                     @foreach ($presupuestos as $presupuesto)
                         <option value="{{$presupuesto->id}}">{{$presupuesto->mes}}/{{$presupuesto->año}}</option>
                     @endforeach
               </select>
+              <div style="margin-top: 2%" id="informacion_presupuesto"></div>
             </div>
                 <div class="card-header" id="div_presupuesto">
                     <table id="dtPresupuestos" class="table table-hover table-dark" cellspacing="0" width="100%">
@@ -29,18 +30,22 @@ Gestión de Presupuesto
                             <tr>
                             <th class="th-sm">Usuario</th>
                             <th class="th-sm">Cargo</th>
-                            <th class="th-sm">Mes</th> 
-                            <th class="th-sm">Cantidad de Horas</th>
-                            <th class="th-sm">Tipo de Hora</th>
-                            <th class="th-sm">Fecha Solicitud</th>
+                            <th class="th-sm">Fecha</th> 
+                            <th class="th-sm">Hora Inicio</th>
+                            <th class="th-sm">Hora Fin</th>
+                            <th class="th-sm">Tipo Hora</th>
+                            <th class="th-sm">Acción</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        {{-- Funciones.js linea 1050 --}}
+                        <tbody id="cuerpo_presupuesto">
                         </tbody>
                     </table>       
                 </div>      
             </div>
         </div>     
     </div>
-    @include('presupuestos.modalRegistrarPresupuesto')            
+    @include('presupuestos.modalRegistrarPresupuesto') 
+    @include('presupuestos.modalVerDetallesHoraP') 
+    @include('presupuestos.modalDetallesPresupuesto')                                             
 @endsection

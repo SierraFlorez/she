@@ -11,7 +11,7 @@ Consultar usuarios
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card" style="margin-top: 5%">
             <center>
-                <h1> Lista De Usuarios </h1>
+                <h1> Lista de Usuarios </h1>
             </center><br>
             <div style="padding-left: 2%;">
                 <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-success" style="color: white">

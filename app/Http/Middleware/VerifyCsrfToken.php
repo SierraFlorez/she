@@ -43,6 +43,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/fechas_especiales/save/*',
         // Presupuesto
         '/presupuesto/save/*',
+        '/presupuesto/tabla/*',
+        '/presupuesto/detalle/*',
 
 
 

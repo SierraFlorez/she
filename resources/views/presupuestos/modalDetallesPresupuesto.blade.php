@@ -1,24 +1,30 @@
-<div class="modal fade" id="modalRegistrarPresupuesto">
+<div class="modal fade" id="modalDetallePresupuesto">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header text-center" style="background: #29913A;">
-        <h4 class="modal-title w-100 font-weight-bold" style="color: white">Registrar Presupuesto</h4>
+        <h4 class="modal-title w-100 font-weight-bold" style="color: white">Detalles de Presupuesto</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" style="color: white">&times;</span>
         </button>
       </div>
       <div class="modal-body mx-3">
-         {{-- Input del presupuesto --}}
+         {{-- Input del presupuesto inicial --}}
         <div class="md-form mb-4">
           <i class="fas fa-dollar-sign"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto</label>
-          <input required type="number" id="presupuesto_p" class="form-control validate">
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto Inicial</label>
+          <input required type="number" id="presupuesto_u" class="form-control validate">
+        </div>
+         {{-- Input del presupuesto restante --}}
+         <div class="md-form mb-4">
+          <i class="fas fa-dollar-sign"></i>
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto Restante</label>
+          <input readonly type="number" id="presupuesto_r" class="form-control validate">
         </div>
         {{-- Input del mes --}}
         <div class="md-form mb-4">
           <i class="fas fa-calendar"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Mes</label>
-              <select class="form-control validate" id="mes_presupuesto">
+              <select class="form-control validate" id="mes_u">
                 <option value=""></option>
                 <option value="1">Enero</option>
                 <option value="2">Febrero</option>
@@ -38,7 +44,7 @@
         <div class="md-form mb-4">
           <i class="fas fa-calendar"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-email">Año</label>
-          <select class="form-control validate" id="año_p" name="">
+          <select class="form-control validate" id="año_u" name="">
             <option value=""></option>
             <option value="2019">2019</option>
             <option value="2020">2020</option>
@@ -57,7 +63,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-secondary" onclick="savePresupuesto()">Guardar</button>
+        <button class="btn btn-secondary" id="updatePresupuesto">Editar</button>
       </div>
     </div>
   </div>

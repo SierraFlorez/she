@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 // <modelos>
 use App\Presupuesto;
+use App\Hora;
+use App\TipoHora;
 // </modelos>
 use Illuminate\Http\Request;
 use Validator;
@@ -13,8 +15,9 @@ class PresupuestosController extends Controller
     // Retorna la vista de presupuestos
     public function index()
     {
+        $tipoHoras=TipoHora::all();
         $presupuestos=Presupuesto::where('id','!=','0')->get();
-        return view('presupuestos.index', compact('presupuestos'));
+        return view('presupuestos.index', compact('presupuestos','tipoHoras'));
     }
 
     // Guarda la información de las horas extras
@@ -30,6 +33,11 @@ class PresupuestosController extends Controller
         if ($validador->fails()) {
             return $validador->errors()->all();
         }
+        $presupuestoExistente=Presupuesto::where('mes','=',$presupuesto['mes'])->where('año','=',$presupuesto['año'])->first();
+        if ($presupuestoExistente== !NULL){
+            $msg="ese mes ya tiene un presupuesto asignado";
+            return ($msg);
+        }
         Presupuesto::create($presupuesto);
         return (1);
     }
@@ -44,17 +52,27 @@ class PresupuestosController extends Controller
         ]);
     }
 
-    
-    public function store(Request $request)
+    // Llena la tabla de presupuestos mostrando las horas extras de dicho presupuesto
+    public function horas($id)
     {
-        //
+        $presupuesto=Presupuesto::Find($id);
+        $horas=Hora::where('presupuesto_id','=',$id)->select('id','cargo_user_id','cargo_user_id','fecha','hi_solicitada','hf_solicitada','tipo_hora','id')->get();
+        $presupuesto['horas']=$horas;
+        
+        return ($presupuesto);
+    }
+
+    //  Llena el modulo de detalle
+    public function detalle($id)
+    {
+        $presupuesto=Presupuesto::find($id);
+        $restante=$presupuesto['presupuesto_inicial']-$presupuesto['presupuesto_gastado'];
+        $presupuesto['restante']=$restante;
+        return ($presupuesto);
     }
 
    
-    public function show($id)
-    {
-        //
-    }
+  
 
     public function edit($id)
     {

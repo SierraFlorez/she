@@ -82,10 +82,4 @@
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
-</script>
+

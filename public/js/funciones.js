@@ -137,7 +137,10 @@ function detallesUsuarioSesion(id) {
     $("#email_user").val(data.usuario.email);
     $("#telefono_user").val(data.usuario.telefono);
     $("#tipoDocumento_user").val(data.usuario.tipo_documento);
-    $("#updateSesion").attr("onclick", "updateUsuarioSesion(" + data.usuario.id + ")");
+    $("#updateSesion").attr(
+      "onclick",
+      "updateUsuarioSesion(" + data.usuario.id + ")"
+    );
   });
 }
 
@@ -703,7 +706,7 @@ function detallesHora(id) {
   });
 }
 
-// Función para actualizar cargo ajax
+// Función para actualizar horas ajax
 function updateHoras(id) {
   var url = "horas/update";
   $fecha = $("#fecha_h").val();
@@ -997,8 +1000,9 @@ function saveFecha() {
 function savePresupuesto() {
   var url = "presupuesto/save";
   $presupuesto = $("#presupuesto_p").val();
-  $mes = $("#mes_p").val();
+  $mes = $("#mes_presupuesto").val();
   $año = $("#año_p").val();
+  console.log($mes);
 
   var obj = new Object();
   obj.Presupuesto = $presupuesto;
@@ -1006,7 +1010,7 @@ function savePresupuesto() {
   obj.Año = $año;
 
   var datos = JSON.stringify(obj);
-  // console.log(datos);
+  console.log(datos);
   $.post(url + "/" + datos).done(function (data) {
     $("#modalRegistrarPresupuesto").modal("hide"); //ocultamos el modal
     // console.log(data);
@@ -1020,10 +1024,14 @@ function savePresupuesto() {
         "success"
       );
     } else {
-      Swal.fire("Error!", "Error al guardar el presupuesto; " + data + ".", "error");
+      Swal.fire(
+        "Error!",
+        "Error al guardar el presupuesto; " + data + ".",
+        "error"
+      );
     }
-    $("#div_presupuesto").load(" #dtPresupuesto", function () {
-      $("#dtPresupuesto")
+    $("#div_presupuesto").load(" #dtPresupuestos", function () {
+      $("#dtPresupuestos")
         .addClass("table-striped table-bordered")
         .dataTable({
           language: {
@@ -1035,5 +1043,154 @@ function savePresupuesto() {
           buttons: ["copy", "excel", "csv"],
         });
     });
+  });
+}
+
+// Función para el modal de detalle de presupuesto
+function detallesPresupuesto(id) {
+  var url = "presupuesto/detalle";
+  $.post(url + "/" + id).done(function (data) {
+    // console.log(data);
+    $("#presupuesto_u").val(data.presupuesto_inicial);
+    $("#presupuesto_r").val(data.restante);
+    $("#mes_u").val(data.mes);
+    $("#año_u").val(data.año);
+    $("#updatePresupuesto").attr(
+      "onclick",
+      "updatePresupuesto(" + data.id + ")"
+    );
+  });
+}
+
+// Función para actualizar cargo ajax
+function updatePresupuesto(id) {
+  var url = "presupuesto/update";
+  $presupuesto  = $("#presupuesto_u").val();
+  $año = $("#año_u").val();
+  $mes = $("#mes_u").val();
+
+  var obj = new Object();
+  obj.Id = id;
+  obj.Presupuesto = $presupuesto;
+  obj.Año = $año;
+  obj.Mes = $mes;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#modalDetallePresupuesto").modal("hide"); //ocultamos el modal
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire(
+        "Completado!",
+        "Se ha editado correctamente el Presupuesto",
+        "success"
+      );
+    } else {
+      Swal.fire("Error!", "Error al editar Presupuesto; " + data + ".", "error");
+    }
+    $("#div_horas").load(" #dthorasExtras", function () {
+      $("#dthorasExtras")
+        .addClass("table-striped table-bordered")
+        .dataTable({
+          language: {
+            url: "DataTables/Spanish.json",
+          },
+          destroy: true,
+          responsive: true,
+          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+          buttons: ["copy", "excel", "csv"],
+        });
+    });
+  });
+}
+
+// Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
+function tabla_de_presupuestos() {
+    
+  var seleccion = document.getElementById("seleccionar_presupuesto");
+  var id = seleccion.options[seleccion.selectedIndex].value;
+  var url = "presupuesto/tabla";
+  var  boton_presupuesto= `<button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallePresupuesto" 
+    onclick="detallesPresupuesto(`+ id +`)">Detalles de presupuesto</button>`;
+  
+  $.post(url + "/" + id).done(function (data) {
+    if (data.horas.length>=1){
+      $("#informacion_presupuesto").html("");
+      $("#informacion_presupuesto").append(boton_presupuesto);
+    }
+    else{
+      $("#informacion_presupuesto").html("");
+    }
+    $("#cuerpo_presupuesto").html("");
+    // console.log(data);
+    for (var i = 0; i < data.horas.length; i++) {
+      var id = data.horas;
+      console.log(id);
+      var tr =
+        `<tr>
+        <td>` + data.horas[i].id +`</td>
+        <td>` +
+        data.horas[i].id +
+        `</td>
+        <td>` +
+        data.horas[i].fecha +
+        `</td>
+        <td>` +
+        data.horas[i].hi_solicitada +
+        `</td>
+        <td>` +
+        data.horas[i].hf_solicitada +
+        `</td>
+        <td>` +
+        data.horas[i].tipo_hora +
+        `</td>
+        <td> 
+            <button class="btn btn-secondary" onclick="detallesHoraP(`+ data.horas[i].id +`)" data-toggle="modal" data-target="#modalDetallesHoraP">Detalles
+            </button>
+            
+      </tr>`;
+
+      $("#cuerpo_presupuesto").append(tr);
+    }
+  });
+}
+
+// Función para el modal de detalles de hora en presupuesto
+function detallesHoraP(id) {
+  console.log(id);
+  var url = "horas/detalle";
+  $("#funcionario_p").val('');
+    $("#cargo_p").val('');
+    $("#fecha_p").val('');
+    $("#th_p").val('');
+    $("#hora_inicio_p").val('');
+    $("#hora_fin_p").val('');
+    $("#horas_p").val('');
+    $("#valor_hora_p").val('');
+    $("#valor_total_p").val('');
+    $("#cargo_user_p").val('');
+    $("#justificacion_p").val('');
+    $("#autorizado_p").val('');
+  $.post(url + "/" + id).done(function (data) {
+    $("#funcionario_p").val(data.user.nombres + " " + data.user.apellidos);
+    $("#cargo_p").val(data.cargo.nombre);
+    $("#fecha_p").val(data.hora.fecha);
+    $("#th_p").val(data.tipoHora.id);
+    $("#hora_inicio_p").val(data.hora.hi_solicitada);
+    $("#hora_fin_p").val(data.hora.hf_solicitada);
+    $("#horas_p").val(data.cantidadHoras);
+    $("#valor_hora_p").val(data.valor);
+    $("#valor_total_p").val(data.valorTotal);
+    $("#cargo_user_p").val(data.cargoUser.id);
+    $("#justificacion_p").val(data.hora.justificacion);
+    if (data.autorizado === 0) {
+      $("#autorizado_p").val("No ha sido autorizado");
+    } else {
+      $("#autorizado_p").val(
+        data.autorizado.nombres + " " + data.autorizado.apellidos
+      );
+    }
+    $("#update_p").attr("onclick", "updateHoras(" + data.hora.id + ")");
   });
 }

@@ -107,6 +107,12 @@ Route::get('/presupuestos', 'PresupuestosController@index')->name('/presupuesto'
 // GUARDA EL PRESUPUESTO
 Route::post('/presupuesto/save/{id}', 'PresupuestosController@guardar')->name('/presupuestos/save/{id}')->middleware('auth');
 
+// TABLA DE PRESUPUESTOS
+Route::post('/presupuesto/tabla/{id}', 'PresupuestosController@horas')->name('/presupuestos/save/{id}')->middleware('auth');
+
+// DETALLE DE PRESUPUESTOS
+Route::post('/presupuesto/detalle/{id}', 'PresupuestosController@detalle')->name('/presupuestos/detalle/{id}')->middleware('auth');
+
 // ------------- MODULO DE TIPO DE HORAS -------------------------------
 
 // RETORNA LA VISTA DE TIPO DE HORAS
