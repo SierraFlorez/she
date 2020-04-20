@@ -11,7 +11,6 @@ use App\FechaEspecial;
 use App\User;
 
 // </Modelos>
-use Illuminate\Http\Request;
 use Validator;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,9 +20,11 @@ class horasExtrasController extends Controller
     public function index()
     {
         if (Auth::User()->role_id == 1) {
+            $usuarios = User::where('id', '!=', 0)->get();
             $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                 ->join('users', 'users.id', '=', 'cargo_user.user_id')->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
                 ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                ->where('autorizacion', 0)
                 ->select(
                     'users.nombres',
                     'users.apellidos',
@@ -38,13 +39,58 @@ class horasExtrasController extends Controller
                     'tipo_horas.nombre_hora'
                 )->get();
             $tipoHoras = TipoHora::all();
-            return view('horasExtras.index', compact('horas','tipoHoras'));
+            return view('horasExtras.index', compact('horas', 'tipoHoras', 'usuarios'));
         } else {
             $id = Auth::User()->cargos()->id;
             $horas = Hora::where('cargo_user_id', $id)->orderBy('fecha', 'asc')
                 ->orderBy('hi_solicitada', 'asc')->raw('hi_solicitada', '-', 'hf_solicitada')->get();
             return view('horasExtras.index', compact('horas'));
         }
+    }
+
+    public function tabla($id)
+    {
+        if ($id == "all") { 
+            $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
+                ->join('users', 'users.id', '=', 'cargo_user.user_id')
+                ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
+                ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                ->where('autorizacion', 0)
+                ->select(
+                    'users.nombres',
+                    'users.apellidos',
+                    'cargos.nombre',
+                    'horas.id',
+                    'horas.fecha',
+                    'horas.hi_solicitada',
+                    'horas.hf_solicitada',
+                    'horas.autorizacion',
+                    'tipo_horas.nombre_hora'
+                )->get();
+        }
+        else{
+            $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
+                ->join('users', 'users.id', '=', 'cargo_user.user_id')
+                ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
+                ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                ->where('autorizacion', 0)
+                ->where('cargo_user.user_id',$id)
+                ->select(
+                    'users.nombres',
+                    'users.apellidos',
+                    'cargos.nombre',
+                    'horas.id',
+                    'horas.fecha',
+                    'horas.hi_solicitada',
+                    'horas.hf_solicitada',
+                    'horas.autorizacion',
+                    'tipo_horas.nombre_hora'
+                )->get();
+        }
+        // die($horas);
+        return ($horas);
     }
 
     // Lleva a la vista los usuarios que sean funcionarios, tengan estado activo, y tengan un CargoUsuario activo
@@ -109,7 +155,7 @@ class horasExtrasController extends Controller
         $horaExistente = Hora::where([
             ['cargo_user_id', '=', $horasextras['cargo_user_id']],
             ['fecha', '=', $horasextras['fecha']], ['hi_solicitada', '=', $horasextras['hi_solicitada']],
-            ['hf_solicitada', '=', $horasextras['hf_solicitada']],['justificacion','=',$horasextras['justificacion']]
+            ['hf_solicitada', '=', $horasextras['hf_solicitada']], ['justificacion', '=', $horasextras['justificacion']]
         ])->first();
         if ($horaExistente == !NULL) {
             $msg = "ya existe esa misma hora en esa misma fecha";
@@ -266,7 +312,7 @@ class horasExtrasController extends Controller
         // dd($dato);
         $hora = Hora::find($dato['Id']);
         if ($hora['autorizacion'] == 0) {
-            $horasextra['autorizacion'] = $dato["Id_user"];
+            $horasextra['autorizacion'] = Auth::user()->id;
             $hora->update($horasextra);
             return (1);
         } else {

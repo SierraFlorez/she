@@ -58,7 +58,10 @@ Route::post('/passreset/{id}', 'UsuariosController@cambiar_password')->name('/re
 // ----------- MODULO HORAS EXTRAS -------------------------------------
 
 // RETORNA LA VISTA DE HORAS EXTRAS DEL USUARIO
-Route::get('/horasExtras', 'HorasExtrasController@index')->name('/horasExtras')->middleware('auth');
+Route::get('/autorizar', 'HorasExtrasController@index')->name('/autorizar')->middleware('auth');
+
+// TABLA DE HORAS EXTRAS
+Route::post('/horas/tabla/{id}', 'HorasExtrasController@tabla')->name('/horas/table/{id}')->middleware('auth');
 
 // RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
 Route::get('/horasExtras_registro', 'HorasExtrasController@registrar')->name('/horasExtras_registro')->middleware('auth');
@@ -69,11 +72,12 @@ Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/hora
 // MUESTRA LA INFORMACIÓN DE LAS HORAS
 Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/horas/detalle/{id}')->middleware('auth');
 
-// AUTORIZA LAS HORAS
+// ACTUALIZA LAS HORAS
 Route::post('/horas/update/{id}', 'HorasExtrasController@update')->name('/horas/update/{id}')->middleware('auth');
 
 // AUTORIZA LAS HORAS
 Route::post('/horas/autorizar/{id}', 'HorasExtrasController@autorizar')->name('/horas/autorizar/{id}')->middleware('auth');
+
 
 
 // ----------- MODULO CARGOS -------------------------------------
@@ -112,6 +116,9 @@ Route::post('/presupuesto/tabla/{id}', 'PresupuestosController@horas')->name('/p
 
 // DETALLE DE PRESUPUESTOS
 Route::post('/presupuesto/detalle/{id}', 'PresupuestosController@detalle')->name('/presupuestos/detalle/{id}')->middleware('auth');
+
+// DETALLE DE PRESUPUESTOS
+Route::post('/presupuesto/update/{id}', 'PresupuestosController@update')->name('/presupuestos/update/{id}')->middleware('auth');
 
 // ------------- MODULO DE TIPO DE HORAS -------------------------------
 

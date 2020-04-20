@@ -22,7 +22,7 @@ Gestión de Presupuesto
                         <option value="{{$presupuesto->id}}">{{$presupuesto->mes}}/{{$presupuesto->año}}</option>
                     @endforeach
               </select>
-              <div style="margin-top: 2%" id="informacion_presupuesto"></div>
+              <div class="row" style="margin-top: 2%" id="informacion_presupuesto"></div>
             </div>
                 <div class="card-header" id="div_presupuesto">
                     <table id="dtPresupuestos" class="table table-hover table-dark" cellspacing="0" width="100%">
@@ -37,8 +37,8 @@ Gestión de Presupuesto
                             <th class="th-sm">Acción</th>
                             </tr>
                         </thead>
-                        {{-- Funciones.js linea 1050 --}}
-                        <tbody id="cuerpo_presupuesto">
+                        {{-- js 1050 --}}
+                        <tbody>
                         </tbody>
                     </table>       
                 </div>      

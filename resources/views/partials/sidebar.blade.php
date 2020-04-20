@@ -30,9 +30,9 @@
                     </li>
                     {{-- Gestion de Horas Extras --}} 
                     <li class="nav-item ">
-                        <a class="nav-link" href="{{ url("/horasExtras") }}" data-target="#submenu-1"
+                        <a class="nav-link" href="{{ url("/autorizar") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Horas Extras<span
+                            <i class="fas fa-address-card" style="color: white;"></i>Autorizar Horas Extras<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
