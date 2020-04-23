@@ -9,6 +9,7 @@ use App\Cargo;
 use App\CargoUser;
 use App\FechaEspecial;
 use App\User;
+use App\Presupuesto;
 
 // </Modelos>
 use Validator;
@@ -48,9 +49,10 @@ class horasExtrasController extends Controller
         }
     }
 
+    // Llena la tabla con cada peticion del js
     public function tabla($id)
     {
-        if ($id == "all") { 
+        if ($id == "all") {
             $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                 ->join('users', 'users.id', '=', 'cargo_user.user_id')
                 ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
@@ -68,15 +70,14 @@ class horasExtrasController extends Controller
                     'horas.autorizacion',
                     'tipo_horas.nombre_hora'
                 )->get();
-        }
-        else{
+        } else {
             $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                 ->join('users', 'users.id', '=', 'cargo_user.user_id')
                 ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
                 ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
                 ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
                 ->where('autorizacion', 0)
-                ->where('cargo_user.user_id',$id)
+                ->where('cargo_user.user_id', $id)
                 ->select(
                     'users.nombres',
                     'users.apellidos',
@@ -121,10 +122,19 @@ class horasExtrasController extends Controller
         $horasextras['autorizacion'] = 0;
         $horasextras['hi_ejecutada'] = '00:00:00';
         $horasextras['hf_ejecutada'] = '00:00:00';
+        $mesPresupuesto = date('m', strtotime($horasextras['fecha']));
+        $añoPresupuesto = date('Y', strtotime($horasextras['fecha']));
+        $presupuesto = Presupuesto::where('mes', '=', $mesPresupuesto)->where('año', '=', $añoPresupuesto)->first();
+        if ($presupuesto == NULL) {
+            $msg = "No se tiene un presupuesto asignado para la fecha dada";
+            return ($msg);
+        }
+        $horasextras['presupuesto_id'] = $presupuesto['id'];
         $validador = $this->validatorHoraGuardar($horasextras);
         if ($validador->fails()) {
             return $validador->errors()->all();
         }
+        $horasextras['guardar'] = 1;
         $msg = $this->validacion($horasextras);
         if ($msg == 1) {
             Hora::create($horasextras);
@@ -152,14 +162,16 @@ class horasExtrasController extends Controller
     {
         $msg = 1;
         // Consulta para saber si la franja del tiempo y el día es exactamente igual
-        $horaExistente = Hora::where([
-            ['cargo_user_id', '=', $horasextras['cargo_user_id']],
-            ['fecha', '=', $horasextras['fecha']], ['hi_solicitada', '=', $horasextras['hi_solicitada']],
-            ['hf_solicitada', '=', $horasextras['hf_solicitada']], ['justificacion', '=', $horasextras['justificacion']]
-        ])->first();
-        if ($horaExistente == !NULL) {
-            $msg = "ya existe esa misma hora en esa misma fecha";
-            return ($msg);
+        if ($horasextras['guardar'] == 1) {
+            $horaExistente = Hora::where([
+                ['cargo_user_id', '=', $horasextras['cargo_user_id']],
+                ['fecha', '=', $horasextras['fecha']], ['hi_solicitada', '=', $horasextras['hi_solicitada']],
+                ['hf_solicitada', '=', $horasextras['hf_solicitada']], ['justificacion', '=', $horasextras['justificacion']]
+            ])->irst();
+            if ($horaExistente == !NULL) {
+                $msg = "ya existe esa misma hora en esa misma fecha";
+                return ($msg);
+            }
         }
         // Consulta para saber si la franja del tiempo se encuentra disponible
         $horasYaTrabajadas = Hora::where([['cargo_user_id', '=', $horasextras['cargo_user_id']], ['fecha', '=', $horasextras['fecha']]])->get();
@@ -223,22 +235,24 @@ class horasExtrasController extends Controller
                 }
             }
         }
+        // Comienza la validacion del presupuesto
+        $valorTotal = $this->calcularValorHoras($horasextras);
+        $presupuesto = Presupuesto::find($horasextras['presupuesto_id']);
+        $presupuesto['sumaRestante'] = $valorTotal['valor_total'] + $presupuesto['presupuesto_gastado'];
+        // Caso en que supere el presupuesto
+        if ($presupuesto['sumaRestante'] > $presupuesto['presupuesto_inicial']) {
+            $msg = "excede el presupuesto restante";
+        }
         // Retorna en caso que no cumpla ninguna de las condiciones y guarda la información
         return ($msg);
     }
 
-
-
-
-    // Trae toda la información del usuario para el modal detalle
-    public function detalle($id)
+    // Función para calcular el valor de las horas
+    public function calcularValorHoras($hora)
     {
-        $hora = Hora::find($id);
+        $cantidadHoras = $hora['hf_solicitada'] - $hora['hi_solicitada'];
         $cargoUser = CargoUser::find($hora['cargo_user_id']);
         $cargo = Cargo::find($cargoUser['cargo_id']);
-        $user = User::find($cargoUser['user_id']);
-        $tipoHora = TipoHora::find($hora['tipo_hora']);
-        $cantidadHoras = $hora['hf_solicitada'] - $hora['hi_solicitada'];
         if ($hora['tipo_hora'] == 1) {
             $valorTotal = $cantidadHoras * $cargo['valor_diurna'];
             $valor = $cargo['valor_diurna'];
@@ -252,6 +266,22 @@ class horasExtrasController extends Controller
             $valorTotal = $cantidadHoras * $cargo['valor_recargo'];
             $valor = $cargo['valor_recargo'];
         }
+        $valores = [];
+        $valores['valor_total'] = $valorTotal;
+        $valores['valor'] = $valor;
+        return ($valores);
+    }
+
+    // Trae toda la información del usuario para el modal detalle
+    public function detalle($id)
+    {
+        $hora = Hora::find($id);
+        $cargoUser = CargoUser::find($hora['cargo_user_id']);
+        $cargo = Cargo::find($cargoUser['cargo_id']);
+        $user = User::find($cargoUser['user_id']);
+        $tipoHora = TipoHora::find($hora['tipo_hora']);
+        $cantidadHoras = $hora['hf_solicitada'] - $hora['hi_solicitada'];
+        $valores = $this->calcularValorHoras($hora);
         $autorizado = User::find($hora['autorizacion']);
         if (is_null($autorizado)) {
             $autorizado = 0;
@@ -263,9 +293,9 @@ class horasExtrasController extends Controller
         $detalle['user'] = $user;
         $detalle['tipoHora'] = $tipoHora;
         $detalle['cantidadHoras'] = $cantidadHoras;
-        $detalle['valorTotal'] = $valorTotal;
+        $detalle['valorTotal'] = $valores['valor_total'];
         $detalle['autorizado'] = $autorizado;
-        $detalle['valor'] = $valor;
+        $detalle['valor'] = $valores['valor'];
         return ($detalle);
     }
 
@@ -281,6 +311,14 @@ class horasExtrasController extends Controller
         $horaExtra['hf_solicitada'] = $dato["Fin"];
         $horaExtra['tipo_hora'] = $dato["Th"];
         $horaExtra['justificacion'] = $dato["Justificacion"];
+        $mesPresupuesto = date('m', strtotime($horaExtra['fecha']));
+        $añoPresupuesto = date('Y', strtotime($horaExtra['fecha']));
+        $presupuesto = Presupuesto::where('mes', '=', $mesPresupuesto)->where('año', '=', $añoPresupuesto)->first();
+        if ($presupuesto == NULL) {
+            $msg = "No se tiene un presupuesto asignado para la fecha dada";
+            return ($msg);
+        }
+        $horaExtra['presupuesto_id'] = $presupuesto['id'];
         $ok = $this->validatorUpdate($horaExtra);
         if ($ok->fails()) {
             return $ok->errors()->all();;
@@ -312,9 +350,16 @@ class horasExtrasController extends Controller
         // dd($dato);
         $hora = Hora::find($dato['Id']);
         if ($hora['autorizacion'] == 0) {
-            $horasextra['autorizacion'] = Auth::user()->id;
-            $hora->update($horasextra);
-            return (1);
+            $msg = $this->validacion($hora);
+            if ($msg == 1) {
+                $horasextra['autorizacion'] = Auth::user()->id;
+                $hora->update($horasextra);
+                $presupuesto = Presupuesto::find($hora['presupuesto_id']);
+                $valor = $this->calcularValorHoras($hora);
+                $presupuestoRestante['presupuesto_gastado'] = $presupuesto['presupuesto_gastado'] + $valor['valor_total'];
+                $presupuesto->update($presupuestoRestante);
+            }
+            return ($msg);
         } else {
             return ('estas horas ya se encuentran autorizadas; se recomienda recargar la pagina');
         }

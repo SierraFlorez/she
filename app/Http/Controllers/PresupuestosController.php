@@ -56,7 +56,7 @@ class PresupuestosController extends Controller
     public function horas($id)
     {
         $presupuesto=Presupuesto::Find($id);
-        $presupuesto['restante']=$presupuesto['presupuesto_inicial']-$presupuesto['presupuesto_restante'];
+        $presupuesto['restante']=$presupuesto['presupuesto_inicial']-$presupuesto['presupuesto_gastado'];
         $horas=Hora::where('presupuesto_id','=',$id)
         ->join('cargo_user','cargo_user.id','=','horas.cargo_user_id')
         ->join('cargos','cargo_user.cargo_id','=','cargos.id')

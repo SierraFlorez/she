@@ -640,30 +640,37 @@ function tabla_de_horas() {
   var seleccion = document.getElementById("seleccionar_usuario");
   var id = seleccion.options[seleccion.selectedIndex].value;
   var url = "horas/tabla";
-    // console.log(id);
+  // console.log(id);
   $.post(url + "/" + id).done(function (data) {
     // console.log(data);
-    var t = $('#dthorasExtras').DataTable();
+    var t = $("#dthorasExtras").DataTable();
     t.clear().draw();
     // console.log(data);
-    var t = $('#dthorasExtras').DataTable();
+    var t = $("#dthorasExtras").DataTable();
     for (var i = 0; i < data.length; i++) {
-      var total=data[i].hi_solicitada-data[i].hf_solicitada;
+      var total = data[i].hi_solicitada - data[i].hf_solicitada;
       console.log(total);
-      var botonEditar=`<button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(`+data[i].id+`)">Detalles</button>`;
-      var botonAutorizar=`<button class="btn btn-danger" onclick="autorizar(`+data[i].id+`)">No autorizado
+      var botonEditar =
+        `<button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
+        data[i].id +
+        `)">Detalles</button>`;
+      var botonAutorizar =
+        `<button class="btn btn-danger" onclick="autorizar(` +
+        data[i].id +
+        `)">No autorizado
       </button>`;
-      t.row.add( [
-        
-        data[i].nombres + data[i].apellidos,
-        data[i].nombre,
-        data[i].fecha,
-        data[i].hi_solicitada,
-        data[i].hf_solicitada,
-        data[i].nombre_hora,
-        botonAutorizar,
-        botonEditar
-    ] ).draw( false );
+      t.row
+        .add([
+          data[i].nombres + data[i].apellidos,
+          data[i].nombre,
+          data[i].fecha,
+          data[i].hi_solicitada,
+          data[i].hf_solicitada,
+          data[i].nombre_hora,
+          botonAutorizar,
+          botonEditar,
+        ])
+        .draw(false);
     }
   });
 }
@@ -795,7 +802,7 @@ function autorizar(id) {
   // console.log(id);
   // console.log(idUser);
   Swal.fire({
-    title: "¿Estas seguro que quieres autorizar estas horas?",
+    title: "¿Deseas Autorizar estas horas?",
     text: "No se puede revertir esta acción",
     type: "warning",
     showCancelButton: true,
@@ -1086,36 +1093,44 @@ function tabla_de_presupuestos() {
   var boton_presupuesto =
     `<div class="col-md-12">
     <button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallePresupuesto" 
-    onclick="detallesPresupuesto(` +id +`)">Detalles de presupuesto</button>
+    onclick="detallesPresupuesto(` +
+    id +
+    `)">Detalles de presupuesto</button>
     </div>
     <div style="margin-top:2%" class="col-md-6"><label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto restante</label>
     <input readonly type="text" id="presupuesto_restantes" class="form-control validate"></div>`;
 
   $.post(url + "/" + id).done(function (data) {
-    var t = $('#dtPresupuestos').DataTable();
-    if (data.horas.length >= 1) {
-      t.clear().draw();
+    var t = $("#dtPresupuestos").DataTable();
+    t.clear().draw();
+    if (id > 0) {
       $("#informacion_presupuesto").html("");
       $("#informacion_presupuesto").append(boton_presupuesto);
       $("#presupuesto_restantes").val(data.restante);
-    } else {
+    } 
+    else{
       $("#informacion_presupuesto").html("");
     }
     $("#cuerpo_presupuesto").html("");
     // console.log(data);
-    var t = $('#dtPresupuestos').DataTable();
+    var t = $("#dtPresupuestos").DataTable();
     for (var i = 0; i < data.horas.length; i++) {
-      var boton=`<button class="btn btn-secondary" onclick="detallesHoraP(` +data.horas[i].id +`)" data-toggle="modal" data-target="#modalDetallesHoraP">Detalles
+      var boton =
+        `<button class="btn btn-secondary" onclick="detallesHoraP(` +
+        data.horas[i].id +
+        `)" data-toggle="modal" data-target="#modalDetallesHoraP">Detalles
       </button>`;
-      t.row.add( [
-        data.horas[i].nombres + data.horas[i].apellidos,
-        data.horas[i].nombre,
-        data.horas[i].fecha,
-        data.horas[i].hi_solicitada,
-        data.horas[i].hf_solicitada,
-        data.horas[i].nombre_hora,
-        boton
-    ] ).draw( false );
+      t.row
+        .add([
+          data.horas[i].nombres + data.horas[i].apellidos,
+          data.horas[i].nombre,
+          data.horas[i].fecha,
+          data.horas[i].hi_solicitada,
+          data.horas[i].hf_solicitada,
+          data.horas[i].nombre_hora,
+          boton,
+        ])
+        .draw(false);
     }
   });
 }
@@ -1206,6 +1221,5 @@ function updatePresupuesto(id) {
         "error"
       );
     }
-    
   });
 }

@@ -70,7 +70,14 @@ Registrar Horas Extras
                 <input class="form-control" type="hidden" value="{{$funcionario->id}}" id="funcionario_cargo_user">
             </div>
         </div><br>
+        <div class="row">
+        <div class="col">
         <button class="btn btn-success" onclick="guardarHoras()"> Guardar </button>
+        </div>
+        <div class="col-3">
+        <a class="btn btn-secondary" href="{{ url("/autorizar") }}"> Volver </a>
+        </div>
+      </div>
       </div><br>
     </div>
   </div>
