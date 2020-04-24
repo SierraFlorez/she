@@ -639,38 +639,106 @@ function crearCargo() {
 function tabla_de_horas() {
   var seleccion = document.getElementById("seleccionar_usuario");
   var id = seleccion.options[seleccion.selectedIndex].value;
+  var filtro1 = document.getElementById("input1");
+  var filtro2 = document.getElementById("input2");
+  var filtro3 = document.getElementById("input3");
+  var ejecutados = 0;
+  var autorizados = 0;
+  var noAutorizados = 0;
+
+  if (filtro1.checked) {
+    var ejecutados = 1;
+  }
+  if (filtro2.checked) {
+    var autorizados = 1;
+  }
+  if (filtro3.checked) {
+    var noAutorizados = 1;
+  }
+
   var url = "horas/tabla";
+
+  var obj = new Object();
+  obj.Id = id;
+  obj.Ejecutados = ejecutados;
+  obj.Autorizados = autorizados;
+  obj.NoAutorizados = noAutorizados;
+  var datos = JSON.stringify(obj);
   // console.log(id);
-  $.post(url + "/" + id).done(function (data) {
+  $.post(url + "/" + datos).done(function (data) {
     // console.log(data);
     var t = $("#dthorasExtras").DataTable();
     t.clear().draw();
     // console.log(data);
     var t = $("#dthorasExtras").DataTable();
+    var boton = 1;
     for (var i = 0; i < data.length; i++) {
       var total = data[i].hi_solicitada - data[i].hf_solicitada;
-      console.log(total);
       var botonEditar =
         `<button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
         data[i].id +
         `)">Detalles</button>`;
-      var botonAutorizar =
-        `<button class="btn btn-danger" onclick="autorizar(` +
-        data[i].id +
-        `)">No autorizado
-      </button>`;
-      t.row
-        .add([
-          data[i].nombres + data[i].apellidos,
-          data[i].nombre,
-          data[i].fecha,
-          data[i].hi_solicitada,
-          data[i].hf_solicitada,
-          data[i].nombre_hora,
-          botonAutorizar,
-          botonEditar,
-        ])
-        .draw(false);
+      if (data[i].autorizacion == 0) {
+        var boton =
+          `<button class="btn btn-danger" onclick="autorizar(` +
+          data[i].id +
+          `)">No Autorizado
+          </button>`;
+      }
+
+      if (
+        data[i].autorizacion != 0 &&
+        data[i].hi_ejecutada == "00:00:00" &&
+        data[i].hi_ejecutada == "00:00:00"
+      ) {
+        var boton =
+          `<button data-toggle="modal" data-target="#modalEjecutar" class="btn btn-warning" onclick="detallesEjecutar(` +
+          data[i].id +
+          `)">Autorizado
+        </button>`;
+      }
+
+      if (
+        data[i].autorizacion != 0 &&
+        data[i].hi_ejecutada != "00:00:00" &&
+        data[i].hi_ejecutada != "00:00:00"
+      ) {
+        var boton =
+          `<button class="btn btn-primary" onclick="ejecutado(` +
+          data[i].id +
+          `)">Ejecutado
+        </button>`;
+      }
+      if (
+        data[i].hi_ejecutada != "00:00:00" &&
+        data[i].hf_ejecutada != "00:00:00"
+      ) {
+        t.row
+          .add([
+            data[i].nombres + data[i].apellidos,
+            data[i].nombre,
+            data[i].fecha,
+            data[i].hi_ejecutada,
+            data[i].hf_ejecutada,
+            data[i].nombre_hora,
+            boton,
+            botonEditar,
+          ])
+          .draw(false);
+      } else {
+        t.row
+          .add([
+            data[i].nombres + data[i].apellidos,
+            data[i].nombre,
+            data[i].fecha,
+            data[i].hi_solicitada,
+            data[i].hf_solicitada,
+            data[i].nombre_hora,
+            boton,
+            botonEditar,
+          ])
+          .draw(false);
+      }
     }
   });
 }
@@ -723,7 +791,8 @@ function guardarHoras() {
 function detallesHora(id) {
   var url = "horas/detalle";
   $.post(url + "/" + id).done(function (data) {
-    console.log(data);
+    // console.log(data);
+    $("#inputs_e").html("");
     $("#funcionario_h").val(data.user.nombres + " " + data.user.apellidos);
     $("#cargo_h").val(data.cargo.nombre);
     $("#fecha_h").val(data.hora.fecha);
@@ -735,12 +804,28 @@ function detallesHora(id) {
     $("#valor_total_h").val(data.valorTotal);
     $("#cargo_user_h").val(data.cargoUser.id);
     $("#justificacion_h").val(data.hora.justificacion);
-    if (data.autorizado === 0) {
-      $("#autorizado_h").val("No ha sido autorizado");
-    } else {
-      $("#autorizado_h").val(
-        data.autorizado.nombres + " " + data.autorizado.apellidos
-      );
+    $("#autorizado_h").val(
+      data.autorizado.nombres + " " + data.autorizado.apellidos
+    );
+    if (data.hora.hi_ejecutada != "00:00:00" && data.hora.hf_ejecutada) {
+      var inputs = `<div class="form-row mb-6">
+        <div class="col">
+          <i class="fas fa-clock"></i>
+          <label data-error="wrong" data-success="right" for="orangeForm-pass">Hora Inicio Ejecutada</label>
+          <input type="time" id="hora_inicio_e" class="form-control validate">
+        </div>
+        <div class="col">
+          <i class="fas fa-clock"></i>
+          <label data-error="wrong" data-success="right" for="orangeForm-pass">Hora Fin Ejecutada</label>
+          <input type="time" id="hora_fin_e" class="form-control validate">
+        </div>
+      </div>`;
+      $("#inputs_e").append(inputs);
+      $("#hora_inicio_e").val(data.hora.hi_ejecutada);
+      $("#hora_fin_e").val(data.hora.hf_ejecutada);
+    }
+    else{
+      $("#inputs_e").html("");
     }
     $("#update_h").attr("onclick", "updateHoras(" + data.hora.id + ")");
   });
@@ -754,7 +839,7 @@ function updateHoras(id) {
   $hora_inicio = $("#hora_inicio_h").val();
   $hora_fin = $("#hora_fin_h").val();
   $cargoUser = $("#cargo_user_h").val();
-  console.log($th);
+  // console.log($th);
 
   $justificacion = $("#justificacion_h").val();
 
@@ -788,7 +873,7 @@ function updateHoras(id) {
           language: {
             url: "DataTables/Spanish.json",
           },
-          destroy: true,
+          destroy: false,
           responsive: true,
           dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
           buttons: ["copy", "excel", "csv"],
@@ -797,7 +882,7 @@ function updateHoras(id) {
   });
 }
 
-// Activa el estado del Usuario
+// Autoriza las horas
 function autorizar(id) {
   // console.log(id);
   // console.log(idUser);
@@ -840,6 +925,66 @@ function autorizar(id) {
       });
     }
   });
+}
+
+// Función para el modal de detalles ejecutar
+function detallesEjecutar(id) {
+  var url = "horas/detalle";
+  $("#fecha_e").val("");
+  $("#is_e").val("");
+  $("#fs_e").val("");
+  $("#ij_e").val("");
+  $("#fj_e").val("");
+  $.post(url + "/" + id).done(function (data) {
+    // console.log(data);
+    $("#fecha_e").val(data.hora.fecha);
+    $("#is_e").val(data.hora.hi_solicitada);
+    $("#fs_e").val(data.hora.hf_solicitada);
+    $("#ij_e").val(data.hora.hi_solicitada);
+    $("#fj_e").val(data.hora.hf_solicitada);
+    $("#ejecutar").attr("onclick", "ejecutar(" + data.hora.id + ")");
+  });
+}
+
+// Ejecuta las horas
+function ejecutar(id) {
+  var url = "horas/ejecutar";
+  $inicio = $("#ij_e").val();
+  $fin = $("#fj_e").val();
+
+  var obj = new Object();
+  obj.Id = id;
+  obj.Inicio = $inicio;
+  obj.Fin = $fin;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#modalEjecutar").modal("hide"); //ocultamos el modal
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire("Completado!", "Se han Ejecutado las Horas", "success");
+    } else {
+      Swal.fire("Error!", "Error al ejecutar; " + data + ".", "error");
+    }
+    $("#div_horas").load(" #dthorasExtras", function () {
+      $("#dthorasExtras")
+        .addClass("table-striped table-bordered")
+        .dataTable({
+          language: {
+            url: "DataTables/Spanish.json",
+          },
+          destroy: true,
+          responsive: true,
+          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+          buttons: ["copy", "excel", "csv"],
+        });
+    });
+  });
+}
+
+function ejecutado($id) {
+  Swal.fire("Completado!", "Esas Horas ya se encuentran Ejecutadas", "success");
 }
 
 // ------------MODULO DE REPORTES ----------------
@@ -1107,8 +1252,7 @@ function tabla_de_presupuestos() {
       $("#informacion_presupuesto").html("");
       $("#informacion_presupuesto").append(boton_presupuesto);
       $("#presupuesto_restantes").val(data.restante);
-    } 
-    else{
+    } else {
       $("#informacion_presupuesto").html("");
     }
     $("#cuerpo_presupuesto").html("");

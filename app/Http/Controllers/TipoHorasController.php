@@ -23,6 +23,7 @@ class TipoHorasController extends Controller
         $tipoHora = TipoHora::find($id);
         return ($tipoHora);
     }
+
     // Actualiza la hora extra
     public function update($data)
     {
@@ -40,6 +41,7 @@ class TipoHorasController extends Controller
             return (1);
         }
     }
+    
     // Verifica la actualización
     public function validatorUpdate($request)
     {

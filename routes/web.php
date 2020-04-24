@@ -55,31 +55,6 @@ Route::post('/registrar/guardar/{id}', 'UsuariosController@save')->name('/regist
 Route::post('/passreset/{id}', 'UsuariosController@cambiar_password')->name('/registrar/guardar')->middleware('auth');
 
 
-// ----------- MODULO HORAS EXTRAS -------------------------------------
-
-// RETORNA LA VISTA DE HORAS EXTRAS DEL USUARIO
-Route::get('/autorizar', 'HorasExtrasController@index')->name('/autorizar')->middleware('auth');
-
-// TABLA DE HORAS EXTRAS
-Route::post('/horas/tabla/{id}', 'HorasExtrasController@tabla')->name('/horas/table/{id}')->middleware('auth');
-
-// RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
-Route::get('/horasExtras_registro', 'HorasExtrasController@registrar')->name('/horasExtras_registro')->middleware('auth');
-
-// GUARDA LAS HORAS EXTRAS
-Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
-
-// MUESTRA LA INFORMACIÓN DE LAS HORAS
-Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/horas/detalle/{id}')->middleware('auth');
-
-// ACTUALIZA LAS HORAS
-Route::post('/horas/update/{id}', 'HorasExtrasController@update')->name('/horas/update/{id}')->middleware('auth');
-
-// AUTORIZA LAS HORAS
-Route::post('/horas/autorizar/{id}', 'HorasExtrasController@autorizar')->name('/horas/autorizar/{id}')->middleware('auth');
-
-
-
 // ----------- MODULO CARGOS -------------------------------------
 
 // RETORNA LA VISTA DE HORAS EXTRAS
@@ -95,13 +70,39 @@ Route::post('/cargos/update/{id}', 'CargosController@update')->name('/cargos/upd
 Route::post('/cargos/guardar/{id}', 'CargosController@save')->name('/cargos/save')->middleware('auth');
 
 
-// ------------- MODULO DE REPORTES -------------------------------
+// ----------- MODULO SOLICITUDES -------------------------------------
 
-// RETORNA LA VISTA DE GENERAR REPORTES
-Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
+// RETORNA LA VISTA DE HORAS EXTRAS
+Route::get('/solicitudes', 'SolicitudesController@index')->name('/solicitudes')->middleware('auth');
 
-// DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
-Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+
+
+// ----------- MODULO HORAS EXTRAS -------------------------------------
+
+// RETORNA LA VISTA PARA AUTORIZAR HORAS EXTRAS
+Route::get('/horas_extras', 'HorasExtrasController@index')->name('/horas_extras')->middleware('auth');
+
+// TABLA DE HORAS EXTRAS
+Route::post('/horas/tabla/{id}', 'HorasExtrasController@tabla')->name('/horas/table/{id}')->middleware('auth');
+
+// RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
+Route::get('/registrar_horas', 'HorasExtrasController@registrar')->name('/registrar_horas')->middleware('auth');
+
+// GUARDA LAS HORAS EXTRAS
+Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');
+
+// MUESTRA LA INFORMACIÓN DE LAS HORAS
+Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/horas/detalle/{id}')->middleware('auth');
+
+// ACTUALIZA LAS HORAS
+Route::post('/horas/update/{id}', 'HorasExtrasController@update')->name('/horas/update/{id}')->middleware('auth');
+
+// AUTORIZA LAS HORAS
+Route::post('/horas/autorizar/{id}', 'HorasExtrasController@autorizar')->name('/horas/autorizar/{id}')->middleware('auth');
+
+// EJECUTA LAS HORAS
+Route::post('/horas/ejecutar/{id}', 'HorasExtrasController@ejecutar')->name('/horas/ejecutar/{id}')->middleware('auth');
+
 
 // ----------- MODULO DE PRESUPUESTO -------------------------------------
 
@@ -119,6 +120,16 @@ Route::post('/presupuesto/detalle/{id}', 'PresupuestosController@detalle')->name
 
 // DETALLE DE PRESUPUESTOS
 Route::post('/presupuesto/update/{id}', 'PresupuestosController@update')->name('/presupuestos/update/{id}')->middleware('auth');
+
+
+// ------------- MODULO DE REPORTES -------------------------------
+
+// RETORNA LA VISTA DE GENERAR REPORTES
+Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
+
+// DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
+Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+
 
 // ------------- MODULO DE TIPO DE HORAS -------------------------------
 
@@ -144,5 +155,3 @@ Route::post('/fechas_especiales/update/{id}', 'FechasEspecialesController@update
 
 // GUARDA LA FECHA ESPECIAL
 Route::post('/fechas_especiales/save/{id}', 'FechasEspecialesController@save')->name('/fechas_especiales/save/{id}')->middleware('auth');
-
-

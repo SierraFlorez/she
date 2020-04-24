@@ -61,6 +61,8 @@
             </div>
           </div>
         </div>
+        <div id="inputs_e" class="md-form mb-4">
+        </div>
         {{-- Input del cargo  --}}
         <div class="md-form mb-4">
           <div class="form-row mb-6">

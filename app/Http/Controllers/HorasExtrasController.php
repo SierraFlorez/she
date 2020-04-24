@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 
 class horasExtrasController extends Controller
 {
-    // Retorna la vista de horas del usuario
+    // Retorna la vista de horas por autorizar
     public function index()
     {
         if (Auth::User()->role_id == 1) {
@@ -25,7 +25,6 @@ class horasExtrasController extends Controller
             $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                 ->join('users', 'users.id', '=', 'cargo_user.user_id')->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
                 ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
-                ->where('autorizacion', 0)
                 ->select(
                     'users.nombres',
                     'users.apellidos',
@@ -50,15 +49,94 @@ class horasExtrasController extends Controller
     }
 
     // Llena la tabla con cada peticion del js
-    public function tabla($id)
+    public function tabla($data)
     {
-        if ($id == "all") {
+        $horas = [];
+        $dato = json_decode($data, true);
+        $where=[];
+        // Todos los usuarios
+        if ($dato['Id'] == "all") {
+            // Caso en que los 3 check esten marcados
+            if (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 1)) {
+                $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
+                    ->join('users', 'users.id', '=', 'cargo_user.user_id')
+                    ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                    ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
+                    ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                    ->select(
+                        'users.nombres',
+                        'users.apellidos',
+                        'cargos.nombre',
+                        'horas.id',
+                        'horas.fecha',
+                        'horas.hi_solicitada',
+                        'horas.hf_solicitada',
+                        'horas.hi_ejecutada',
+                        'horas.hf_ejecutada',
+                        'horas.autorizacion',
+                        'tipo_horas.nombre_hora'
+                    )->get();
+                return ($horas);
+            }
+            // Solo autorizados
+            elseif (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 0) && ($dato['NoAutorizados'] == 0)) {
+                $where = [
+                    ['autorizacion', '!=', 0], ['hi_ejecutada', '=', '00:00:00'], ['hf_ejecutada', '=', '00:00:00']
+                ];
+            }
+            // Solo ejecutados
+            elseif (($dato['Autorizados'] == 0) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 0)) {
+                $where = [
+                    ['autorizacion', '!=', 0], ['hi_ejecutada', '!=', '00:00:00'], ['hi_ejecutada', '!=', '00:00:00']
+                ];
+            }
+            // Solo no autorizados
+            elseif (($dato['Autorizados'] == 0) && ($dato['Ejecutados'] == 0) && ($dato['NoAutorizados'] == 1)) {
+                $where = [
+                    ['autorizacion', '=', 0]
+                ];
+            }
+            // Autorizados y ejecutados
+            elseif (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 0)) {
+                $where = [
+                    ['autorizacion', '!=', 0]
+                ];
+            }
+            // Autorizados y No autorizados
+            elseif (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 0) && ($dato['NoAutorizados'] == 1)) {
+                $where = [
+                    ['hi_ejecutada', '=', '00:00:00'], ['hf_ejecutada', '=', '00:00:00']
+                ];
+            }
+            // Ejecutados y no autorizados
+            elseif (($dato['Autorizados'] == 0) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 1)) {
+                $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
+                    ->join('users', 'users.id', '=', 'cargo_user.user_id')
+                    ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                    ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
+                    ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                    ->where('autorizacion', '=', 0)->orWhere([['autorizacion', '!=', 0], ['hi_ejecutada', '!=', '00:00:00'], ['hf_ejecutada', '!=', '00:00:00']])
+                    ->select(
+                        'users.nombres',
+                        'users.apellidos',
+                        'cargos.nombre',
+                        'horas.id',
+                        'horas.fecha',
+                        'horas.hi_solicitada',
+                        'horas.hf_solicitada',
+                        'horas.hi_ejecutada',
+                        'horas.hf_ejecutada',
+                        'horas.autorizacion',
+                        'tipo_horas.nombre_hora'
+                    )->get();
+                return ($horas);
+            }
             $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                 ->join('users', 'users.id', '=', 'cargo_user.user_id')
                 ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
                 ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
                 ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
-                ->where('autorizacion', 0)
+                ->where($where)
                 ->select(
                     'users.nombres',
                     'users.apellidos',
@@ -67,17 +145,97 @@ class horasExtrasController extends Controller
                     'horas.fecha',
                     'horas.hi_solicitada',
                     'horas.hf_solicitada',
+                    'horas.hi_ejecutada',
+                    'horas.hf_ejecutada',
                     'horas.autorizacion',
                     'tipo_horas.nombre_hora'
                 )->get();
+            // Casos de usuarios en particular
         } else {
+            // los 3 estados
+            if (($dato['Autorizados'] == 1 && ($dato['Ejecutados'] == 1)) && ($dato['NoAutorizados'] == 1)) {
+                $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
+                    ->join('users', 'users.id', '=', 'cargo_user.user_id')
+                    ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                    ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
+                    ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                    ->where('cargo_user.user_id', $dato['Id'])
+                    ->select(
+                        'users.nombres',
+                        'users.apellidos',
+                        'cargos.nombre',
+                        'horas.id',
+                        'horas.fecha',
+                        'horas.hi_solicitada',
+                        'horas.hf_solicitada',
+                        'horas.hi_ejecutada',
+                        'horas.hf_ejecutada',
+                        'horas.autorizacion',
+                        'tipo_horas.nombre_hora'
+                    )->get();
+                return ($horas);
+            }
+            // Solo autorizados
+            elseif (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 0) && ($dato['NoAutorizados'] == 0)) {
+                $where = [
+                    ['autorizacion', '!=', 0], ['hi_ejecutada', '=', '00:00:00'], ['hf_ejecutada', '=', '00:00:00']
+                ];
+            }
+            // Solo ejecutados
+            elseif (($dato['Autorizados'] == 0) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 0)) {
+                $where = [
+                    ['autorizacion', '!=', 0], ['hi_ejecutada', '!=', '00:00:00'], ['hi_ejecutada', '!=', '00:00:00']
+                ];
+            }
+            // Solo no autorizados
+            elseif (($dato['Autorizados'] == 0) && ($dato['Ejecutados'] == 0) && ($dato['NoAutorizados'] == 1)) {
+                $where = [
+                    ['autorizacion', '=', 0]
+                ];
+            }
+            // Autorizados y ejecutados
+            elseif (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 0)) {
+                $where = [
+                    ['autorizacion', '!=', 0]
+                ];
+            }
+            // Autorizados y No autorizados
+            elseif (($dato['Autorizados'] == 1) && ($dato['Ejecutados'] == 0) && ($dato['NoAutorizados'] == 1)) {
+                $where = [
+                    ['hi_ejecutada', '=', '00:00:00'], ['hf_ejecutada', '=', '00:00:00']
+                ];
+            }
+            // Ejecutados y no autorizados
+            elseif (($dato['Autorizados'] == 0) && ($dato['Ejecutados'] == 1) && ($dato['NoAutorizados'] == 1)) {
+                $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
+                    ->join('users', 'users.id', '=', 'cargo_user.user_id')
+                    ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                    ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
+                    ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+                    ->where('cargo_user.user_id', $dato['Id'])
+                    ->where('autorizacion', '=', 0)->orWhere([['autorizacion', '!=', 0], ['hi_ejecutada', '!=', '00:00:00'], ['hf_ejecutada', '!=', '00:00:00']])
+                    ->select(
+                        'users.nombres',
+                        'users.apellidos',
+                        'cargos.nombre',
+                        'horas.id',
+                        'horas.fecha',
+                        'horas.hi_solicitada',
+                        'horas.hf_solicitada',
+                        'horas.hi_ejecutada',
+                        'horas.hf_ejecutada',
+                        'horas.autorizacion',
+                        'tipo_horas.nombre_hora'
+                    )->get();
+                return ($horas);
+            }
             $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
                 ->join('users', 'users.id', '=', 'cargo_user.user_id')
                 ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
                 ->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
                 ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
-                ->where('autorizacion', 0)
-                ->where('cargo_user.user_id', $id)
+                ->where('cargo_user.user_id', $dato['Id'])
+                ->where($where)
                 ->select(
                     'users.nombres',
                     'users.apellidos',
@@ -86,6 +244,8 @@ class horasExtrasController extends Controller
                     'horas.fecha',
                     'horas.hi_solicitada',
                     'horas.hf_solicitada',
+                    'horas.hi_ejecutada',
+                    'horas.hf_ejecutada',
                     'horas.autorizacion',
                     'tipo_horas.nombre_hora'
                 )->get();
@@ -167,7 +327,7 @@ class horasExtrasController extends Controller
                 ['cargo_user_id', '=', $horasextras['cargo_user_id']],
                 ['fecha', '=', $horasextras['fecha']], ['hi_solicitada', '=', $horasextras['hi_solicitada']],
                 ['hf_solicitada', '=', $horasextras['hf_solicitada']], ['justificacion', '=', $horasextras['justificacion']]
-            ])->irst();
+            ])->first();
             if ($horaExistente == !NULL) {
                 $msg = "ya existe esa misma hora en esa misma fecha";
                 return ($msg);
@@ -251,22 +411,28 @@ class horasExtrasController extends Controller
     public function calcularValorHoras($hora)
     {
         $cantidadHoras = $hora['hf_solicitada'] - $hora['hi_solicitada'];
+        $cantidadHorasEjecutadas = $hora['hf_ejecutada'] - $hora['hi_ejecutada'];
         $cargoUser = CargoUser::find($hora['cargo_user_id']);
         $cargo = Cargo::find($cargoUser['cargo_id']);
         if ($hora['tipo_hora'] == 1) {
             $valorTotal = $cantidadHoras * $cargo['valor_diurna'];
+            $valorEjecutado = $cantidadHorasEjecutadas * $cargo['valor_diurna'];
             $valor = $cargo['valor_diurna'];
         } elseif ($hora['tipo_hora'] == 2) {
             $valorTotal = $cantidadHoras * $cargo['valor_nocturna'];
+            $valorEjecutado = $cantidadHorasEjecutadas * $cargo['valor_nocturna'];
             $valor = $cargo['valor_nocturna'];
         } elseif ($hora['tipo_hora'] == 3) {
             $valorTotal = $cantidadHoras * $cargo['valor_dominical'];
+            $valorEjecutado = $cantidadHorasEjecutadas * $cargo['valor_dominical'];
             $valor = $cargo['valor_dominical'];
         } elseif ($hora['tipo_hora'] == 4) {
             $valorTotal = $cantidadHoras * $cargo['valor_recargo'];
+            $valorEjecutado = $cantidadHorasEjecutadas * $cargo['valor_recargo'];
             $valor = $cargo['valor_recargo'];
         }
         $valores = [];
+        $valores['valor_ejecutado'] = $valorEjecutado;
         $valores['valor_total'] = $valorTotal;
         $valores['valor'] = $valor;
         return ($valores);
@@ -318,6 +484,10 @@ class horasExtrasController extends Controller
             $msg = "No se tiene un presupuesto asignado para la fecha dada";
             return ($msg);
         }
+        if ($hora['autorizacion'] != 0){
+            $msg="No se puede editar una hora ya autorizada";
+            return ($msg);
+        }
         $horaExtra['presupuesto_id'] = $presupuesto['id'];
         $ok = $this->validatorUpdate($horaExtra);
         if ($ok->fails()) {
@@ -343,7 +513,7 @@ class horasExtrasController extends Controller
         ]);
     }
 
-    // Cambia el estado a activo
+    // Autoriza las horas
     public function autorizar($data)
     {
         $dato = json_decode($data, true);
@@ -363,5 +533,29 @@ class horasExtrasController extends Controller
         } else {
             return ('estas horas ya se encuentran autorizadas; se recomienda recargar la pagina');
         }
+    }
+
+    // Ejecuta las horas
+    public function ejecutar($data)
+    {
+        $dato = json_decode($data, true);
+        // dd($dato);
+        $hora = Hora::find($dato['Id']);
+        if ($hora['autorizacion'] == 0) {
+            $msg = "no se han autorizado las horas";
+            return ($msg);
+        } elseif (($dato['Inicio'] < $hora['hi_solicitada']) || ($dato['Inicio'] > $hora['hf_solicitada']) || ($dato['Fin'] < $hora['hi_solicitada']) || ($dato['Fin'] > $hora['hf_solicitada'])) {
+            $msg = "las horas ejecutadas no estan ubicadas dentro del intervalo de tiempo de las horas solicitadas";
+            return ($msg);
+        }
+        $horasextra['hi_ejecutada'] = $dato['Inicio'];
+        $horasextra['hf_ejecutada'] = $dato['Fin'];
+        $hora->update($horasextra);
+        $presupuesto = Presupuesto::find($hora['presupuesto_id']);
+        $valores = $this->calcularValorHoras($hora);
+        $presupuestoRestante['presupuesto_gastado'] = $presupuesto['presupuesto_gastado'] - $valores['valor_total'];
+        $presupuestoRestante['presupuesto_gastado'] = $presupuestoRestante['presupuesto_gastado'] + $valores['valor_ejecutado'];
+        $presupuesto->update($presupuestoRestante);
+        return (1);
     }
 }

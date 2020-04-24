@@ -75,7 +75,7 @@ Registrar Horas Extras
         <button class="btn btn-success" onclick="guardarHoras()"> Guardar </button>
         </div>
         <div class="col-3">
-        <a class="btn btn-secondary" href="{{ url("/autorizar") }}"> Volver </a>
+        <a class="btn btn-secondary" href="{{ url("/horas_extras") }}"> Volver </a>
         </div>
       </div>
       </div><br>

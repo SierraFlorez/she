@@ -16,7 +16,7 @@ Consultar usuarios
   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
     <div class="card" style="margin-top: 5%">
       <center><br>
-        <h1> Generar Excel</h1>
+        <h1> Generar Reportes</h1>
       </center>
       <div class="card-header">
         <form action="{{url('/reportes/solicitudAutorizacion/')}}" method="GET">
@@ -28,7 +28,9 @@ Consultar usuarios
           @endforeach
         </select>
         <br>
-        <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccione el mes que desea generar</label>
+        <div class="row">
+          <div class="col">
+        <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccione el Mes</label>
         <select class="form-control validate" id="select_mes" name="select_mes">
           <option value=""></option>
           <option value="01">Enero</option>
@@ -44,6 +46,26 @@ Consultar usuarios
           <option value="11">Noviembre</option>
           <option value="12">Diciembre</option>
         </select>
+      </div>
+        <div class="col">
+          <label data-error="wrong" data-success="right" for="orangeForm-email">Seleccione el Año</label>
+          <select class="form-control validate" id="año_p" name="">
+            <option value=""></option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+          </select>
+        </div>
+          </div>
         <br>
         <input class="btn btn-success" type="submit" value="Solicitud Autorizacion">
       </form>

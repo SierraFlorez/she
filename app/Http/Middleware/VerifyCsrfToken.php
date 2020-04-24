@@ -30,6 +30,7 @@ class VerifyCsrfToken extends BaseVerifier
         // Horas Extras
         '/horas/guardar/*',
         '/horas/autorizar/*',
+        '/horas/ejecutar/*',
         '/horas/detalle/*',
         '/horas/update/*',
         '/horas/tabla/*',
