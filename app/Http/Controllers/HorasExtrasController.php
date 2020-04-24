@@ -22,29 +22,26 @@ class horasExtrasController extends Controller
     {
         if (Auth::User()->role_id == 1) {
             $usuarios = User::where('id', '!=', 0)->get();
-            $horas = Hora::join('cargo_user', 'cargo_user.id', '=', 'horas.cargo_user_id')
-                ->join('users', 'users.id', '=', 'cargo_user.user_id')->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')->join('tipo_horas', 'horas.tipo_hora', '=', 'tipo_horas.id')
-                ->orderBy('fecha', 'desc')->orderBy('hi_solicitada', 'asc')
+            $horas = Hora::join('solicitudes','solicitudes.id','=','horas.solicitud_id')->join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
+                ->join('users', 'users.id', '=', 'cargo_user.user_id')->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')
+                ->orderBy('fecha', 'desc')
                 ->select(
                     'users.nombres',
                     'users.apellidos',
                     'cargos.nombre',
                     'horas.id',
                     'horas.fecha',
-                    'horas.hi_solicitada',
-                    'horas.hf_solicitada',
-                    'horas.autorizacion',
-                    'horas.hi_ejecutada',
-                    'horas.hf_ejecutada',
+                    'horas.hi_registrada',
+                    'horas.hf_registrada',
                     'tipo_horas.nombre_hora'
                 )->get();
             $tipoHoras = TipoHora::all();
-            return view('horasExtras.index', compact('horas', 'tipoHoras', 'usuarios'));
+            return view('horas.index', compact('horas', 'tipoHoras', 'usuarios'));
         } else {
             $id = Auth::User()->cargos()->id;
             $horas = Hora::where('cargo_user_id', $id)->orderBy('fecha', 'asc')
                 ->orderBy('hi_solicitada', 'asc')->raw('hi_solicitada', '-', 'hf_solicitada')->get();
-            return view('horasExtras.index', compact('horas'));
+            return view('horas.index', compact('horas'));
         }
     }
 
@@ -265,7 +262,7 @@ class horasExtrasController extends Controller
         $fecha = date('Y-m-d');
         $fecha = date('Y-m-d', strtotime('+1 days', strtotime($fecha)));
         $tipoHoras = TipoHora::all();
-        return view('horasExtras.registrarHoras', compact('funcionario', 'fecha', 'tipoHoras', 'id'));
+        return view('horas.registrarHoras', compact('funcionario', 'fecha', 'tipoHoras', 'id'));
     }
 
     // Guarda la información de las horas extras

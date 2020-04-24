@@ -48,6 +48,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/presupuesto/tabla/*',
         '/presupuesto/detalle/*',
         '/presupuesto/update/*',
+        // Solicitudes
+        '/solicitud/guardar/*',
 
 
 

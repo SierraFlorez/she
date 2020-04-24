@@ -28,14 +28,6 @@
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                    {{-- Gestion de Solicitudes --}} 
-                    <li class="nav-item ">
-                        <a class="nav-link" href="{{ url("/solicitudes") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Solicitudes<span
-                                class="badge badge-success">6</span>
-                        </a>
-                    </li>
                     {{-- Gestion de Horas Extras --}} 
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horas_extras") }}" data-target="#submenu-1"

@@ -73,7 +73,10 @@ Route::post('/cargos/guardar/{id}', 'CargosController@save')->name('/cargos/save
 // ----------- MODULO SOLICITUDES -------------------------------------
 
 // RETORNA LA VISTA DE HORAS EXTRAS
-Route::get('/solicitudes', 'SolicitudesController@index')->name('/solicitudes')->middleware('auth');
+Route::get('/registrar_solicitud', 'SolicitudesController@registrar')->name('/registrar_solicitud')->middleware('auth');
+
+// GUARDA SOLICITUD
+Route::post('/solicitud/guardar/{id}', 'SolicitudesController@guardar')->name('/solicitud/guardar/{id}')->middleware('auth');
 
 
 

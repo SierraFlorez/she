@@ -1062,6 +1062,60 @@ function updateTipoHora(id) {
   });
 }
 
+// -------------- MODULO DE SOLICITUDES -----------
+
+// Guarda las horas extras
+function guardarSolicitud() {
+  var url = "solicitud/guardar";
+  $funcionario = $("#funcionario_cargo_user_s").val();
+  $año = $("[name = 'año_solicitud']").children("option:selected").val();
+  $mes = $("[name = 'mes_solicitud']").children("option:selected").val();
+  $tipoHora = $("[name = 'tipohoras_s']").children("option:selected").val();
+  $horaInicio = $("#hora_inicio_s").val();
+  $horaFin = $("#hora_fin_s").val();
+  $horas = $("#horas_s").val();
+  $actividades = $("#actividades_s").val();
+
+  var obj = new Object();
+  obj.Id = $funcionario;
+  obj.Año = $año;
+  obj.Mes = $mes;
+  obj.Inicio = $horaInicio;
+  obj.Fin = $horaFin;
+  obj.Horas = $horas;
+  obj.TipoHora = $tipoHora;
+  obj.Actividad = $actividades;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire(
+        "Completado!",
+        "Se ha Guardado la Solicitud",
+        "success"
+      );
+      $("#tipohoras_h").val("");
+      $("#hora_inicio_s").val("");
+      $("#hora_fin_s").val("");
+      $("#horas_s").val("");
+      $("#actividades_s").val("");
+      $("#justificacion").val("");
+      $("#mes_s").val("");
+      $("#año_s").val("");
+      $("#tipohoras_s").val("");
+    } else {
+      Swal.fire(
+        "Error!",
+        "Error al Guardar Solicitud, " + data + ".",
+        "error"
+      );
+    }
+  });
+}
+
+
 // ------------MODULO DE REPORTES ----------------
 
 function solicitudAutorizacion() {
