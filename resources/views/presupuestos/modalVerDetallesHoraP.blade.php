@@ -91,17 +91,17 @@
               <input readonly type="text" id="autorizado_p" class="form-control validate">
             </div>
           </div>
-           {{-- Input Justificacion --}}
-           <div class="md-form mb-4">
+          {{-- Input Justificacion --}}
+          <div class="md-form mb-4">
             <div class="form-row mb-6">
-           <div class="col" style="margin-top:">
-            <label data-error="wrong" data-success="right" for="orangeForm-name">Justificación:</label>
-            <textarea class="form-control" id="justificacion_p" style="height:100%;"></textarea>
-            <input hidden type="text" id="cargo_user_p" class="form-control validate">
+              <div class="col" style="margin-top:">
+                <label data-error="wrong" data-success="right" for="orangeForm-name">Justificación:</label>
+                <textarea class="form-control" id="justificacion_p" style="height:100%;"></textarea>
+                <input hidden type="text" id="cargo_user_p" class="form-control validate">
+              </div>
+            </div>
           </div>
         </div>
-        </div>
-      </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>

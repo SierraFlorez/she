@@ -16,14 +16,12 @@ class FechasEspecialesController extends Controller
         $fechas = FechaEspecial::all();
         return view('fechasEspeciales.index', compact('fechas'));
     }
-
     // Llena la información del modal
     public function detalle($id)
     {
         $detalle = FechaEspecial::find($id);
         return ($detalle);
     }
-
     // Guarda la fecha
     public function save($data)
     {
@@ -49,7 +47,6 @@ class FechasEspecialesController extends Controller
             'fecha_fin' => 'required',
         ]);
     }
-
     // Actualiza la fecha especial
     public function update($data)
     {
@@ -68,7 +65,6 @@ class FechasEspecialesController extends Controller
         $fecha->update($fechaEspecial);
         return (1);
     }
-
     // Verifica la actualización
     public function validatorUpdate($request)
     {

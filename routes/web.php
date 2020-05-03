@@ -78,6 +78,12 @@ Route::get('/registrar_solicitud', 'SolicitudesController@registrar')->name('/re
 // GUARDA SOLICITUD
 Route::post('/solicitud/guardar/{id}', 'SolicitudesController@guardar')->name('/solicitud/guardar/{id}')->middleware('auth');
 
+// TODAS LAS SOLICITUDES DEL USUARIO
+Route::post('/solicitudes/{id}', 'SolicitudesController@solicitudes')->name('/solicitudes/{id}')->middleware('auth');
+
+// D
+Route::post('/solicitudes/detalles/{id}', 'SolicitudesController@detalles')->name('/solicitudes/detalles{id}')->middleware('auth');
+
 
 
 // ----------- MODULO HORAS EXTRAS -------------------------------------

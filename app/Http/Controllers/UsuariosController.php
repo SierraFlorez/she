@@ -17,7 +17,7 @@ class UsuariosController extends Controller
     public function index()
     {
         $cargos = Cargo::all();
-        $usuarios = User::select('id', 'nombres', 'apellidos', 'documento', 'estado')->where('id','!=',0)->get();
+        $usuarios = User::select('id', 'nombres', 'apellidos', 'documento', 'estado')->where('id', '!=', 0)->get();
         $roles = Role::orderBy('id', 'DESC')->get();
         return view('usuarios.index', compact('usuarios', 'cargos', 'roles'));
     }
@@ -65,7 +65,6 @@ class UsuariosController extends Controller
             'regional' => 'required',
         ]);
     }
-   
     // Trae toda la información del usuario para el modal detalle
     public function detalle($id)
     {
@@ -77,7 +76,6 @@ class UsuariosController extends Controller
         $usuarioDetalle['cargo'] = $cargo;
         return ($usuarioDetalle);
     }
-
     // Actualiza la información del usuario
     public function update($data)
     {
@@ -152,10 +150,10 @@ class UsuariosController extends Controller
         if ($mismoCargo == !NULL) {
             $cambioEstado['estado'] = 1;
             $mismoCargo->update($cambioEstado);
-            return(1);
+            return (1);
         } else {
             CargoUser::create($cargoVigente);
-            return(1);
+            return (1);
         }
     }
     // Cambia el estado a activo

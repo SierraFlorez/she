@@ -50,6 +50,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/presupuesto/update/*',
         // Solicitudes
         '/solicitud/guardar/*',
+        '/solicitudes/*',
+        '/solicitudes/detalles/*',
 
 
 

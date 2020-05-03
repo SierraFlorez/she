@@ -18,4 +18,9 @@ class CargoUser extends Model
     {
         return $this->belongsTo('App\Cargo','cargo_id');
     }
+
+    public function solicitudes()
+    {
+        return $this->hasMany('App\Solicitud','cargo_user_id','id');
+    }
 }

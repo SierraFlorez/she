@@ -8,7 +8,7 @@
         </button>
       </div>
       <div class="modal-body mx-3">
-         {{-- Input del presupuesto --}}
+        {{-- Input del presupuesto --}}
         <div class="md-form mb-4">
           <i class="fas fa-dollar-sign"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto</label>
@@ -18,21 +18,21 @@
         <div class="md-form mb-4">
           <i class="fas fa-calendar"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Mes</label>
-              <select class="form-control validate" id="mes_presupuesto">
-                <option value=""></option>
-                <option value="1">Enero</option>
-                <option value="2">Febrero</option>
-                <option value="3">Marzo</option>
-                <option value="4">Abril</option>
-                <option value="5">Mayo</option>
-                <option value="6">Junio</option>
-                <option value="7">Julio</option>
-                <option value="8">Agosto</option>
-                <option value="9">Septiembre</option>
-                <option value="10">Octubre</option>
-                <option value="11">Noviembre</option>
-                <option value="12">Diciembre</option>
-              </select>
+          <select class="form-control validate" id="mes_presupuesto">
+            <option value=""></option>
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <option value="4">Abril</option>
+            <option value="5">Mayo</option>
+            <option value="6">Junio</option>
+            <option value="7">Julio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </select>
         </div>
         {{-- Input del año --}}
         <div class="md-form mb-4">

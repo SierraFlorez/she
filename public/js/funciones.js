@@ -13,9 +13,9 @@ $("#date_input").on("change", function () {
       $(this).val().length == 0
         ? ""
         : $.datepicker.formatDate(
-            $(this).attr("dateformat"),
-            new Date($(this).val())
-          )
+          $(this).attr("dateformat"),
+          new Date($(this).val())
+        )
     );
 });
 function notificacionCorreo() {
@@ -635,110 +635,100 @@ function crearCargo() {
 
 // ------------MODULO DE HORAS EXTRAS ----------------
 
-// Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
-function tabla_de_horas() {
+// Función para mostrar la solicitud
+function selectSolicitud() {
   var seleccion = document.getElementById("seleccionar_usuario");
   var id = seleccion.options[seleccion.selectedIndex].value;
-  var filtro1 = document.getElementById("input1");
-  var filtro2 = document.getElementById("input2");
-  var filtro3 = document.getElementById("input3");
-  var ejecutados = 0;
-  var autorizados = 0;
-  var noAutorizados = 0;
+  var url = "solicitudes";
 
-  if (filtro1.checked) {
-    var ejecutados = 1;
-  }
-  if (filtro2.checked) {
-    var autorizados = 1;
-  }
-  if (filtro3.checked) {
-    var noAutorizados = 1;
-  }
+  $.post(url + "/" + id).done(function (data) {
+    $("#select_presupuesto").html("");
+    if (data.length > 0) {
+      var divSolicitud = `<div class="col-md-6">
+      <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Solicitud</label>
+      <select class="form-control validate" id="seleccionar_solicitud" name="" onchange="tabla_de_horas();">
+      <option value="0"></option>`;
+      $("#select_presupuesto").html("");
+
+      for (var i = 0; i < data.length; i++) {
+        var options =
+          `<option value="` +
+          data[i].id +
+          `">` +
+          data[i].actividades +
+          `/ ` +
+          data[i].presupuesto.año +
+          `-` +
+          data[i].presupuesto.mes +
+          ` / ` +
+          data[i].tipo_horas.nombre_hora +
+          `</option>`;
+        var divSolicitud = divSolicitud + options;
+      }
+
+      divSolicitud =
+        divSolicitud +
+        `</select></div><div style="margin-top:2%"id="botonSolicitud" class="col-md-6"></div>`;
+      $("#select_presupuesto").append(divSolicitud);
+    } else {
+      var divSolicitud = `<div class="col-md-6"><p>El cargo vigente del usuario no tiene ninguna solicitud.</p></div>`;
+      $("#select_presupuesto").append(divSolicitud);
+    }
+  });
+}
+
+// Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
+function tabla_de_horas() {
+  var seleccion = document.getElementById("seleccionar_solicitud");
+  var id = seleccion.options[seleccion.selectedIndex].value;
 
   var url = "horas/tabla";
-
   var obj = new Object();
   obj.Id = id;
-  obj.Ejecutados = ejecutados;
-  obj.Autorizados = autorizados;
-  obj.NoAutorizados = noAutorizados;
+
   var datos = JSON.stringify(obj);
   // console.log(id);
   $.post(url + "/" + datos).done(function (data) {
-    // console.log(data);
+    $("#botonSolicitud").html("");
+    var boton = 0;
+    var boton =
+      `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-secondary" onclick="detallesSolicitud(` +
+      data.solicitud.id +
+      `);">Detalles de Solicitud</button>`;
+    if (data.solicitud.autorizacion == 0) {
+      var boton =
+        boton +
+        `<button onclick="autorizar_solicitud(` +
+        data.solicitud.id +
+        `);" class="btn btn-danger"> No Autorizado </button>`;
+    }
+    if (data.solicitud.autorizacion != 0) {
+      var boton =
+        boton +
+        `<button  onclick="autorizar_solicitud(` +
+        data.solicitud.id +
+        `);" class="btn btn-danger"> Autorizado </button>`;
+    }
+    $("#botonSolicitud").append(boton);
     var t = $("#dthorasExtras").DataTable();
     t.clear().draw();
     // console.log(data);
-    var t = $("#dthorasExtras").DataTable();
-    var boton = 1;
-    for (var i = 0; i < data.length; i++) {
-      var total = data[i].hi_solicitada - data[i].hf_solicitada;
+    for (var i = 0; i < data.horas.length; i++) {
       var botonEditar =
         `<button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
-        data[i].id +
+        data.horas[i].id +
         `)">Detalles</button>`;
-      if (data[i].autorizacion == 0) {
-        var boton =
-          `<button class="btn btn-danger" onclick="autorizar(` +
-          data[i].id +
-          `)">No Autorizado
-          </button>`;
-      }
-
-      if (
-        data[i].autorizacion != 0 &&
-        data[i].hi_ejecutada == "00:00:00" &&
-        data[i].hi_ejecutada == "00:00:00"
-      ) {
-        var boton =
-          `<button data-toggle="modal" data-target="#modalEjecutar" class="btn btn-warning" onclick="detallesEjecutar(` +
-          data[i].id +
-          `)">Autorizado
-        </button>`;
-      }
-
-      if (
-        data[i].autorizacion != 0 &&
-        data[i].hi_ejecutada != "00:00:00" &&
-        data[i].hi_ejecutada != "00:00:00"
-      ) {
-        var boton =
-          `<button class="btn btn-primary" onclick="ejecutado(` +
-          data[i].id +
-          `)">Ejecutado
-        </button>`;
-      }
-      if (
-        data[i].hi_ejecutada != "00:00:00" &&
-        data[i].hf_ejecutada != "00:00:00"
-      ) {
-        t.row
-          .add([
-            data[i].nombres + data[i].apellidos,
-            data[i].nombre,
-            data[i].fecha,
-            data[i].hi_ejecutada,
-            data[i].hf_ejecutada,
-            data[i].nombre_hora,
-            boton,
-            botonEditar,
-          ])
-          .draw(false);
-      } else {
-        t.row
-          .add([
-            data[i].nombres + data[i].apellidos,
-            data[i].nombre,
-            data[i].fecha,
-            data[i].hi_solicitada,
-            data[i].hf_solicitada,
-            data[i].nombre_hora,
-            boton,
-            botonEditar,
-          ])
-          .draw(false);
-      }
+      t.row
+        .add([
+          data.horas[i].nombres + data.horas[i].apellidos,
+          data.horas[i].nombre,
+          data.horas[i].fecha,
+          data.horas[i].hi_registrada,
+          data.horas[i].hf_registrada,
+          data.horas[i].nombre_hora,
+          botonEditar,
+        ])
+        .draw(false);
     }
   });
 }
@@ -748,18 +738,16 @@ function guardarHoras() {
   var url = "horas/guardar";
   $funcionario = $("#funcionario_cargo_user").val();
   $fecha = $("#date").val();
-  $tipoHora = $("[name = 'tipohoras_h']").children("option:selected").val();
+  $solicitud = $("[name = 'solicitud_h']").children("option:selected").val();
   $horaInicio = $("#hora_inicio").val();
   $horaFin = $("#hora_fin").val();
-  $justificacion = $("#justificacion").val();
 
   var obj = new Object();
   obj.Id = $funcionario;
   obj.Fecha = $fecha;
   obj.Inicio = $horaInicio;
   obj.Fin = $horaFin;
-  obj.TipoHora = $tipoHora;
-  obj.Justificacion = $justificacion;
+  obj.Solicitud = $solicitud;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -823,8 +811,7 @@ function detallesHora(id) {
       $("#inputs_e").append(inputs);
       $("#hora_inicio_e").val(data.hora.hi_ejecutada);
       $("#hora_fin_e").val(data.hora.hf_ejecutada);
-    }
-    else{
+    } else {
       $("#inputs_e").html("");
     }
     $("#update_h").attr("onclick", "updateHoras(" + data.hora.id + ")");
@@ -1091,11 +1078,7 @@ function guardarSolicitud() {
   $.post(url + "/" + datos).done(function (data) {
     // console.log(data);
     if (data == 1) {
-      Swal.fire(
-        "Completado!",
-        "Se ha Guardado la Solicitud",
-        "success"
-      );
+      Swal.fire("Completado!", "Se ha Guardado la Solicitud", "success");
       $("#tipohoras_h").val("");
       $("#hora_inicio_s").val("");
       $("#hora_fin_s").val("");
@@ -1106,15 +1089,43 @@ function guardarSolicitud() {
       $("#año_s").val("");
       $("#tipohoras_s").val("");
     } else {
-      Swal.fire(
-        "Error!",
-        "Error al Guardar Solicitud, " + data + ".",
-        "error"
-      );
+      Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
     }
   });
 }
 
+// Modal de detalles de solicitud
+function detallesSolicitud(id) {
+  var url = "solicitudes/detalles";
+  $("#funcionario_s").val("");
+  $("#cargo_s").val("");
+  $("#th_solicitud_s").val("");
+  $("#año_solicitud_s").val("");
+  $("#mes_solicitud_sd").val("");
+  $("#hora_inicio_s").val("");
+  $("#hora_fin_s").val("");
+  $("#valor_total_s").val("");
+  $("#valor_hora_s").val("");
+  $("#horas_s").val("");
+  $("#autorizado_s").val("");
+  $("#actividades_s").val("");
+  $.post(url + "/" + id).done(function (data) {
+    console.log(data);
+    $("#funcionario_s").val(data.nombres + " " + data.apellidos);
+    $("#cargo_s").val(data.nombre);
+    $("#th_solicitud_s").val(data.nombre_hora);
+    $("#año_solicitud_s").val(data.año);
+    $("#mes_solicitud_sd").val(data.mes);
+    $("#hora_inicio_s").val(data.hora_inicio);
+    $("#hora_fin_s").val(data.hora_fin);
+    $("#valor_total_s").val(data.valor_total);
+    $("#valor_hora_s").val(data.valor_hora);
+    $("#horas_s").val(data.total_horas);
+    $("#autorizado_s").val(data.autorizacion);
+    $("#actividades_s").val(data.actividades);
+    // $("#updateFecha").attr("onclick", "updateFecha(" + data.id + ")");
+  });
+}
 
 // ------------MODULO DE REPORTES ----------------
 

@@ -11,7 +11,7 @@ Registrar Horas Extras
   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
     <div class="card row" style="margin-top: 5%;border-radius:10px">
       <center>
-        <br><h1> Solicitud de Horas Extras </h1>
+        <br><h1> Registro de Horas Extras </h1>
       </center>
       <div class="card-body" >
         {{--  --}}
@@ -32,7 +32,7 @@ Registrar Horas Extras
         <div class="form-row mb-6">
           {{-- Input de mes --}}
           <div class="col">
-          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha de Solicitud:</label>
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha de Registro</label>
         <br>
         <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="2021-01-30">
         <input class="form-control date-input-fallback" id="alt" type="text" placeholder="Seleccione una fecha">
@@ -40,11 +40,11 @@ Registrar Horas Extras
           </div>
           {{-- Input de tipo de hora --}}
           <div class="col">
-            <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de horas:</label>
-            <select class="form-control validate" id="tipohoras_h" name="tipohoras_h">
-              <option value="">Seleccione tipo de hora </option>
-              @foreach($tipoHoras as $tipoHora)
-              <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
+            <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccione una Solicitud</label>
+            <select class="form-control validate" id="solicitud_h" name="solicitud_h">
+              <option value="">Seleccione una Solicitud </option>
+              @foreach($solicitudes as $solicitud)
+              <option value="{{$solicitud->id}}">{{$solicitud->actividades}} / {{$solicitud->presupuesto->año}}-{{$solicitud->presupuesto->mes}} / {{$solicitud->tipoHoras->nombre_hora}}</option>
               @endforeach
             </select>
           </div>
@@ -60,12 +60,7 @@ Registrar Horas Extras
           <div class="col-md-6">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Hora fin:</label>
             <input class="form-control" type="time" id="hora_fin">
-          </div>
-          {{-- Input Justificacion --}}
-          <div class="col-md-12" style="margin-top:1%">
-            <label data-error="wrong" data-success="right" for="orangeForm-name">Justificación:</label>
-            <textarea class="form-control" id="justificacion" style="height: 120px;"></textarea>
-          </div>
+          </div>          
             <div class="col-md-6">
                 <input class="form-control" type="hidden" value="{{$funcionario->id}}" id="funcionario_cargo_user">
             </div>

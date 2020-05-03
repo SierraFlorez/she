@@ -49,7 +49,7 @@ class CargosController extends Controller
     public function validatorCargoUpdate($cargo)
     {
         return Validator::make($cargo, [
-            'nombre' => 'required|max:50|unique:cargos,nombre,'.$cargo['id'],
+            'nombre' => 'required|max:50|unique:cargos,nombre,' . $cargo['id'],
             'sueldo' => 'required|numeric|max:10000000|min:1000000',
             'valor_diurna' => 'required|numeric|min:1000|max:100000',
             'valor_diurna' => 'required|numeric|min:1000|max:100000',
@@ -70,17 +70,16 @@ class CargosController extends Controller
         $cargo['valor_dominical'] = $dato["Dominical"];
         $cargo['valor_recargo'] = $dato["Nocturno"];
 
-        
+
         $validador = $this->validatorCargoSave($cargo);
         if ($validador->fails()) {
             return $validador->errors()->all();
         } else {
             Cargo::create($cargo);
             return (1);
-            }
-        
+        }
     }
-
+    // Valida cuando se guarda un cargo
     public function validatorCargoSave($cargo)
     {
         return Validator::make($cargo, [
@@ -95,18 +94,4 @@ class CargosController extends Controller
         ]);
     }
 
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
-    }
 }

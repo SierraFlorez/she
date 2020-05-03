@@ -8,7 +8,7 @@
         </button>
       </div>
       <div class="modal-body mx-3">
-         {{-- Input del nombre --}}
+        {{-- Input del nombre --}}
         <div class="md-form mb-4">
           <i class="fas fa-file-alt"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Descripción</label>
@@ -53,9 +53,9 @@
   </div>
 </div>
 <script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
+  $(document).ready(function () {
+    $('.documento_user').keyup(function () {
+      this.value = (this.value + '').replace(/[^0-9]/g, '');
+    });
+  });
 </script>

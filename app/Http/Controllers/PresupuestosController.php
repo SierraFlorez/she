@@ -19,7 +19,6 @@ class PresupuestosController extends Controller
         $presupuestos=Presupuesto::where('id','!=','0')->get();
         return view('presupuestos.index', compact('presupuestos','tipoHoras'));
     }
-
     // Guarda la información de las horas extras
     public function guardar($data)
     {
@@ -41,7 +40,6 @@ class PresupuestosController extends Controller
         Presupuesto::create($presupuesto);
         return (1);
     }
-
     // Valida la información de la hora extra
     public function validatorGuardar(array $data)
     {
@@ -51,7 +49,6 @@ class PresupuestosController extends Controller
             'año' => 'required',
         ]);
     }
-
     // Llena la tabla de presupuestos mostrando las horas extras de dicho presupuesto
     public function horas($id)
     {
@@ -66,7 +63,6 @@ class PresupuestosController extends Controller
         $presupuesto['horas']=$horas;
         return ($presupuesto);
     }
-
     //  Llena el modulo de detalles del presupuesto
     public function detalle($id)
     {
@@ -75,7 +71,6 @@ class PresupuestosController extends Controller
         $presupuesto['restante']=$restante;
         return ($presupuesto);
     }
-
     // Actualiza la información del presupuesto
     public function update($data)
     {
@@ -93,7 +88,6 @@ class PresupuestosController extends Controller
         return (1);
         
     }
-
     // Verifica la actualización
     public function validatorUpdate($request)
     {
