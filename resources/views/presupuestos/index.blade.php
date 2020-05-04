@@ -25,12 +25,13 @@ Gestión de Presupuesto
               <div class="row" style="margin-top: 2%" id="informacion_presupuesto"></div>
             </div>
                 <div class="card-header" id="div_presupuesto">
+                    <center><h2> Solicitudes </h2></center>
                     <table id="dtPresupuestos" class="table table-hover table-dark" cellspacing="0" width="100%">
                         <thead class="thead-dark">
                             <tr>
                             <th class="th-sm">Usuario</th>
                             <th class="th-sm">Cargo</th>
-                            <th class="th-sm">Fecha</th> 
+                            <th class="th-sm">Cantidad de Horas</th> 
                             <th class="th-sm">Hora Inicio</th>
                             <th class="th-sm">Hora Fin</th>
                             <th class="th-sm">Tipo Hora</th>

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 // <modelos>
 use App\Presupuesto;
-use App\Hora;
+use App\Solicitud;
 use App\TipoHora;
 // </modelos>
-use Illuminate\Http\Request;
 use Validator;
 
 
@@ -50,18 +49,17 @@ class PresupuestosController extends Controller
         ]);
     }
     // Llena la tabla de presupuestos mostrando las horas extras de dicho presupuesto
-    public function horas($id)
+    public function tabla($id)
     {
         $presupuesto = Presupuesto::Find($id);
         $presupuesto['restante'] = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
-        $horas = Hora::where('presupuesto_id', '=', $id)
-            ->join('solicitudes', 'horas.solicitud_id', '=', 'solicitudes.id')
+        $solicitudes = Solicitud::where('presupuesto_id', '=', $id)
             ->join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
             ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')
             ->join('users', 'cargo_user.user_id', '=', 'users.id')
             ->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')
-            ->select('horas.id', 'users.nombres', 'users.apellidos', 'cargos.nombre', 'hi_registrada', 'hf_registrada', 'tipo_horas.nombre_hora', 'horas.fecha')->get();
-        $presupuesto['horas'] = $horas;
+            ->select('solicitudes.id', 'users.nombres', 'users.apellidos', 'cargos.nombre', 'solicitudes.hora_inicio', 'solicitudes.hora_fin', 'tipo_horas.nombre_hora', 'total_horas')->get();
+        $presupuesto['solicitudes'] = $solicitudes;
         return ($presupuesto);
     }
     //  Llena el modulo de detalles del presupuesto

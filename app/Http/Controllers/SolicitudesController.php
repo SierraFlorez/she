@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 // <Modelos>
-use App\Hora;
 use App\TipoHora;
 use App\CargoUser;
-use App\FechaEspecial;
 use App\Cargo;
 use App\Presupuesto;
 use App\Solicitud;
 use App\User;
-
+use App\Hora;
 // </Modelos>
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -203,6 +201,7 @@ class SolicitudesController extends Controller
         $valores = $this->calcularValorHoras($solicitud);
         $solicitud['valor_total'] = $valores['valor_total'];
         $solicitud['valor_hora'] = $valores['valor'];
+        $solicitud['horas_restantes']=Hora::where('solicitud_id',$id)->sum('horas_trabajadas');
         // dd($solicitud);
         if ($solicitud['autorizacion'] == 0) {
             $solicitud['autorizacion'] = "La solicitud no ha sido autorizada";

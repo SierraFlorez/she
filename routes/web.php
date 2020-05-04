@@ -120,7 +120,7 @@ Route::get('/presupuestos', 'PresupuestosController@index')->name('/presupuesto'
 Route::post('/presupuesto/save/{id}', 'PresupuestosController@guardar')->name('/presupuestos/save/{id}')->middleware('auth');
 
 // TABLA DE PRESUPUESTOS
-Route::post('/presupuesto/tabla/{id}', 'PresupuestosController@horas')->name('/presupuestos/save/{id}')->middleware('auth');
+Route::post('/presupuesto/tabla/{id}', 'PresupuestosController@tabla')->name('/presupuestos/save/{id}')->middleware('auth');
 
 // DETALLE DE PRESUPUESTOS
 Route::post('/presupuesto/detalle/{id}', 'PresupuestosController@detalle')->name('/presupuestos/detalle/{id}')->middleware('auth');
@@ -135,7 +135,7 @@ Route::post('/presupuesto/update/{id}', 'PresupuestosController@update')->name('
 Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
 
 // DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
-Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+Route::get('/reportes/solicitudAutorizacion', 'ReportesController@reportes')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
 
 
 // ------------- MODULO DE TIPO DE HORAS -------------------------------

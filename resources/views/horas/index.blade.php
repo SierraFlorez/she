@@ -35,6 +35,7 @@ Gestión Horas Extras
             <div style="margin-top:1%;padding-left: 2%" id="select_presupuesto" class="row">
             </div>
             <div class="card-header" id="div_horas">
+                <center><h2> Horas Registradas </h2></center>
                 <table id="dthorasExtras" class="table table-hover table-dark" cellspacing="0" width="100%"
                     style="text-align: center">
                     <thead class="thead-dark">
