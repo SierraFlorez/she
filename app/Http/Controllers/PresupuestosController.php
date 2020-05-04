@@ -15,9 +15,9 @@ class PresupuestosController extends Controller
     // Retorna la vista de presupuestos
     public function index()
     {
-        $tipoHoras=TipoHora::all();
-        $presupuestos=Presupuesto::where('id','!=','0')->get();
-        return view('presupuestos.index', compact('presupuestos','tipoHoras'));
+        $tipoHoras = TipoHora::all();
+        $presupuestos = Presupuesto::where('id', '!=', '0')->get();
+        return view('presupuestos.index', compact('presupuestos', 'tipoHoras'));
     }
     // Guarda la información de las horas extras
     public function guardar($data)
@@ -32,9 +32,9 @@ class PresupuestosController extends Controller
         if ($validador->fails()) {
             return $validador->errors()->all();
         }
-        $presupuestoExistente=Presupuesto::where('mes','=',$presupuesto['mes'])->where('año','=',$presupuesto['año'])->first();
-        if ($presupuestoExistente== !NULL){
-            $msg="ese mes ya tiene un presupuesto asignado";
+        $presupuestoExistente = Presupuesto::where('mes', '=', $presupuesto['mes'])->where('año', '=', $presupuesto['año'])->first();
+        if ($presupuestoExistente == !NULL) {
+            $msg = "ese mes ya tiene un presupuesto asignado";
             return ($msg);
         }
         Presupuesto::create($presupuesto);
@@ -52,23 +52,24 @@ class PresupuestosController extends Controller
     // Llena la tabla de presupuestos mostrando las horas extras de dicho presupuesto
     public function horas($id)
     {
-        $presupuesto=Presupuesto::Find($id);
-        $presupuesto['restante']=$presupuesto['presupuesto_inicial']-$presupuesto['presupuesto_gastado'];
-        $horas=Hora::where('presupuesto_id','=',$id)
-        ->join('cargo_user','cargo_user.id','=','horas.cargo_user_id')
-        ->join('cargos','cargo_user.cargo_id','=','cargos.id')
-        ->join('users','cargo_user.user_id','=','users.id')
-        ->join('tipo_horas','horas.tipo_hora','=','tipo_horas.id')
-        ->select('horas.id','users.nombres','users.apellidos','cargos.nombre','hi_solicitada','hf_solicitada','tipo_horas.nombre_hora','horas.fecha')->get();
-        $presupuesto['horas']=$horas;
+        $presupuesto = Presupuesto::Find($id);
+        $presupuesto['restante'] = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
+        $horas = Hora::where('presupuesto_id', '=', $id)
+            ->join('solicitudes', 'horas.solicitud_id', '=', 'solicitudes.id')
+            ->join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
+            ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')
+            ->join('users', 'cargo_user.user_id', '=', 'users.id')
+            ->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')
+            ->select('horas.id', 'users.nombres', 'users.apellidos', 'cargos.nombre', 'hi_registrada', 'hf_registrada', 'tipo_horas.nombre_hora', 'horas.fecha')->get();
+        $presupuesto['horas'] = $horas;
         return ($presupuesto);
     }
     //  Llena el modulo de detalles del presupuesto
     public function detalle($id)
     {
-        $presupuesto=Presupuesto::find($id);
-        $restante=$presupuesto['presupuesto_inicial']-$presupuesto['presupuesto_gastado'];
-        $presupuesto['restante']=$restante;
+        $presupuesto = Presupuesto::find($id);
+        $restante = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
+        $presupuesto['restante'] = $restante;
         return ($presupuesto);
     }
     // Actualiza la información del presupuesto
@@ -86,7 +87,6 @@ class PresupuestosController extends Controller
         }
         $presupuesto->update($Presupuesto);
         return (1);
-        
     }
     // Verifica la actualización
     public function validatorUpdate($request)

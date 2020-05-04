@@ -9,6 +9,7 @@ use App\FechaEspecial;
 use App\Cargo;
 use App\Presupuesto;
 use App\Solicitud;
+use App\User;
 
 // </Modelos>
 use Validator;
@@ -76,36 +77,28 @@ class SolicitudesController extends Controller
     public function validacion($solicitud)
     {
         $msg = 1;
-        // Consulta para saber si la franja del tiempo y el día es exactamente igual
-        // if ($solicitud['guardar'] == 1) {
-        //     $horaExistente = Hora::where([
-        //         ['cargo_user_id', '=', $solicitud['cargo_user_id']],
-        //         ['fecha', '=', $solicitud['fecha']], ['hora_inicio', '=', $solicitud['hora_inicio']],
-        //         ['hora_fin', '=', $solicitud['hora_fin']], ['justificacion', '=', $solicitud['justificacion']]
-        //     ])->first();
-        //     if ($horaExistente == !NULL) {
-        //         $msg = "ya existe esa misma hora en esa misma fecha";
-        //         return ($msg);
-        //     }
-        // }
+        $id = 0;
+        if (isset($solicitud['id'])) {
+            $id = $solicitud['id'];
+        }
         // Consulta para saber si la franja del tiempo se encuentra disponible
-        $solicitudIgual =  Solicitud::where([['cargo_user_id', '=', $solicitud['cargo_user_id']], ['presupuesto_id', '=', $solicitud['presupuesto_id']], ['hora_inicio', '=', $solicitud['hora_inicio']], ['hora_fin', '=', $solicitud['hora_fin']]])->first();
+        $solicitudIgual =  Solicitud::where([['cargo_user_id', '=', $solicitud['cargo_user_id']], ['presupuesto_id', '=', $solicitud['presupuesto_id']], ['hora_inicio', '=', $solicitud['hora_inicio']], ['hora_fin', '=', $solicitud['hora_fin']], ['actividades', '=', $solicitud['actividades']], ['autorizacion','!=',0]])->first();
         if ($solicitudIgual != NULL) {
             $msg = 'ya existe esa misma solicitud';
             return ($msg);
         }
         $solicitudesAnteriores = Solicitud::where([['cargo_user_id', '=', $solicitud['cargo_user_id']], ['presupuesto_id', '=', $solicitud['presupuesto_id']]])->get();
         foreach ($solicitudesAnteriores as $horasNoDisponibles) {
-            if (($solicitud['hora_inicio'] <= $horasNoDisponibles['hora_inicio']) && ($solicitud['hora_fin'] >= $horasNoDisponibles['hora_fin'])) {
+            if (($solicitud['hora_inicio'] <= $horasNoDisponibles['hora_inicio']) && ($solicitud['hora_fin'] >= $horasNoDisponibles['hora_fin']) && ($id != $horasNoDisponibles['id'])) {
                 $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
                 return ($msg);
             }
-            if (($solicitud['hora_inicio'] >= $horasNoDisponibles['hora_inicio']) && ($solicitud['hora_fin'] <= $horasNoDisponibles['hora_fin'])) {
+            if (($solicitud['hora_inicio'] >= $horasNoDisponibles['hora_inicio']) && ($solicitud['hora_fin'] <= $horasNoDisponibles['hora_fin']) && ($id != $horasNoDisponibles['id'])) {
                 $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
                 return ($msg);
             }
-            if (($solicitud['hora_inicio'] < $horasNoDisponibles['hora_inicio']) && ($solicitud['hora_fin'] <= $horasNoDisponibles['hora_fin']) && ($solicitud['hora_fin'] > $horasNoDisponibles['hora_inicio'])) {
-                $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo1';
+            if (($solicitud['hora_inicio'] < $horasNoDisponibles['hora_inicio']) && ($solicitud['hora_fin'] <= $horasNoDisponibles['hora_fin']) && ($solicitud['hora_fin'] > $horasNoDisponibles['hora_inicio']) && ($id != $horasNoDisponibles['id'])) {
+                $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
                 return ($msg);
             }
         }
@@ -213,7 +206,81 @@ class SolicitudesController extends Controller
         // dd($solicitud);
         if ($solicitud['autorizacion'] == 0) {
             $solicitud['autorizacion'] = "La solicitud no ha sido autorizada";
+        } else {
+            $autorizado = User::find($solicitud['autorizacion']);
+            $solicitud['autorizacion'] = "Fue autorizado por " . $autorizado['nombres'] . " " . $autorizado['apellidos'];
         }
         return ($solicitud);
+    }
+    // Actualiza la información de solicitud
+    public function update($data)
+    {
+        $dato = json_decode($data, true);
+        $solicitud = Solicitud::find($dato['Id']);
+        $solicitudE['id'] = $dato["Id"];
+        $solicitudE['tipo_hora_id'] = $dato["Th"];
+        $solicitudE['cargo_user_id'] = $dato["CargoUser"];
+        $solicitudE['hora_inicio'] = $dato["Inicio"];
+        $solicitudE['hora_fin'] = $dato["Fin"];
+        $solicitudE['tipo_hora_id'] = $dato["Th"];
+        $solicitudE['total_horas'] = $dato["Horas"];
+        $solicitudE['actividades'] = $dato["Actividades"];
+        $solicitudE['update'] = 1;
+        $mesPresupuesto = $dato["Mes"];
+        $añoPresupuesto = $dato["Año"];
+        $presupuesto = Presupuesto::where('mes', '=', $mesPresupuesto)->where('año', '=', $añoPresupuesto)->first();
+        if ($presupuesto == NULL) {
+            $msg = "No se tiene un presupuesto asignado para la fecha dada";
+            return ($msg);
+        }
+        if ($solicitud['autorizacion'] != 0) {
+            $msg = "No se puede editar una hora ya autorizada";
+            return ($msg);
+        }
+        $solicitudE['presupuesto_id'] = $presupuesto['id'];
+        $ok = $this->validatorUpdate($solicitudE);
+        if ($ok->fails()) {
+            return $ok->errors()->all();;
+        }
+        $msg = $this->validacion($solicitudE);
+        if ($msg == 1) {
+            $solicitud->update($solicitudE);
+            return (1);
+        } else {
+            return ($msg);
+        }
+    }
+    // Verifica la actualización
+    public function validatorUpdate($request)
+    {
+        return Validator::make($request, [
+            'cargo_user_id' => 'required',
+            'presupuesto_id' => 'required',
+            'hora_inicio' => 'required',
+            'hora_fin' => 'required',
+            'total_horas' => 'required',
+            'tipo_hora_id' => 'required'
+        ]);
+    }
+    // Autoriza las horas
+    public function autorizar($data)
+    {
+        $dato = json_decode($data, true);
+        // dd($dato);
+        $solicitud = Solicitud::find($dato['Id']);
+        if ($solicitud['autorizacion'] == 0) {
+            $msg = $this->validacion($solicitud);
+            if ($msg == 1) {
+                $solicitudA['autorizacion'] = Auth::user()->id;
+                $solicitud->update($solicitudA);
+                $presupuesto = Presupuesto::find($solicitud['presupuesto_id']);
+                $valor = $this->calcularValorHoras($solicitud);
+                $presupuestoRestante['presupuesto_gastado'] = $presupuesto['presupuesto_gastado'] + $valor['valor_total'];
+                $presupuesto->update($presupuestoRestante);
+            }
+            return ($msg);
+        } else {
+            return ('estas horas ya se encuentran autorizadas; se recomienda recargar la pagina');
+        }
     }
 }

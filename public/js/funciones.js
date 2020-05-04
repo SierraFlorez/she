@@ -10,14 +10,15 @@ $("#date_input").on("change", function () {
       width: $(this).width(),
     })
     .text(
-      $(this).val().length == 0
-        ? ""
-        : $.datepicker.formatDate(
-          $(this).attr("dateformat"),
-          new Date($(this).val())
-        )
+      $(this).val().length == 0 ?
+      "" :
+      $.datepicker.formatDate(
+        $(this).attr("dateformat"),
+        new Date($(this).val())
+      )
     );
 });
+
 function notificacionCorreo() {
   Swal.fire(
     "Completado!",
@@ -633,6 +634,174 @@ function crearCargo() {
   });
 }
 
+// -------------- MODULO DE SOLICITUDES -----------
+
+// Guarda las horas extras
+function guardarSolicitud() {
+  var url = "solicitud/guardar";
+  $funcionario = $("#funcionario_cargo_user_s").val();
+  $año = $("[name = 'año_solicitud']").children("option:selected").val();
+  $mes = $("[name = 'mes_solicitud']").children("option:selected").val();
+  $tipoHora = $("[name = 'tipohoras_s']").children("option:selected").val();
+  $horaInicio = $("#hora_inicio_s").val();
+  $horaFin = $("#hora_fin_s").val();
+  $horas = $("#horas_s").val();
+  $actividades = $("#actividades_s").val();
+
+  var obj = new Object();
+  obj.Id = $funcionario;
+  obj.Año = $año;
+  obj.Mes = $mes;
+  obj.Inicio = $horaInicio;
+  obj.Fin = $horaFin;
+  obj.Horas = $horas;
+  obj.TipoHora = $tipoHora;
+  obj.Actividad = $actividades;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire("Completado!", "Se ha Guardado la Solicitud", "success");
+      $("#tipohoras_h").val("");
+      $("#hora_inicio_s").val("");
+      $("#hora_fin_s").val("");
+      $("#horas_s").val("");
+      $("#actividades_s").val("");
+      $("#justificacion").val("");
+      $("#mes_s").val("");
+      $("#año_s").val("");
+      $("#tipohoras_s").val("");
+    } else {
+      Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
+    }
+  });
+}
+
+// Modal de detalles de solicitud
+function detallesSolicitud(id) {
+  var url = "solicitudes/detalles";
+  $("#funcionario_s").val("");
+  $("#cargo_s").val("");
+  $("#th_solicitud_s").val("");
+  $("#año_solicitud_s").val("");
+  $("#mes_solicitud_sd").val("");
+  $("#hora_inicio_s").val("");
+  $("#hora_fin_s").val("");
+  $("#valor_total_s").val("");
+  $("#valor_hora_s").val("");
+  $("#horas_s").val("");
+  $("#autorizado_s").val("");
+  $("#actividades_s").val("");
+  $.post(url + "/" + id).done(function (data) {
+    $("#funcionario_s").val(data.nombres + " " + data.apellidos);
+    $("#cargo_s").val(data.nombre);
+    $("#cargo_user_s").val(data.cargo_user_id);
+    $("#th_solicitud_s").val(data.tipo_hora_id);
+    $("#año_solicitud_s").val(data.año);
+    $("#mes_solicitud_sd").val(data.mes);
+    $("#hora_inicio_s").val(data.hora_inicio);
+    $("#hora_fin_s").val(data.hora_fin);
+    $("#valor_total_s").val(data.valor_total);
+    $("#valor_hora_s").val(data.valor_hora);
+    $("#horas_s").val(data.total_horas);
+    $("#autorizado_s").val(data.autorizacion);
+    $("#actividades_s").val(data.actividades);
+    $("#update_solicitud").attr("onclick", "updateSolicitud(" + id + ")");
+  });
+}
+
+// Función para actualizar solicitud
+function updateSolicitud(id) {
+  var url = "solicitudes/update";
+
+  $cargo_user = $("#cargo_user_s").val();
+  $th = $("#th_solicitud_s").val();
+  $año = $("#año_solicitud_s").val();
+  $mes = $("#mes_solicitud_sd").val();
+  $inicio = $("#hora_inicio_s").val();
+  $fin = $("#hora_fin_s").val();
+  $horas = $("#horas_s").val();
+  $actividades = $("#actividades_s").val();
+
+  var obj = new Object();
+  obj.Id = id;
+  obj.CargoUser = $cargo_user;
+  obj.Th = $th;
+  obj.Año = $año;
+  obj.Mes = $mes;
+  obj.Inicio = $inicio;
+  obj.Fin = $fin;
+  obj.Horas = $horas;
+  obj.Actividades = $actividades;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#modalDetallesSolicitud").modal("hide"); //ocultamos el modal
+    // console.log(data);
+    if (data == 1) {
+      Swal.fire(
+        "Completado!",
+        "Se ha editado la solicitud correctamente",
+        "success"
+      );
+    } else {
+      Swal.fire("Error!", "Error al editar la fecha, " + data + ".", "error");
+    }
+    $("#div_horas").load(" #dthorasExtras", function () {
+      $("#dthorasExtras")
+        .addClass("table-striped table-bordered")
+        .dataTable({
+          language: {
+            url: "DataTables/Spanish.json",
+          },
+          destroy: true,
+          responsive: true,
+          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+          buttons: ["copy", "excel", "csv"],
+        });
+    });
+  });
+}
+
+// Autoriza la solicitud
+function autorizarSolicitud(id) {
+  // console.log(id);
+  // console.log(idUser);
+  Swal.fire({
+    title: "¿Deseas Autorizar esta solicitud?",
+    text: "No se puede revertir esta acción",
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Autorizar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.value) {
+      var url = "solicitudes/autorizar";
+      var obj = new Object();
+      obj.Id = id;
+      var datos = JSON.stringify(obj);
+      $.post(url + "/" + datos).done(function (data) {
+        if (data == 1) {
+          Swal.fire("Completado!", "Se ha autorizado la solicitud", "success");
+          $("#botonSolicitud").html("");
+          var boton =
+            `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-secondary" onclick="detallesSolicitud(` +
+            id +
+            `);">Detalles de Solicitud</button> <button class="btn btn-primary"> Autorizado </button>`;
+          $("#botonSolicitud").append(boton);
+        } else {
+          Swal.fire("Error!", "Error al autorizar; " + data + ".", "error");
+        }
+      });
+    }
+  });
+}
+
 // ------------MODULO DE HORAS EXTRAS ----------------
 
 // Función para mostrar la solicitud
@@ -677,7 +846,7 @@ function selectSolicitud() {
   });
 }
 
-// Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
+// Carga la tabla de horas
 function tabla_de_horas() {
   var seleccion = document.getElementById("seleccionar_solicitud");
   var id = seleccion.options[seleccion.selectedIndex].value;
@@ -698,16 +867,12 @@ function tabla_de_horas() {
     if (data.solicitud.autorizacion == 0) {
       var boton =
         boton +
-        `<button onclick="autorizar_solicitud(` +
-        data.solicitud.id +
-        `);" class="btn btn-danger"> No Autorizado </button>`;
+        `<button class="btn btn-danger" onclick="autorizarSolicitud(` + data.solicitud.id + `)"> No Autorizado </button>`;
     }
     if (data.solicitud.autorizacion != 0) {
       var boton =
         boton +
-        `<button  onclick="autorizar_solicitud(` +
-        data.solicitud.id +
-        `);" class="btn btn-danger"> Autorizado </button>`;
+        `<button class="btn btn-primary"> Autorizado </button>`;
     }
     $("#botonSolicitud").append(boton);
     var t = $("#dthorasExtras").DataTable();
@@ -741,6 +906,7 @@ function guardarHoras() {
   $solicitud = $("[name = 'solicitud_h']").children("option:selected").val();
   $horaInicio = $("#hora_inicio").val();
   $horaFin = $("#hora_fin").val();
+  $horasT = $("#horas_trabajadas").val();
 
   var obj = new Object();
   obj.Id = $funcionario;
@@ -748,6 +914,7 @@ function guardarHoras() {
   obj.Inicio = $horaInicio;
   obj.Fin = $horaFin;
   obj.Solicitud = $solicitud;
+  obj.Horas = $horasT;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -775,45 +942,43 @@ function guardarHoras() {
   });
 }
 
+// Función para mostrar la solicitud
+function inputsRegistrarHora() {
+  var seleccion = document.getElementById("solicitud_h");
+  var id = seleccion.options[seleccion.selectedIndex].value;
+  var url = "solicitudes/detalles";
+  $("#inputs_solicitud").html("");
+  $.post(url + "/" + id).done(function (data) {
+    $("#inputs_solicitud").html("");
+    var inputs = `<div class="col-md-6">
+      <label data-error="wrong" data-success="right" for="orangeForm-name">Hora Inicio Solicitada</label>
+      <input readonly class="form-control bfh-timepicker" type="time" id="hora_inicio_solicitada">
+      </div>
+      <div class="col-md-6">
+      <label data-error="wrong" data-success="right" for="orangeForm-name">Hora Fin Solicitada</label>
+      <input readonly class="form-control bfh-timepicker" type="time" id="hora_fin_solicitada">
+      </div>`;
+    $("#inputs_solicitud").append(inputs);
+    $("#hora_inicio_solicitada").val(data.hora_inicio);
+    $("#hora_fin_solicitada").val(data.hora_fin);
+
+  });
+}
+
 // Función para el modal de detalles
 function detallesHora(id) {
   var url = "horas/detalle";
   $.post(url + "/" + id).done(function (data) {
     // console.log(data);
-    $("#inputs_e").html("");
     $("#funcionario_h").val(data.user.nombres + " " + data.user.apellidos);
     $("#cargo_h").val(data.cargo.nombre);
     $("#fecha_h").val(data.hora.fecha);
     $("#th_h").val(data.tipoHora.id);
-    $("#hora_inicio_h").val(data.hora.hi_solicitada);
-    $("#hora_fin_h").val(data.hora.hf_solicitada);
-    $("#horas_h").val(data.cantidadHoras);
+    $("#hora_inicio_h").val(data.hora.hi_registrada);
+    $("#hora_fin_h").val(data.hora.hf_registrada);
+    $("#horas_h").val(data.hora.horas_trabajadas);
     $("#valor_hora_h").val(data.valor);
     $("#valor_total_h").val(data.valorTotal);
-    $("#cargo_user_h").val(data.cargoUser.id);
-    $("#justificacion_h").val(data.hora.justificacion);
-    $("#autorizado_h").val(
-      data.autorizado.nombres + " " + data.autorizado.apellidos
-    );
-    if (data.hora.hi_ejecutada != "00:00:00" && data.hora.hf_ejecutada) {
-      var inputs = `<div class="form-row mb-6">
-        <div class="col">
-          <i class="fas fa-clock"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-pass">Hora Inicio Ejecutada</label>
-          <input type="time" id="hora_inicio_e" class="form-control validate">
-        </div>
-        <div class="col">
-          <i class="fas fa-clock"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-pass">Hora Fin Ejecutada</label>
-          <input type="time" id="hora_fin_e" class="form-control validate">
-        </div>
-      </div>`;
-      $("#inputs_e").append(inputs);
-      $("#hora_inicio_e").val(data.hora.hi_ejecutada);
-      $("#hora_fin_e").val(data.hora.hf_ejecutada);
-    } else {
-      $("#inputs_e").html("");
-    }
     $("#update_h").attr("onclick", "updateHoras(" + data.hora.id + ")");
   });
 }
@@ -822,22 +987,16 @@ function detallesHora(id) {
 function updateHoras(id) {
   var url = "horas/update";
   $fecha = $("#fecha_h").val();
-  $th = $("#th_h").val();
+  $horas = $("#horas_h").val();
   $hora_inicio = $("#hora_inicio_h").val();
   $hora_fin = $("#hora_fin_h").val();
-  $cargoUser = $("#cargo_user_h").val();
   // console.log($th);
-
-  $justificacion = $("#justificacion_h").val();
-
   var obj = new Object();
   obj.Id = id;
   obj.Fecha = $fecha;
-  obj.Th = $th;
-  obj.CargoUser = $cargoUser;
   obj.Inicio = $hora_inicio;
+  obj.Horas = $horas;
   obj.Fin = $hora_fin;
-  obj.Justificacion = $justificacion;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -901,8 +1060,7 @@ function autorizar(id) {
                 },
                 destroy: true,
                 responsive: true,
-                dom:
-                  'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+                dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
                 buttons: ["copy", "excel", "csv"],
               });
           });
@@ -1049,83 +1207,7 @@ function updateTipoHora(id) {
   });
 }
 
-// -------------- MODULO DE SOLICITUDES -----------
 
-// Guarda las horas extras
-function guardarSolicitud() {
-  var url = "solicitud/guardar";
-  $funcionario = $("#funcionario_cargo_user_s").val();
-  $año = $("[name = 'año_solicitud']").children("option:selected").val();
-  $mes = $("[name = 'mes_solicitud']").children("option:selected").val();
-  $tipoHora = $("[name = 'tipohoras_s']").children("option:selected").val();
-  $horaInicio = $("#hora_inicio_s").val();
-  $horaFin = $("#hora_fin_s").val();
-  $horas = $("#horas_s").val();
-  $actividades = $("#actividades_s").val();
-
-  var obj = new Object();
-  obj.Id = $funcionario;
-  obj.Año = $año;
-  obj.Mes = $mes;
-  obj.Inicio = $horaInicio;
-  obj.Fin = $horaFin;
-  obj.Horas = $horas;
-  obj.TipoHora = $tipoHora;
-  obj.Actividad = $actividades;
-
-  var datos = JSON.stringify(obj);
-  // console.log(datos);
-  $.post(url + "/" + datos).done(function (data) {
-    // console.log(data);
-    if (data == 1) {
-      Swal.fire("Completado!", "Se ha Guardado la Solicitud", "success");
-      $("#tipohoras_h").val("");
-      $("#hora_inicio_s").val("");
-      $("#hora_fin_s").val("");
-      $("#horas_s").val("");
-      $("#actividades_s").val("");
-      $("#justificacion").val("");
-      $("#mes_s").val("");
-      $("#año_s").val("");
-      $("#tipohoras_s").val("");
-    } else {
-      Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
-    }
-  });
-}
-
-// Modal de detalles de solicitud
-function detallesSolicitud(id) {
-  var url = "solicitudes/detalles";
-  $("#funcionario_s").val("");
-  $("#cargo_s").val("");
-  $("#th_solicitud_s").val("");
-  $("#año_solicitud_s").val("");
-  $("#mes_solicitud_sd").val("");
-  $("#hora_inicio_s").val("");
-  $("#hora_fin_s").val("");
-  $("#valor_total_s").val("");
-  $("#valor_hora_s").val("");
-  $("#horas_s").val("");
-  $("#autorizado_s").val("");
-  $("#actividades_s").val("");
-  $.post(url + "/" + id).done(function (data) {
-    console.log(data);
-    $("#funcionario_s").val(data.nombres + " " + data.apellidos);
-    $("#cargo_s").val(data.nombre);
-    $("#th_solicitud_s").val(data.nombre_hora);
-    $("#año_solicitud_s").val(data.año);
-    $("#mes_solicitud_sd").val(data.mes);
-    $("#hora_inicio_s").val(data.hora_inicio);
-    $("#hora_fin_s").val(data.hora_fin);
-    $("#valor_total_s").val(data.valor_total);
-    $("#valor_hora_s").val(data.valor_hora);
-    $("#horas_s").val(data.total_horas);
-    $("#autorizado_s").val(data.autorizacion);
-    $("#actividades_s").val(data.actividades);
-    // $("#updateFecha").attr("onclick", "updateFecha(" + data.id + ")");
-  });
-}
 
 // ------------MODULO DE REPORTES ----------------
 

@@ -16,6 +16,7 @@
               <i class="fas fa-user"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-name">Funcionario</label>
               <input readonly type="text" id="funcionario_s" class="form-control validate">
+              <input hidden type="text" id="cargo_user_s" class="form-control validate">
             </div>
             {{-- Input del cargo --}}
             <div class="col">
@@ -34,7 +35,7 @@
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Tipo de Hora</label>
               <select class="form-control validate" id="th_solicitud_s" name="tipohoras_s">
                 @foreach($tipoHoras as $tipoHora)
-                <option value="{{$tipoHora->nombre_hora}}">{{$tipoHora->nombre_hora}}</option>
+                <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
                 @endforeach
               </select>
             </div>
@@ -146,7 +147,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-secondary" id="update_s">Editar</button>
+        <button class="btn btn-secondary"  id="update_solicitud">Editar</button>
       </div>
     </div>
   </div>

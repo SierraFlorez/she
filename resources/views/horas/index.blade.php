@@ -57,6 +57,5 @@ Gestión Horas Extras
     </div>
 </div>
 @include('horas.modalVerDetallesHora')
-@include('horas.modalEjecutar')
 @include('solicitudes.modalDetallesSolicitud')
 @endsection

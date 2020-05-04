@@ -29,8 +29,6 @@ class VerifyCsrfToken extends BaseVerifier
         '/cargos/guardar/*',
         // Horas Extras
         '/horas/guardar/*',
-        '/horas/autorizar/*',
-        '/horas/ejecutar/*',
         '/horas/detalle/*',
         '/horas/update/*',
         '/horas/tabla/*',
@@ -52,6 +50,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/solicitud/guardar/*',
         '/solicitudes/*',
         '/solicitudes/detalles/*',
+        '/solicitudes/update/*',
+        '/solicitudes/autorizar/*',
 
 
 

@@ -37,7 +37,7 @@
             <div class="col">
               <i class="fas fa-moon"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Tipo de Hora</label>
-              <select class="form-control validate" id="th_h" name="tipohoras_h">
+              <select  readonly class="form-control validate" id="th_h" name="tipohoras_h">
                 @foreach($tipoHoras as $tipoHora)
                 <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
                 @endforeach
@@ -68,8 +68,8 @@
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-tag"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Cantidad de Horas</label>
-              <input readonly class="form-control validate" id="horas_h">
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Horas Trabajadas</label>
+              <input type="number" class="form-control validate" id="horas_h">
             </div>
             {{-- Input del sueldo  --}}
             <div class="col">
@@ -87,23 +87,9 @@
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Valor Total</label>
               <input readonly type="number" id="valor_total_h" class="form-control validate">
             </div>
-            <div class="col">
-              <i class="fas fa-user"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Autorizado</label>
-              <input readonly type="text" id="autorizado_h" class="form-control validate">
-            </div>
           </div>
-           {{-- Input Justificacion --}}
-           <div class="md-form mb-4">
-            <div class="form-row mb-6">
-           <div class="col" style="margin-top:">
-            <label data-error="wrong" data-success="right" for="orangeForm-name">Justificación:</label>
-            <textarea class="form-control" id="justificacion_h" style="height:100%;"></textarea>
-            <input hidden type="text" id="cargo_user_h" class="form-control validate">
-          </div>
+          <input hidden type="text" id="cargo_user_h" class="form-control validate">
         </div>
-        </div>
-      </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>

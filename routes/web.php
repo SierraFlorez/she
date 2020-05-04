@@ -81,9 +81,14 @@ Route::post('/solicitud/guardar/{id}', 'SolicitudesController@guardar')->name('/
 // TODAS LAS SOLICITUDES DEL USUARIO
 Route::post('/solicitudes/{id}', 'SolicitudesController@solicitudes')->name('/solicitudes/{id}')->middleware('auth');
 
-// D
-Route::post('/solicitudes/detalles/{id}', 'SolicitudesController@detalles')->name('/solicitudes/detalles{id}')->middleware('auth');
+// DETALLES SOLICITUDES
+Route::post('/solicitudes/detalles/{id}', 'SolicitudesController@detalles')->name('/solicitudes/detalles/{id}')->middleware('auth');
 
+// ACTUALIZAR SOLICITUD
+Route::post('/solicitudes/update/{id}', 'SolicitudesController@update')->name('/solicitudes/update/{id}')->middleware('auth');
+
+// AUTORIZAR SOLICITUD
+Route::post('/solicitudes/autorizar/{id}', 'SolicitudesController@autorizar')->name('/solicitudes/autorizar/{id}')->middleware('auth');
 
 
 // ----------- MODULO HORAS EXTRAS -------------------------------------
@@ -105,13 +110,6 @@ Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/hora
 
 // ACTUALIZA LAS HORAS
 Route::post('/horas/update/{id}', 'HorasExtrasController@update')->name('/horas/update/{id}')->middleware('auth');
-
-// AUTORIZA LAS HORAS
-Route::post('/horas/autorizar/{id}', 'HorasExtrasController@autorizar')->name('/horas/autorizar/{id}')->middleware('auth');
-
-// EJECUTA LAS HORAS
-Route::post('/horas/ejecutar/{id}', 'HorasExtrasController@ejecutar')->name('/horas/ejecutar/{id}')->middleware('auth');
-
 
 // ----------- MODULO DE PRESUPUESTO -------------------------------------
 

@@ -6,45 +6,49 @@ Registrar Horas Extras
 @endsection
 {{-- contenido de la pagina principal (solo ventana) --}}
 @section('main-content')
-
 <div class="row">
   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-    <div class="card row" style="margin-top: 5%;border-radius:10px">
+    <div class="card" style="margin-top: 5%;border-radius:10px">
       <center>
-        <br><h1> Registro de Horas Extras </h1>
+        <h1> Registro de Horas Extras </h1>
       </center>
-      <div class="card-body" >
+      <div class="card-body">
         {{--  --}}
         <center>
-            <div class="form-row mb-6">
-                <div class="col-md-4">
-                    <h5>Funcionario:</h5> &nbsp;{{$funcionario->nombres.' '.$funcionario->apellidos}}
-                    <hr style="width:300%;border-color:darkgrey">
-                </div>
-                <div class="col-md-4">
-                    <h5>Documento:</h5> &nbsp;{{$funcionario->documento}}
-                </div>
-                <div class="col-md-4">
-                    <h5>Cargo Actual:</h5> &nbsp;{{$funcionario->nombre}}
-                </div>
+          <div class="form-row mb-6">
+            <div class="col-md-4">
+              <h5>Funcionario:</h5> &nbsp;{{$funcionario->nombres.' '.$funcionario->apellidos}}
+              <hr style="width:50%;border-color:darkgrey">
             </div>
+            <div class="col-md-4">
+              <h5>Documento:</h5> &nbsp;{{$funcionario->documento}}
+              <hr style="width:50%;border-color:darkgrey">
+            </div>
+            <div class="col-md-4">
+              <h5>Cargo Actual:</h5> &nbsp;{{$funcionario->nombre}}
+              <hr style="width:50%;border-color:darkgrey">
+            </div>
+          </div>
         </center>
         <div class="form-row mb-6">
           {{-- Input de mes --}}
-          <div class="col">
-          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha de Registro</label>
-        <br>
-        <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12" max="2021-01-30">
-        <input class="form-control date-input-fallback" id="alt" type="text" placeholder="Seleccione una fecha">
-        <div id="picker" hidden></div>
+          <div class="col-md-6">
+            <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha de Registro</label>
+            <br>
+            <input hidden class="date-input-native" id="date" type="date" name="date_h" min="2020-01-12"
+              max="2021-01-30">
+            <input class="form-control date-input-fallback" id="alt" type="text" placeholder="Seleccione una fecha">
+            <div id="picker" hidden></div>
           </div>
           {{-- Input de tipo de hora --}}
-          <div class="col">
+          <div class="col-md-6">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccione una Solicitud</label>
-            <select class="form-control validate" id="solicitud_h" name="solicitud_h">
-              <option value="">Seleccione una Solicitud </option>
+            <select class="form-control validate" id="solicitud_h" name="solicitud_h" onchange="inputsRegistrarHora();">
+              <option value="o">Seleccione una Solicitud </option>
               @foreach($solicitudes as $solicitud)
-              <option value="{{$solicitud->id}}">{{$solicitud->actividades}} / {{$solicitud->presupuesto->año}}-{{$solicitud->presupuesto->mes}} / {{$solicitud->tipoHoras->nombre_hora}}</option>
+              <option value="{{$solicitud->id}}">{{$solicitud->actividades}} /
+                {{$solicitud->presupuesto->año}}-{{$solicitud->presupuesto->mes}} /
+                {{$solicitud->tipoHoras->nombre_hora}}</option>
               @endforeach
             </select>
           </div>
@@ -56,23 +60,32 @@ Registrar Horas Extras
             </label>
             <input class="form-control bfh-timepicker" type="time" id="hora_inicio">
           </div>
-          {{-- Input de tipo de hora --}}
+          {{-- Input de hora fin --}}
           <div class="col-md-6">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Hora fin:</label>
             <input class="form-control" type="time" id="hora_fin">
-          </div>          
-            <div class="col-md-6">
-                <input class="form-control" type="hidden" value="{{$funcionario->id}}" id="funcionario_cargo_user">
-            </div>
+          </div>
+          <input class="form-control" type="hidden" value="{{$funcionario->id}}" id="funcionario_cargo_user">
+        </div>
+        <div class="form-row mb-6" style="margin-top:1%">
+          {{-- Input de total horas --}}
+          <div class="col-md-6">
+            <label data-error="wrong" data-success="right" for="orangeForm-name">Total horas trabajadas
+            </label>
+            <input placeholder="En caso que sea media hora agregar el .5" class="form-control bfh-timepicker"
+              type="number" id="horas_trabajadas">
+          </div>
+        </div>
+        <div id="inputs_solicitud" class="form-row mb-6" style="margin-top:1%">
         </div><br>
         <div class="row">
-        <div class="col">
-        <button class="btn btn-success" onclick="guardarHoras()"> Guardar </button>
+          <div class="col">
+            <button class="btn btn-success" onclick="guardarHoras()"> Guardar </button>
+          </div>
+          <div class="col-4">
+            <a class="btn btn-secondary" href="{{ url("/horas_extras") }}"> Volver </a>
+          </div>
         </div>
-        <div class="col-3">
-        <a class="btn btn-secondary" href="{{ url("/horas_extras") }}"> Volver </a>
-        </div>
-      </div>
       </div><br>
     </div>
   </div>
@@ -80,104 +93,110 @@ Registrar Horas Extras
 
 {{-- Función para el input date --}}
 <script>
-  (function(){
-        'use strict';
+  (function () {
+    'use strict';
 
-        var dayNamesShort = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+    var dayNamesShort = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
 
-        var monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    var monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
+      'Octubre', 'Noviembre', 'Diciembre'
+    ];
 
-        var icon = '<svg viewBox="0 0 512 512"><polygon points="268.395,256 134.559,121.521 206.422,50 411.441,256 206.422,462 134.559,390.477 "/></svg>';
+    var icon =
+      '<svg viewBox="0 0 512 512"><polygon points="268.395,256 134.559,121.521 206.422,50 411.441,256 206.422,462 134.559,390.477 "/></svg>';
 
-        var root = document.getElementById('picker');
+    var root = document.getElementById('picker');
 
-        var dateInput = document.getElementById('date');
+    var dateInput = document.getElementById('date');
 
-        var altInput = document.getElementById('alt');
+    var altInput = document.getElementById('alt');
 
-        var doc = document.documentElement;
+    var doc = document.documentElement;
 
-        function format ( dt ) {
+    function format(dt) {
 
-        //   return Picker.prototype.pad(dt.getDate()) + '-' + monthNames[dt.getMonth()].slice(0,3) + '-' + dt.getFullYear();
-          return Picker.prototype.pad(dt.getFullYear() + '-' + monthNames[dt.getMonth()].slice(0,3) + '-' + dt.getDate());
-        }
+      //   return Picker.prototype.pad(dt.getDate()) + '-' + monthNames[dt.getMonth()].slice(0,3) + '-' + dt.getFullYear();
+      return Picker.prototype.pad(dt.getFullYear() + '-' + monthNames[dt.getMonth()].slice(0, 3) + '-' + dt
+        .getDate());
+    }
 
-        function show ( ) {
+    function show() {
 
-          root.removeAttribute('hidden');
+      root.removeAttribute('hidden');
 
-        }
+    }
 
-        function hide ( ) {
+    function hide() {
 
-          root.setAttribute('hidden', '');
+      root.setAttribute('hidden', '');
 
-          doc.removeEventListener('click', hide);
+      doc.removeEventListener('click', hide);
 
-        }
+    }
 
-        function onSelectHandler ( ) {
+    function onSelectHandler() {
 
-          var value = this.get();
+      var value = this.get();
 
-          if ( value.start ) {
+      if (value.start) {
 
-            dateInput.value = value.start.Ymd();
+        dateInput.value = value.start.Ymd();
 
-            altInput.value = format(value.start);
+        altInput.value = format(value.start);
 
-            hide();
+        hide();
 
-          }
+      }
 
-        }
+    }
 
-        var picker = new Picker(root, {
+    var picker = new Picker(root, {
 
-          min: new Date(dateInput.min),
+      min: new Date(dateInput.min),
 
-          max: new Date(dateInput.max),
+      max: new Date(dateInput.max),
 
-          icon: icon,
+      icon: icon,
 
-          twoCalendars: false,
+      twoCalendars: false,
 
-          dayNamesShort: dayNamesShort,
+      dayNamesShort: dayNamesShort,
 
-          monthNames: monthNames,
+      monthNames: monthNames,
 
-          onSelect: onSelectHandler
+      onSelect: onSelectHandler
 
-        });
+    });
 
 
-        root.parentElement.addEventListener('click', function ( e ) { e.stopPropagation(); });
+    root.parentElement.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
 
-        dateInput.addEventListener('change', function ( ) {
+    dateInput.addEventListener('change', function () {
 
-          if ( dateInput.value ) {
+      if (dateInput.value) {
 
-            picker.select(new Date(dateInput.value));
+        picker.select(new Date(dateInput.value));
 
-          } else {
+      } else {
 
-            picker.clear();
+        picker.clear();
 
-          }
+      }
 
-        });
+    });
 
-        altInput.addEventListener('focus', function ( ) {
+    altInput.addEventListener('focus', function () {
 
-          altInput.blur();
+      altInput.blur();
 
-          show();
+      show();
 
-          doc.addEventListener('click', hide, false);
+      doc.addEventListener('click', hide, false);
 
-        });
+    });
 
-      }());
+  }());
 </script>
 @endsection
