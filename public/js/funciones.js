@@ -222,6 +222,16 @@ function detallesUsuarioCargoSesion(id) {
 // Función para el modal de detalles
 function detallesUsuario(id) {
   var url = "usuarios/detalle";
+  $("#documento_user_d").val("");
+  $("#nombres_user_d").val("");
+  $("#apellidos_user_d").val("");
+  $("#cargo_user_d").val("");
+  $("#centro_user_d").val("");
+  $("#regional_user_d").val("");
+  $("#sueldo_user_d").val("");
+  $("#email_user_d").val("");
+  $("#telefono_user_d").val("");
+  $("#tipoDocumento_user_d").val("");
   $.post(url + "/" + id).done(function (data) {
     // console.log(data);
     $("#documento_user_d").val(data.usuario.documento);
@@ -268,16 +278,6 @@ function updateUsuario(id) {
   var datos = JSON.stringify(obj);
   // console.log(datos);
   $.post(url + "/" + datos).done(function (data) {
-    $("#documento_user_d").val(data.documento);
-    $("#nombres_user_d").val(data.nombres);
-    $("#apellidos_user_d").val(data.apellidos);
-    $("#email_user_d").val(data.email);
-    $("#centro_user_d").val(data.centro);
-    $("#regional_user_d").val(data.regional);
-    $("#cargo_user_d").val(data.cargo);
-    $("#sueldo_user_d").val(data.sueldo);
-    $("#telefono_user_d").val(data.telefono);
-    $("#tipoDocumento_user_d").val(data.tipo_documento);
     $("#modalDetalle").modal("hide"); //ocultamos el modal
     // console.log(data);
     if (data == 1) {
@@ -307,6 +307,12 @@ function updateUsuario(id) {
 // Muestra la información del cargo del usuario
 function detallesUsuarioCargo(id) {
   var url = "usuarios/detalleCargo";
+  $("#cargov_d").val("");
+  $("#sueldov_d").val("");
+  $("#diurna_d").val("");
+  $("#nocturna_d").val("");
+  $("#dominical_d").val("");
+  $("#nocturno_d").val("");
   $.post(url + "/" + id).done(function (data) {
     // console.log(data.cargo);
     $("#cargov_d").val(data.cargo.nombre);
@@ -403,10 +409,7 @@ function inactivar(id) {
     });
   });
 }
-// Mensaje en caso que no tenga permiso
-function Nopermiso() {
-  Swal.fire("Error!", "Usted no tiene permiso para editar esto", "error");
-}
+
 // Guarda usuario en la base de datos
 function crearUsuario() {
   var url = "registrar/guardar";
@@ -440,14 +443,6 @@ function crearUsuario() {
   var datos = JSON.stringify(obj);
   // console.log(datos);
   $.post(url + "/" + datos).done(function (data) {
-    $("#documento_user").val(data.documento);
-    $("#nombres_user").val(data.nombres);
-    $("#apellidos_user").val(data.apellidos);
-    $("#email_user").val(data.email);
-    $("#eps_user").val(data.eps);
-    $("#telefono_user").val(data.telefono);
-    $("#tipoDocumento_user").val(data.tipo_documento);
-    $("#rol_user").val(data.rol_id);
     $("#modalRegistrarUsuario").modal("hide"); //ocultamos el modal
     // console.log(data);
     if (data == 1) {
@@ -517,6 +512,12 @@ $("#passReset").click(function () {
 
 // Función para el modal de detalles
 function detallesCargo(id) {
+  $("#nombre_cargo_d").val("");
+  $("#sueldo_cargo_d").val("");
+  $("#diurna_cargo_d").val("");
+  $("#nocturna_cargo_d").val("");
+  $("#dominical_cargo_d").val("");
+  $("#nocturno_cargo_d").val("");
   var url = "cargos/detalle";
   $.post(url + "/" + id).done(function (data) {
     $("#nombre_cargo_d").val(data.nombre);
@@ -552,12 +553,6 @@ function updateCargo(id) {
   var datos = JSON.stringify(obj);
   // console.log(datos);
   $.post(url + "/" + datos).done(function (data) {
-    $("#nombre_cargo_d").val(data.nombre);
-    $("#sueldo_cargo_d").val(data.sueldo);
-    $("#diurna_cargo_d").val(data.valor_diurna);
-    $("#nocturna_cargo_d").val(data.valor_nocturna);
-    $("#dominical_cargo_d").val(data.valor_dominical);
-    $("#nocturno_cargo_d").val(data.valor_recargo);
     $("#modalDetalleCargo").modal("hide"); //ocultamos el modal
     // console.log(data);
     if (data == 1) {
@@ -854,49 +849,54 @@ function tabla_de_horas() {
   var seleccion = document.getElementById("seleccionar_solicitud");
   var id = seleccion.options[seleccion.selectedIndex].value;
 
+  $("#botonSolicitud").html("");
   var url = "horas/tabla";
   var obj = new Object();
   obj.Id = id;
 
   var datos = JSON.stringify(obj);
-  // console.log(id);
   $.post(url + "/" + datos).done(function (data) {
-    $("#botonSolicitud").html("");
-    var boton = 0;
-    var boton =
-      `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-success" onclick="detallesSolicitud(` +
-      data.solicitud.id +
-      `);">Detalles de Solicitud</button>`;
-    if (data.solicitud.autorizacion == 0) {
+    if (data.solicitud == null) {
+      var t = $("#dthorasExtras").DataTable();
+      t.clear().draw();
+    } else {
+
+      var boton = 0;
       var boton =
-        boton +
-        `<button class="btn btn-danger" onclick="autorizarSolicitud(` + data.solicitud.id + `)"> No Autorizado </button>`;
-    }
-    if (data.solicitud.autorizacion != 0) {
-      var boton =
-        boton +
-        `<button class="btn btn-primary"> Autorizado </button>`;
-    }
-    $("#botonSolicitud").append(boton);
-    var t = $("#dthorasExtras").DataTable();
-    t.clear().draw();
-    // console.log(data);
-    for (var i = 0; i < data.horas.length; i++) {
-      var botonEditar =
-        `<button class="btn btn-success" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
-        data.horas[i].id +
-        `)">Detalles</button>`;
-      t.row
-        .add([
-          data.horas[i].nombres + " " + data.horas[i].apellidos,
-          data.horas[i].nombre,
-          data.horas[i].fecha,
-          data.horas[i].hi_registrada,
-          data.horas[i].hf_registrada,
-          data.horas[i].nombre_hora,
-          botonEditar,
-        ])
-        .draw(false);
+        `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-success" onclick="detallesSolicitud(` +
+        data.solicitud.id +
+        `);">Detalles de Solicitud</button>`;
+      if (data.solicitud.autorizacion == 0) {
+        var boton =
+          boton +
+          `<button class="btn btn-danger" onclick="autorizarSolicitud(` + data.solicitud.id + `)"> No Autorizado </button>`;
+      }
+      if (data.solicitud.autorizacion != 0) {
+        var boton =
+          boton +
+          `<button class="btn btn-primary"> Autorizado </button>`;
+      }
+      $("#botonSolicitud").append(boton);
+      var t = $("#dthorasExtras").DataTable();
+      t.clear().draw();
+      // console.log(data);
+      for (var i = 0; i < data.horas.length; i++) {
+        var botonEditar =
+          `<button class="btn btn-success" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
+          data.horas[i].id +
+          `)">Detalles</button>`;
+        t.row
+          .add([
+            data.horas[i].nombres + " " + data.horas[i].apellidos,
+            data.horas[i].nombre,
+            data.horas[i].fecha,
+            data.horas[i].hi_registrada,
+            data.horas[i].hf_registrada,
+            data.horas[i].nombre_hora,
+            botonEditar,
+          ])
+          .draw(false);
+      }
     }
   });
 }
@@ -971,6 +971,15 @@ function inputsRegistrarHora() {
 // Función para el modal de detalles
 function detallesHora(id) {
   var url = "horas/detalle";
+  $("#funcionario_h").val("");
+  $("#cargo_h").val("");
+  $("#fecha_h").val("");
+  $("#th_h").val("");
+  $("#hora_inicio_h").val("");
+  $("#hora_fin_h").val("");
+  $("#horas_h").val("");
+  $("#valor_hora_h").val("");
+  $("#valor_total_h").val("");
   $.post(url + "/" + id).done(function (data) {
     // console.log(data);
     $("#funcionario_h").val(data.user.nombres + " " + data.user.apellidos);
@@ -1012,83 +1021,23 @@ function updateHoras(id) {
         "Se ha editado correctamente las Horas Extras ",
         "success"
       );
+      $("#div_horas").load(" #dthorasExtras", function () {
+        $("#dthorasExtras")
+          .addClass("table table-bordered")
+          .dataTable({
+            language: {
+              url: "DataTables/Spanish.json",
+            },
+            destroy: false,
+            responsive: true,
+            dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+            buttons: ["copy", "excel", "csv"],
+          });
+      });
     } else {
       Swal.fire("Error!", "Error al editar horas; " + data + ".", "error");
     }
-    $("#div_horas").load(" #dthorasExtras", function () {
-      $("#dthorasExtras")
-        .addClass("table table-bordered")
-        .dataTable({
-          language: {
-            url: "DataTables/Spanish.json",
-          },
-          destroy: false,
-          responsive: true,
-          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
-          buttons: ["copy", "excel", "csv"],
-        });
-    });
   });
-}
-
-// Autoriza las horas
-function autorizar(id) {
-  // console.log(id);
-  // console.log(idUser);
-  Swal.fire({
-    title: "¿Deseas Autorizar estas horas?",
-    text: "No se puede revertir esta acción",
-    type: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Autorizar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.value) {
-      var url = "horas/autorizar";
-      var obj = new Object();
-      obj.Id = id;
-      var datos = JSON.stringify(obj);
-      $.post(url + "/" + datos).done(function (data) {
-        if (data == 1) {
-          Swal.fire("Completado!", "Se han autorizado las horas", "success");
-
-          $("#div_horas").load(" #dthorasExtras", function () {
-            $("#dthorasExtras")
-              .addClass("table table-bordered")
-              .dataTable({
-                language: {
-                  url: "DataTables/Spanish.json",
-                },
-                destroy: true,
-                responsive: true,
-                dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
-                buttons: ["copy", "excel", "csv"],
-              });
-          });
-        } else {
-          Swal.fire("Error!", "Error al autorizar; " + data + ".", "error");
-        }
-      });
-    }
-  });
-}
-
-// ------------MODULO DE REPORTES ----------------
-
-function solicitudAutorizacion() {
-  var url = "reportes/solicitudAutorizacion";
-  $funcionario = $("[name = 'select_f']").children("option:selected").val();
-  $mes = $("[name = 'select_mes']").children("option:selected").val();
-  $año = $("[name = 'select_año_r']").children("option:selected").val();
-  console.log(url);
-  var obj = new Object();
-  obj.Id = $funcionario;
-  obj.Mes = $mes;
-  obj.Año = $año;
-  var datos = JSON.stringify(obj);
-  $.post(url + "/" + datos).done(function (data) {});
 }
 
 // ---------- MODULO TIPO DE HORAS ---------
@@ -1096,6 +1045,9 @@ function solicitudAutorizacion() {
 // Función para el modal de detalles
 function detallesTipoHora(id) {
   var url = "tipo_horas/detalle";
+  $("#nombre_hora_t").val("");
+  $("#hora_inicio_t").val("");
+  $("#hora_fin_t").val("");
   $.post(url + "/" + id).done(function (data) {
     $("#nombre_hora_t").val(data.nombre_hora);
     $("#hora_inicio_t").val(data.hora_inicio);
@@ -1155,6 +1107,9 @@ function updateTipoHora(id) {
 
 // Función para el modal de detalles
 function detallesFecha(id) {
+  $("#nombre_fecha_t").val("");
+  $("#fecha_inicio_t").val("");
+  $("#fecha_fin_t").val("");
   var url = "fechas_especiales/detalle";
   $.post(url + "/" + id).done(function (data) {
     $("#nombre_fecha_t").val(data.descripcion);
@@ -1340,7 +1295,7 @@ function tabla_de_presupuestos() {
       </button>`;
       t.row
         .add([
-          data.solicitudes[i].nombres + data.solicitudes[i].apellidos,
+          data.solicitudes[i].nombres + " " + data.solicitudes[i].apellidos,
           data.solicitudes[i].nombre,
           data.solicitudes[i].total_horas,
           data.solicitudes[i].hora_inicio,
@@ -1436,4 +1391,3 @@ function updatePresupuesto(id) {
     }
   });
 }
-

@@ -80,7 +80,7 @@ class SolicitudesController extends Controller
             $id = $solicitud['id'];
         }
         // Consulta para saber si la franja del tiempo se encuentra disponible
-        $solicitudIgual =  Solicitud::where([['cargo_user_id', '=', $solicitud['cargo_user_id']], ['presupuesto_id', '=', $solicitud['presupuesto_id']], ['hora_inicio', '=', $solicitud['hora_inicio']], ['hora_fin', '=', $solicitud['hora_fin']], ['actividades', '=', $solicitud['actividades']], ['autorizacion','!=',0]])->first();
+        $solicitudIgual =  Solicitud::where([['cargo_user_id', '=', $solicitud['cargo_user_id']], ['presupuesto_id', '=', $solicitud['presupuesto_id']], ['hora_inicio', '=', $solicitud['hora_inicio']], ['hora_fin', '=', $solicitud['hora_fin']], ['actividades', '=', $solicitud['actividades']], ['autorizacion', '!=', 0]])->first();
         if ($solicitudIgual != NULL) {
             $msg = 'ya existe esa misma solicitud';
             return ($msg);
@@ -201,7 +201,8 @@ class SolicitudesController extends Controller
         $valores = $this->calcularValorHoras($solicitud);
         $solicitud['valor_total'] = $valores['valor_total'];
         $solicitud['valor_hora'] = $valores['valor'];
-        $solicitud['horas_restantes']=Hora::where('solicitud_id',$id)->sum('horas_trabajadas');
+        $solicitud['horas_restantes'] = Hora::where('solicitud_id', $id)->sum('horas_trabajadas');
+        $solicitud['horas_restantes'] = $solicitud['horas_restantes']-$solicitud['total_horas'];
         // dd($solicitud);
         if ($solicitud['autorizacion'] == 0) {
             $solicitud['autorizacion'] = "La solicitud no ha sido autorizada";
@@ -264,7 +265,10 @@ class SolicitudesController extends Controller
     // Autoriza las horas
     public function autorizar($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        if (Auth::User()->roles->id != 1) {
+            $msg = "no tienes el permiso para ejecutar esta acción";
+            return ($msg);
+        }
         $dato = json_decode($data, true);
         // dd($dato);
         $solicitud = Solicitud::find($dato['Id']);

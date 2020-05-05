@@ -49,10 +49,14 @@ class horasExtrasController extends Controller
             // dd($usuarios);
             return view('horas.index', compact('horas', 'tipoHoras', 'usuarios'));
         } else {
-            $id=CargoUser::where('estado','1')->where('user_id',Auth::User()->id)->first();
-            $solicitudes = Solicitud::join('presupuestos','presupuestos.id','presupuesto_id')->where('cargo_user_id', $id->id)->orderBy('año', 'asc')
-                ->orderBy('mes', 'asc')->get();
-            return view('horas.indexF', compact('solicitudes','tipoHoras'));
+            $id = CargoUser::where('estado', '1')->where('user_id', Auth::User()->id)->first();
+            $solicitudes = Solicitud::join('presupuestos', 'presupuestos.id', 'presupuesto_id')->where('cargo_user_id', $id->id)->orderBy('año', 'asc')
+                ->orderBy('mes', 'asc')
+                ->select(
+                    'solicitudes.id',
+                    'solicitudes.actividades'
+                )->get();
+            return view('horas.indexF', compact('solicitudes', 'tipoHoras'));
         }
     }
     // Llena la tabla con cada peticion del js
@@ -153,7 +157,7 @@ class horasExtrasController extends Controller
         }
         $horaExistente = Hora::where([
             ['solicitud_id', '=', $horasextras['solicitud_id']], ['fecha', '=', $horasextras['fecha']],
-            ['hi_registrada', '=', $horasextras['hi_registrada']], ['hf_registrada', '=', $horasextras['hf_registrada']],['id','!=',$id]
+            ['hi_registrada', '=', $horasextras['hi_registrada']], ['hf_registrada', '=', $horasextras['hf_registrada']], ['id', '!=', $id]
         ])->first();
         // En caso que exista una hora exactamente igual
         if ($horaExistente == !NULL) {

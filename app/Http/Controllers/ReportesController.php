@@ -54,6 +54,8 @@ class ReportesController extends Controller
     // Reporte de solicitud
     public function solicitudAutorizacion($dato)
     {
+        $dato['select_f'] = str_replace('{"id":', '', $dato['select_f']);
+        $dato['select_f'] = str_replace('}', '', $dato['select_f']);
         setlocale(LC_ALL, '');
         $id = $dato['select_f'];
         $mes = $dato['select_mes'];
@@ -372,6 +374,8 @@ class ReportesController extends Controller
     // Reporte de legalización
     public function legalizacionHoras($dato)
     {
+        $dato['select_f'] = str_replace('{"id":', '', $dato['select_f']);
+        $dato['select_f'] = str_replace('}', '', $dato['select_f']);
         setlocale(LC_ALL, '');
         $id = $dato['select_f'];
         $mes = $dato['select_mes'];

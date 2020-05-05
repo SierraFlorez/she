@@ -22,17 +22,18 @@ Gestión Horas Extras
             </div>
             <div style="margin-top: 1%; padding-left: 2%;padding-right: 2%">
                 <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Solicitud</label>
-                <select class="form-control validate" id="seleccionar_usuario" name="" onchange="selectSolicitud();">
+                <select class="form-control validate" id="seleccionar_solicitud" name="" onchange="tabla_de_horas();">
                     <option value="0"></option>
                     @foreach ($solicitudes as $solicitud)
                     <option value="{{$solicitud->id}}">{{$solicitud->actividades}}</option>
                     @endforeach
                 </select>
             </div>
-            <div style="margin-top:1%;padding-left: 2%" id="select_presupuesto" class="row">
-            </div>
+            <div style="margin-top:2%" id="botonSolicitud" class="col-md-6"></div>
             <div class="card-header" id="div_horas">
-                <center><h2> Horas Registradas </h2></center>
+                <center>
+                    <h2> Horas Registradas </h2>
+                </center>
                 <table id="dthorasExtras" class="table table-hover " cellspacing="0" width="100%"
                     style="text-align: center">
                     <thead class="thead">
