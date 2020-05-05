@@ -116,7 +116,7 @@ Registrar Solicitud
             <button class="btn btn-success" onclick="guardarSolicitud()"> Guardar </button>
           </div>
           <div class="col-4">
-            <a class="btn btn-secondary" href="{{ url("/horas_extras") }}"> Volver </a>
+            <a class="btn btn-success" href="{{ url("/horas_extras") }}"> Volver </a>
           </div>
         </div>
       </div><br>

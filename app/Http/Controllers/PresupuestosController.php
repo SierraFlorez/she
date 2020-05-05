@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Presupuesto;
 use App\Solicitud;
 use App\TipoHora;
+use Illuminate\Support\Facades\Auth;
 // </modelos>
 use Validator;
-
 
 class PresupuestosController extends Controller
 {
     // Retorna la vista de presupuestos
     public function index()
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $tipoHoras = TipoHora::all();
         $presupuestos = Presupuesto::where('id', '!=', '0')->get();
         return view('presupuestos.index', compact('presupuestos', 'tipoHoras'));
@@ -21,6 +22,7 @@ class PresupuestosController extends Controller
     // Guarda la información de las horas extras
     public function guardar($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         // dd($dato);
         $presupuesto['presupuesto_inicial'] = $dato["Presupuesto"];
@@ -51,6 +53,7 @@ class PresupuestosController extends Controller
     // Llena la tabla de presupuestos mostrando las horas extras de dicho presupuesto
     public function tabla($id)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $presupuesto = Presupuesto::Find($id);
         $presupuesto['restante'] = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
         $solicitudes = Solicitud::where('presupuesto_id', '=', $id)
@@ -65,6 +68,7 @@ class PresupuestosController extends Controller
     //  Llena el modulo de detalles del presupuesto
     public function detalle($id)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $presupuesto = Presupuesto::find($id);
         $restante = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
         $presupuesto['restante'] = $restante;
@@ -73,6 +77,7 @@ class PresupuestosController extends Controller
     // Actualiza la información del presupuesto
     public function update($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $presupuesto = Presupuesto::find($dato['Id']);
         $Presupuesto['id'] = $dato["Id"];

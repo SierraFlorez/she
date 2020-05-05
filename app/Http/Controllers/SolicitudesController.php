@@ -264,6 +264,7 @@ class SolicitudesController extends Controller
     // Autoriza las horas
     public function autorizar($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         // dd($dato);
         $solicitud = Solicitud::find($dato['Id']);

@@ -116,7 +116,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-secondary" id="" onclick="crearUsuario()">Guardar</button>
+        <button class="btn btn-success" id="" onclick="crearUsuario()">Guardar</button>
       </div>
     </div>
   </div>

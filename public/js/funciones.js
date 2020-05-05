@@ -48,7 +48,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   $("#dthorasExtras")
     .addClass(
-      "table-striped table-sm table-hover table-dark table table-bordered"
+      "table table-sm table-hover table table table-bordered"
     )
     .dataTable({
       language: {
@@ -63,7 +63,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   $("#dtPresupuestos")
     .addClass(
-      "table-striped table-sm table-hover table-dark table table-bordered"
+      "table table-sm table-hover table table table-bordered"
     )
     .dataTable({
       language: {
@@ -78,7 +78,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   $("#dtCargos")
     .addClass(
-      "table-striped table-sm table-hover table-dark table table-bordered"
+      "table table-sm table-hover table table table-bordered"
     )
     .dataTable({
       language: {
@@ -94,7 +94,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   $("#dtTipoHoras")
     .addClass(
-      "table-striped table-sm table-hover table-dark table table-bordered"
+      "table table-sm table-hover table table table-bordered"
     )
     .dataTable({
       language: {
@@ -110,7 +110,7 @@ $(document).ready(function () {
 $(document).ready(function () {
   $("#dtFechas")
     .addClass(
-      "table-striped table-sm table-hover table-dark table table-bordered"
+      "table table-sm table-hover table table table-bordered"
     )
     .dataTable({
       language: {
@@ -189,7 +189,7 @@ function updateUsuarioSesion(id) {
     }
     $("#table_div_user").load(" #dtUsuarios", function () {
       $("#dtUsuarios")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -291,7 +291,7 @@ function updateUsuario(id) {
     }
     $("#table_div_user").load(" #dtUsuarios", function () {
       $("#dtUsuarios")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -346,7 +346,7 @@ function cambiarCargo(id) {
 
     $("#table_div_user").load(" #dtUsuarios", function () {
       $("#dtUsuarios")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -368,7 +368,7 @@ function activar(id) {
 
     $("#table_div_user").load(" #dtUsuarios", function () {
       $("#dtUsuarios")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -390,7 +390,7 @@ function inactivar(id) {
 
     $("#table_div_user").load(" #dtUsuarios", function () {
       $("#dtUsuarios")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: ".DataTables/Spanish.json",
@@ -465,7 +465,7 @@ function crearUsuario() {
     }
     $("#table_div_user").load(" #dtUsuarios", function () {
       $("#dtUsuarios")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: ".DataTables/Spanish.json",
@@ -567,7 +567,7 @@ function updateCargo(id) {
     }
     $("#table_div_cargos").load(" #dtCargos", function () {
       $("#dtCargos")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -620,7 +620,7 @@ function crearCargo() {
     }
     $("#table_div_cargos").load(" #dtCargos", function () {
       $("#dtCargos")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -754,7 +754,7 @@ function updateSolicitud(id) {
     }
     $("#div_horas").load(" #dthorasExtras", function () {
       $("#dthorasExtras")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -792,7 +792,7 @@ function autorizarSolicitud(id) {
           Swal.fire("Completado!", "Se ha autorizado la solicitud", "success");
           $("#botonSolicitud").html("");
           var boton =
-            `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-secondary" onclick="detallesSolicitud(` +
+            `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-success" onclick="detallesSolicitud(` +
             id +
             `);">Detalles de Solicitud</button> <button class="btn btn-primary"> Autorizado </button>`;
           $("#botonSolicitud").append(boton);
@@ -864,7 +864,7 @@ function tabla_de_horas() {
     $("#botonSolicitud").html("");
     var boton = 0;
     var boton =
-      `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-secondary" onclick="detallesSolicitud(` +
+      `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-success" onclick="detallesSolicitud(` +
       data.solicitud.id +
       `);">Detalles de Solicitud</button>`;
     if (data.solicitud.autorizacion == 0) {
@@ -883,7 +883,7 @@ function tabla_de_horas() {
     // console.log(data);
     for (var i = 0; i < data.horas.length; i++) {
       var botonEditar =
-        `<button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
+        `<button class="btn btn-success" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
         data.horas[i].id +
         `)">Detalles</button>`;
       t.row
@@ -1017,7 +1017,7 @@ function updateHoras(id) {
     }
     $("#div_horas").load(" #dthorasExtras", function () {
       $("#dthorasExtras")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -1056,7 +1056,7 @@ function autorizar(id) {
 
           $("#div_horas").load(" #dthorasExtras", function () {
             $("#dthorasExtras")
-              .addClass("table-striped table-bordered")
+              .addClass("table table-bordered")
               .dataTable({
                 language: {
                   url: "DataTables/Spanish.json",
@@ -1137,7 +1137,7 @@ function updateTipoHora(id) {
     }
     $("#table_div_tipoHoras").load(" #dtTipoHoras", function () {
       $("#dtTipoHoras")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -1193,7 +1193,7 @@ function updateFecha(id) {
     }
     $("#table_div_fechas").load(" #dtFechas", function () {
       $("#dtFechas")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: "DataTables/Spanish.json",
@@ -1238,7 +1238,7 @@ function saveFecha() {
     }
     $("#table_div_fechas").load(" #dtFechas", function () {
       $("#dtFechas")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: ".DataTables/Spanish.json",
@@ -1290,7 +1290,7 @@ function savePresupuesto() {
     }
     $("#div_presupuesto").load(" #dtPresupuestos", function () {
       $("#dtPresupuestos")
-        .addClass("table-striped table-bordered")
+        .addClass("table table-bordered")
         .dataTable({
           language: {
             url: ".DataTables/Spanish.json",
@@ -1311,7 +1311,7 @@ function tabla_de_presupuestos() {
   var url = "presupuesto/tabla";
   var boton_presupuesto =
     `<div class="col-md-12">
-    <button class="btn btn-secondary" data-toggle="modal" data-target="#modalDetallePresupuesto" 
+    <button class="btn btn-success" data-toggle="modal" data-target="#modalDetallePresupuesto" 
     onclick="detallesPresupuesto(` +
     id +
     `)">Detalles de presupuesto</button>
@@ -1334,7 +1334,7 @@ function tabla_de_presupuestos() {
     var t = $("#dtPresupuestos").DataTable();
     for (var i = 0; i < data.solicitudes.length; i++) {
       var boton =
-        `<button class="btn btn-secondary" onclick="detallesSolicitudP(` +
+        `<button class="btn btn-success" onclick="detallesSolicitudP(` +
         data.solicitudes[i].id +
         `)" data-toggle="modal" data-target="#modalDetallesSolicitudPresupuesto">Detalles
       </button>`;

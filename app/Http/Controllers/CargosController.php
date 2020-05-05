@@ -6,12 +6,15 @@ namespace App\Http\Controllers;
 use App\Cargo;
 use Validator;
 // </modelos>
+use Illuminate\Support\Facades\Auth;
+
 
 class CargosController extends Controller
 {
     // Tabla de cargos
     public function index()
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $cargos = Cargo::all();
         return view('cargos.index', compact('cargos'));
     }
@@ -25,8 +28,8 @@ class CargosController extends Controller
     // Actualizar cargo
     public function update($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
-
         $Cargo = Cargo::find($dato['Id']);
         $cargo['id'] = $dato["Id"];
         $cargo['nombre'] = $dato["Nombre"];
@@ -36,7 +39,6 @@ class CargosController extends Controller
         $cargo['valor_dominical'] = $dato["Dominical"];
         $cargo['valor_recargo'] = $dato["Recargo"];
         $cargo['valor_nocturna'] = $dato["Nocturna"];
-
         $ok = $this->validatorCargoUpdate($cargo);
         if ($ok->fails()) {
             return $ok->errors()->all();
@@ -62,6 +64,7 @@ class CargosController extends Controller
     // Guarda cargo nuevo
     public function save($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $cargo['nombre'] = $dato["Nombre"];
         $cargo['sueldo'] = $dato["Sueldo"];
@@ -69,8 +72,6 @@ class CargosController extends Controller
         $cargo['valor_nocturna'] = $dato["Nocturna"];
         $cargo['valor_dominical'] = $dato["Dominical"];
         $cargo['valor_recargo'] = $dato["Nocturno"];
-
-
         $validador = $this->validatorCargoSave($cargo);
         if ($validador->fails()) {
             return $validador->errors()->all();
@@ -93,5 +94,4 @@ class CargosController extends Controller
             'valor_nocturna' => 'required|numeric|min:1000|max:100000',
         ]);
     }
-
 }

@@ -20,6 +20,7 @@ class horasExtrasController extends Controller
     // Retorna la vista de horas por autorizar
     public function index()
     {
+        $tipoHoras = TipoHora::all();
         if (Auth::User()->role_id == 1) {
             $usuarios = User::join('cargo_user', 'cargo_user.user_id', 'users.id')
                 ->join('cargos', 'cargos.id', 'cargo_user.cargo_id')
@@ -46,13 +47,12 @@ class horasExtrasController extends Controller
                     'tipo_horas.nombre_hora'
                 )->get();
             // dd($usuarios);
-            $tipoHoras = TipoHora::all();
             return view('horas.index', compact('horas', 'tipoHoras', 'usuarios'));
         } else {
-            $id = Auth::User()->cargos()->id;
-            $horas = Hora::where('cargo_user_id', $id)->orderBy('fecha', 'asc')
-                ->orderBy('hi_registrada', 'asc')->raw('hi_registrada', '-', 'hf_registrada')->get();
-            return view('horas.index', compact('horas'));
+            $id=CargoUser::where('estado','1')->where('user_id',Auth::User()->id)->first();
+            $solicitudes = Solicitud::join('presupuestos','presupuestos.id','presupuesto_id')->where('cargo_user_id', $id->id)->orderBy('año', 'asc')
+                ->orderBy('mes', 'asc')->get();
+            return view('horas.indexF', compact('solicitudes','tipoHoras'));
         }
     }
     // Llena la tabla con cada peticion del js

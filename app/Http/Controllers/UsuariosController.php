@@ -7,6 +7,8 @@ use App\Cargo;
 use App\Role;
 use App\User;
 use App\CargoUser;
+use Illuminate\Support\Facades\Auth;
+
 // </Extiende los modelos>
 
 use Validator;
@@ -16,6 +18,7 @@ class UsuariosController extends Controller
     // Trae a la lista de usuarios a la datatable
     public function index()
     {
+        $filtro=$this->administrador(Auth::user()->roles->id);
         $cargos = Cargo::all();
         $usuarios = User::select('id', 'nombres', 'apellidos', 'documento', 'estado')->where('id', '!=', 0)->get();
         $roles = Role::orderBy('id', 'DESC')->get();
@@ -24,6 +27,7 @@ class UsuariosController extends Controller
     // Guarda el usuario en la bd
     public function save($data)
     {
+        $filtro=$this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $usuario['nombres'] = $dato["Nombres"];
         $usuario['apellidos'] = $dato["Apellidos"];
@@ -124,6 +128,7 @@ class UsuariosController extends Controller
     // Cambia el cargo de un usuario, solo puede tener uno vigente
     public function cambiarCargo($data)
     {
+        $filtro=$this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $cargoVigente['user_id'] = $dato['Id'];
         $cargoVigente['cargo_id'] = $dato['Cargo'];
@@ -159,6 +164,7 @@ class UsuariosController extends Controller
     // Cambia el estado a activo
     public function activar($id)
     {
+        $filtro=$this->administrador(Auth::user()->roles->id);
         $usuario = User::find($id);
         $usuario->estado = '1';
         $usuario->save();
@@ -167,6 +173,7 @@ class UsuariosController extends Controller
     // Cambia el estado a inactivo
     public function inactivar($id)
     {
+        $filtro=$this->administrador(Auth::user()->roles->id);
         $usuario = User::find($id);
         $usuario->estado = '0';
         $usuario->save();

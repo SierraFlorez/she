@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 // <modelos>
 use App\FechaEspecial;
 use Validator;
+use Illuminate\Support\Facades\Auth;
 // </modelos>
 
 
@@ -12,6 +13,7 @@ class FechasEspecialesController extends Controller
     // Retorna la pagina de inicio
     public function index()
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         // Retorna la vista de inicio
         $fechas = FechaEspecial::all();
         return view('fechasEspeciales.index', compact('fechas'));
@@ -25,6 +27,7 @@ class FechasEspecialesController extends Controller
     // Guarda la fecha
     public function save($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $fecha['descripcion'] = $dato["Nombre"];
         $fecha['fecha_inicio'] = $dato["Inicio"];
@@ -50,6 +53,7 @@ class FechasEspecialesController extends Controller
     // Actualiza la fecha especial
     public function update($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $fecha = FechaEspecial::find($dato['Id']);
         $fechaEspecial['id'] = $dato["Id"];

@@ -1,18 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
-
 // <modelos>
 use App\TipoHora;
 use Validator;
-
+use App\User;
+use Illuminate\Support\Facades\Auth;
 // </modelos>
 
 class TipoHorasController extends Controller
 {
+   
     // Vista de la lista de tipo horas
     public function index()
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $tipoHoras = TipoHora::all();
         return view('tipoHora.index', compact('tipoHoras'));
     }
@@ -20,6 +22,7 @@ class TipoHorasController extends Controller
     // Llena la información del modal
     public function detalle($id)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $tipoHora = TipoHora::find($id);
         return ($tipoHora);
     }
@@ -27,6 +30,7 @@ class TipoHorasController extends Controller
     // Actualiza la hora extra
     public function update($data)
     {
+        $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $hora = TipoHora::find($dato['Id']);
         $tipoHora['id'] = $dato["Id"];
@@ -41,7 +45,7 @@ class TipoHorasController extends Controller
             return (1);
         }
     }
-    
+
     // Verifica la actualización
     public function validatorUpdate($request)
     {

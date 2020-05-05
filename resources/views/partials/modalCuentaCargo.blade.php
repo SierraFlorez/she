@@ -77,7 +77,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        {{-- <button class="btn btn-secondary" id="updatecv_s">Editar Cargo</button> --}}
+        {{-- <button class="btn btn-success" id="updatecv_s">Editar Cargo</button> --}}
       </div>
     </div>
   </div>

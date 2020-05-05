@@ -96,7 +96,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-secondary" id="update">Editar</button>
+        <button class="btn btn-success" id="update">Editar</button>
       </div>
     </div>
   </div>

@@ -18,8 +18,8 @@ Consultar Fechas Especiales
                     Registrar Fecha</a>
             </div>
             <div class="card-header" id="table_div_fechas">
-                <table id="dtFechas" class="table table-hover table-dark" cellspacing="0" width="100%">
-                    <thead class="thead-dark">
+                <table id="dtFechas" class="table table-hover" cellspacing="0" width="100%">
+                    <thead class="thead">
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Descripcion</th>

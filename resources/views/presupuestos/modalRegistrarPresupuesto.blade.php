@@ -57,7 +57,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-secondary" onclick="savePresupuesto()">Guardar</button>
+        <button class="btn btn-success" onclick="savePresupuesto()">Guardar</button>
       </div>
     </div>
   </div>

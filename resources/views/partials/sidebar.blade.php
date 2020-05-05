@@ -11,86 +11,83 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column">
-                    {{-- Gestion de Usuarios --}}
                     @if (Auth::user() && (Auth::user()->role_id==1))
+                    {{-- SIDEBAR ADMINISTRADOR --}}
+                    {{-- Gestion de Usuarios --}}
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="margin-bottom: 10px; color:white;">
-                            <i class="fas fa-address-card" style="color:white;"></i>Gestión de Usuarios<span
+                            aria-controls="submenu-1" style="margin-bottom: 9px; color:white;font-size: 1.1rem">
+                            <i class="fas fa-users" style="color:white;"></i>Gestión de Usuarios<span
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                    {{-- Gestion de Cargos --}} 
+                    {{-- Gestion de Cargos --}}
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/cargos") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="margin-bottom: 10px; color:white;">
-                            <i class="fas fa-address-card" style="color:white;"></i>Gestión de Cargos<span
+                            aria-controls="submenu-1" style="margin-bottom: 9px; color:white;font-size: 1.1rem">
+                            <i class="fas fa-user-circle" style="color:white;"></i>Gestión de Cargos<span
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                    {{-- Gestion de Horas Extras --}} 
+                    {{-- Gestion de Horas Extras --}}
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horas_extras") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestión Horas Extras<span
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-history" style="color: white;"></i>Gestión Horas Extras<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
                     {{-- Presupuestos --}}
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/presupuestos") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Presupuestos<span
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-briefcase" style="color: white;"></i>Gestión de Presupuestos<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-                    {{-- Reportes --}}              
+                    {{-- Reportes --}}
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/reportes") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Generar Reportes<span
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-file-excel" style="color: white;"></i>Generar Reportes<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-                     {{-- Tipo de Horas --}}
-                     <li class="nav-item ">
+                    {{-- Tipo de Horas --}}
+                    <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/tipo_horas") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Tipo de Horas<span
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-sun" style="color: white;"></i>Gestión de Tipo de Horas<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
                     {{-- Fechas especiales --}}
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/fechas_especiales") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 10px; ">
-                            <i class="fas fa-address-card" style="color: white;"></i>Gestión de Fechas Especiales<span
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-calendar-check" style="color: white;"></i>Gestión de Fechas Especiales<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>
-                        @endif
-                    @if (Auth::user())
-                    <br>
-                    <li class="nav-item">
-                        <div class="dropdown invisibles">
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ Auth::user()->nombres }}
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2" style="width: 62%; ">
-                                <button class="dropdown-item" type="button"
-                                    onclick='detallesUsuario({{Auth::user()->id}})' data-toggle="modal" href="#"
-                                    data-target="#modalCuenta"><i class="fas fa-user mr-2"></i>Cuenta</button>
-                                    <hr>
-                                <button class="dropdown-item" type="button" data-toggle="modal" href="#"
-                                    data-target="#modalPassword"><i class="fas fa-cog mr-2"></i>Cambio de
-                                    Contraseña</button>
-                                    <hr>
-                                <button class="dropdown-item" type="button" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-                                        class="fas fa-power-off mr-2"></i>Cerrar Sesión</button>
-                            </div>
-                        </div>
+                    @endif
+                    @if (Auth::user() && (Auth::user()->role_id==2))
+                    {{-- ------------------------------------------------------------------------------------------------- --}}
+                    {{-- SIDEBAR FUNCIONARIOS --}}
+                    {{-- Gestion de Horas Extras --}}
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/horas_extras") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-history" style="color: white;"></i>Gestión Horas Extras<span
+                                class="badge badge-success">6</span>
+                        </a>
+                    </li>
+                    {{-- Reportes --}}
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/reportes") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-file-excel" style="color: white;"></i>Generar Reportes<span
+                                class="badge badge-success">6</span>
+                        </a>
                     </li>
                     @endif
                 </ul>

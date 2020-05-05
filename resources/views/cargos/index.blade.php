@@ -18,8 +18,8 @@ Consultar Cargos
                     Registrar Cargo</a>
             </div>
             <div class="card-header" id="table_div_cargos">
-                <table id="dtCargos" class="table table-hover table-dark" cellspacing="0" width="100%">
-                    <thead class="thead-dark">
+                <table id="dtCargos" class="table table-hover" cellspacing="0" width="100%">
+                    <thead class="thead">
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Descripción</th>

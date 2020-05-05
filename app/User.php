@@ -1,15 +1,17 @@
 <?php
+
 namespace App;
+
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 // Modelo de usuario
 class User extends Authenticatable
 {
     use Notifiable;
-    protected $table='Users';
+    protected $table = 'Users';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'nombres','apellidos', 'email', 'password','tipo_documento','documento','regional','centro','telefono','estado','role_id'
+        'nombres', 'apellidos', 'email', 'password', 'tipo_documento', 'documento', 'regional', 'centro', 'telefono', 'estado', 'role_id'
     ];
     protected $hidden = [
         'password', 'remember_token',
@@ -20,6 +22,6 @@ class User extends Authenticatable
     }
     public function cargos()
     {
-        return $this->hasMany('App\CargoUser','user_id','id');
+        return $this->hasMany('App\CargoUser');
     }
 }

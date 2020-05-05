@@ -20,17 +20,15 @@ Gestión Horas Extras
                     <a class="btn btn-success" href="{{ url("/registrar_solicitud") }}">Registrar Solicitud </a>
                 </div>
             </div>
-            @if (Auth::User()->roles->id==1)
             <div style="margin-top: 1%; padding-left: 2%;padding-right: 2%">
-                <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Usuario</label>
+                <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Solicitud</label>
                 <select class="form-control validate" id="seleccionar_usuario" name="" onchange="selectSolicitud();">
                     <option value="0"></option>
-                    @foreach ($usuarios as $usuario)
-                    <option value="{{$usuario->id}}">{{$usuario->nombres}} {{$usuario->apellidos}}</option>
+                    @foreach ($solicitudes as $solicitud)
+                    <option value="{{$solicitud->id}}">{{$solicitud->actividades}}</option>
                     @endforeach
                 </select>
             </div>
-            @endif
             <div style="margin-top:1%;padding-left: 2%" id="select_presupuesto" class="row">
             </div>
             <div class="card-header" id="div_horas">
