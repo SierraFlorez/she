@@ -58,7 +58,7 @@ Registrar Horas Extras
           <div class="col-md-6">
             <label data-error="wrong" data-success="right" for="orangeForm-name">Hora de inicio:
             </label>
-            <input class="form-control timepicker" type="text" id="hora_inicio">
+            <input class="form-control " type="time" id="hora_inicio">
           </div>
           {{-- Input de hora fin --}}
           <div class="col-md-6">

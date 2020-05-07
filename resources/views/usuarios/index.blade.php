@@ -18,7 +18,7 @@ Consultar usuarios
                     Registrar Usuario </a>
             </div>
             <div class="card-header" id="table_div_user">
-                <table id="dtUsuarios" class="table table-hover" cellspacing="0" width="100%">
+                <table style="text-align: center" id="dtUsuarios" class="table table-hover" cellspacing="0" width="100%">
                     <thead >
                         <tr>
                             <th class="th-sm">ID</th>

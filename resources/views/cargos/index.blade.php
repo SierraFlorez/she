@@ -18,7 +18,7 @@ Consultar Cargos
                     Registrar Cargo</a>
             </div>
             <div class="card-header" id="table_div_cargos">
-                <table id="dtCargos" class="table table-hover" cellspacing="0" width="100%">
+                <table style="text-align: center" id="dtCargos" class="table table-hover" cellspacing="0" width="100%">
                     <thead class="thead">
                         <tr>
                             <th class="th-sm">ID</th>

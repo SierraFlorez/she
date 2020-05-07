@@ -202,7 +202,7 @@ class SolicitudesController extends Controller
         $solicitud['valor_total'] = $valores['valor_total'];
         $solicitud['valor_hora'] = $valores['valor'];
         $solicitud['horas_restantes'] = Hora::where('solicitud_id', $id)->sum('horas_trabajadas');
-        $solicitud['horas_restantes'] = $solicitud['horas_restantes']-$solicitud['total_horas'];
+        $solicitud['horas_restantes'] = $solicitud['total_horas']-$solicitud['horas_restantes'];
         // dd($solicitud);
         if ($solicitud['autorizacion'] == 0) {
             $solicitud['autorizacion'] = "La solicitud no ha sido autorizada";

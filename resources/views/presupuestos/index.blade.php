@@ -26,7 +26,7 @@ Gestión de Presupuesto
             </div>
                 <div class="card-header" id="div_presupuesto">
                     <center><h2> Solicitudes </h2></center>
-                    <table id="dtPresupuestos" class="table table-hover" cellspacing="0" width="100%">
+                    <table style="text-align: center" id="dtPresupuestos" class="table table-hover" cellspacing="0" width="100%">
                         <thead class="thead">
                             <tr>
                             <th class="th-sm">Usuario</th>

@@ -298,7 +298,6 @@ select.form-control {
     background-position: 99% 52%;
     background-size: auto;
     background-repeat: no-repeat;
-    background-image: url(/images/down-arrow.png);
     padding-right: 15px;
     border: 1px solid #d2d2e4;
     border-radius: 2px;
@@ -1241,11 +1240,12 @@ Top Header
     font-size: 30px;
     text-transform: uppercase;
     font-weight: 700;
-    color: #007bff;
+    color: white;
 }
 
 .navbar-brand:hover {
-    color: #007bff;
+    background-color: #025BA8;
+    color: white;
 }
 
 .navbar-right-top {}
@@ -5001,12 +5001,26 @@ Vertical Timeline - by CodyHouse.co
 .login {
     border-radius: 10px;
     background-color: white;
-    margin-left: 59%;
+    margin-left: 43%;
     margin-top: 200px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+
+}
+.logind {
+    border-radius: 10px;
+    background-color: white;
+    margin-left: 60%;
+    margin-top: 200px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+
 }
 
 @media only screen and (min-width:100px) and (max-width:738px) {
     .login {
+        margin-left: 0px;
+        margin-top: 40px
+    }
+    .logind {
         margin-left: 0px;
         margin-top: 40px
     }
@@ -5015,6 +5029,7 @@ Vertical Timeline - by CodyHouse.co
         background-position: -5% 94% !important;
         background-size: 191% !important;
     }
+   
 }
 
 @media only screen and (min-width:768px) {
@@ -5025,6 +5040,16 @@ Vertical Timeline - by CodyHouse.co
 
     .cd-timeline__read-more,
     .cd-timeline__date {}
+    .fully{
+        width: 0;
+        height: 0;
+        opacity: 0;
+        display: none;
+
+    }
+    .fully:empty {
+        display: none;
+      }
 }
 
 @media only screen and (min-width:1170px) {
@@ -7039,10 +7064,10 @@ Media Query
         padding: 20px 20px 60px 20px;
     }
 
-    .nav-left-sidebar .navbar a {
+    /* .nav-left-sidebar .navbar a {
         color: #fff;
         font-size: 18px;
-    }
+    } */
 
     .nav-left-sidebar .navbar {
         padding: 14px;
@@ -7121,9 +7146,9 @@ Media Query
         padding: 20px 20px 60px 20px;
     }
 
-    .nav-left-sidebar .navbar a {
+    /* .nav-left-sidebar .navbar a {
         color: #fff;
-    }
+    } */
 
     .nav-left-sidebar .navbar-toggler {
         background-color: #fff;

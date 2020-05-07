@@ -53,7 +53,7 @@
             {{-- Input nocturno  --}}
             <div class="col">
               <i class="fas fa-dollar-sign"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Valor Hora Recargo Nocturno</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Valor Hora Recargo</label>
               <input readonly type="number" id="nocturno_s" class="form-control validate">
             </div>
           </div>

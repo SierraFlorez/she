@@ -2,7 +2,7 @@
 <div class="nav-left-sidebar sidebar-dark">
     {{-- style="background-image: url(images/sidebar.png); background-repeat: no-repeat;background-position: center center; display: block;" #29913A !important --}}
     <div class="menu-list">
-        <a class="navbar-brand" href="{{ url("/") }}" style="color: white">SHE</a>
+        <a class="navbar-brand" href="{{ url("/") }}">SHE</a>
         <nav class="navbar navbar-expand-lg navbar-light">
             <a class="d-xl-none d-lg-none" href="#"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -90,10 +90,62 @@
                         </a>
                     </li>
                     @endif
+                    <ul class="navbar-nav ml-auto navbar-right-top fully">
+                        @if (Auth::User())
+                        <div class="row">
+                            <div class="col-6">
+                                <li class="nav-item dropdown nav-user fully"
+                                    style="margin-right: 0px; border-right-width: 0px;">
+                                    <a class="nav-link nav-user-img btn btn-primary fully" href="#"
+                                        id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false"><i class="fa fa-tag fully" style="color:white"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-right nav-user-dropdown fully"
+                                        aria-labelledby="navbarDropdownMenuLink2">
+                                        <div class="nav-user-info fully" style="background-color: #4FB342 !important;">
+                                            <h5 class="mb-0 text-white nav-user-name fully">Cargo Vigente</h5>
+                                        </div>
+                                        <a class="dropdown-itemv fully"
+                                            onclick='detallesUsuarioCargoSesion({{Auth::user()->id}})'
+                                            data-toggle="modal" href="#" data-target="#modalCuentaCargo"><i
+                                                class="fas fa-user mr-2 fully"></i>Cargo</a>
+                                    </div>
+                                </li>
+                            </div>
+                            <div class="col-6">
+                                <li class="nav-item dropdown nav-user fully">
+                                    <a class="nav-link nav-user-img btn btn-primary fully" href="#"
+                                        id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false"><i class="fa fa-user fully" style="color:white"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-left nav-user-dropdown fully"
+                                        aria-labelledby="navbarDropdownMenuLink2">
+                                        <div class="nav-user-info fully" style="background-color: #4FB342 !important;">
+                                            <h5 class="mb-0 text-white nav-user-name">{{ Auth::user()->nombres }}
+                                            </h5>
+                                        </div>
+                                        <a class="dropdown-itemv fully"
+                                            onclick='detallesUsuarioSesion({{Auth::user()->id}})' data-toggle="modal"
+                                            href="#" data-target="#modalCuenta"><i
+                                                class="fas fa-user mr-2 fully"></i>Cuenta</a>
+                                        <a class="dropdown-itemv fully" data-toggle="modal" href="#"
+                                            data-target="#modalPassword"><i class="fas fa-cog mr-2 fully"></i>Cambio de
+                                            contraseña</a>
+                                        <a class="dropdown-itemv fully" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                                class="fas fa-power-off mr-2 fully"></i>Cerrar Sesión
+                                        </a>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            style="display: none;">
+                                            {{ csrf_field() }}
+                                        </form>
+                                    </div>
+                                </li>
+                            </div>
+                        </div>
+                    </ul>
+                    @endif
                 </ul>
             </div>
+        </nav>
     </div>
-    </nav>
-</div>
 </div>
 <!-- end left sidebar -->

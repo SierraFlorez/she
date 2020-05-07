@@ -16,7 +16,7 @@ trait AuthenticatesUsers
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('home.inicio');
     }
 
     /**
@@ -38,9 +38,29 @@ trait AuthenticatesUsers
             return $this->sendLockoutResponse($request);
         }
 
+         // This section is the only change
+         if ($this->guard()->validate($this->credentials($request))) {
+            $user = $this->guard()->getLastAttempted();
+
+            // Make sure the user is active
+            if (($user->estado == 1) && ($this->attemptLogin($request))) {
+                // Send the normal successful login response
+                return $this->sendLoginResponse($request);
+            } else {
+                // Increment the failed login attempts and redirect back to the
+                // login form with an error message.
+                $this->incrementLoginAttempts($request);
+                return redirect()
+                    ->back()
+                    ->withInput($request->only($this->username(), 'remember'))
+                    ->withErrors(['estado' => 'You must be active to login.']);
+            }
+        }
+        
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
+       
 
         // If the login attempt was unsuccessful we will increment the number of attempts
         // to login and redirect the user back to the login form. Of course, when this
@@ -73,7 +93,8 @@ trait AuthenticatesUsers
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt(
-            $this->credentials($request), $request->has('remember')
+            $this->credentials($request),
+            $request->has('remember')
         );
     }
 
@@ -101,7 +122,7 @@ trait AuthenticatesUsers
         $this->clearLoginAttempts($request);
 
         return $this->authenticated($request, $this->guard()->user())
-                ?: redirect()->intended($this->redirectPath());
+            ?: redirect()->intended($this->redirectPath());
     }
 
     /**

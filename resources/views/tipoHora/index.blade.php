@@ -18,7 +18,7 @@ Consultar Tipo de Horas
                     Registrar Tipo Hora</a>
             </div> --}}
             <div class="card-header" id="table_div_tipoHoras">
-                <table id="dtTipoHoras" class="table table-hover" cellspacing="0" width="100%">
+                <table style="text-align: center" id="dtTipoHoras" class="table table-hover" cellspacing="0" width="100%">
                     <thead class="thead">
                         <tr>
                             <th class="th-sm">ID</th>
