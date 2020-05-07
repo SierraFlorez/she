@@ -13,10 +13,10 @@ Gestión Horas Extras
                 <h1>Gestionar Horas Extras </h1>
             </center><br>
             <div class="row" style="padding-left: 2%;">
-                <div style="margin-bottom: 1%" class="col-md-9">
+                <div style="margin-bottom: 1%" class="col-md-9 col-6">
                     <a class="btn btn-success" href="{{ url("/registrar_horas") }}">Registrar Horas Extras </a>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1 col-6">
                     <a class="btn btn-success" href="{{ url("/registrar_solicitud") }}">Registrar Solicitud </a>
                 </div>
             </div>
