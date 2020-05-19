@@ -9,34 +9,22 @@
                     <span aria-hidden="true" style="color: white">&times;</span>
                 </button>
             </div>
-            @if (session('status'))
-            <div class="alert alert-success">
-                {{ session('status') }}
+            {{ csrf_field() }}
+            <div align="center" class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                <br>
+                <label for="email" class="col-md-4 control-label">Correo Electrónico</label>
+                <div class="col-md-12">
+                    <input id="email_restaurar" type="email" class="form-control" name="email" required>
+                </div>
             </div>
-            @endif
-            <form class="form-horizontal" method="POST" action="{{ route('password.email') }}">
-                {{ csrf_field() }}
-                <div align="center" class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                    <br>
-                    <label for="email" class="col-md-4 control-label">Correo Electrónico</label>
-                    <div class="col-md-12">
-                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"
-                            required>
-                        @if ($errors->has('email'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('email') }}</strong>
-                        </span>
-                        @endif
-                    </div>
+            <br>
+            <br>
+            <div class="form-group" align="right">
+                <div class="col-md-6 col-md-offset-4">
+                    <button onclick="restaurarContrasena();" id="notificacionCorreo" type="submit"
+                        class="btn btn-primary">Enviar Enlace</button>
                 </div>
-                <br>
-                <br>
-                <div class="form-group" align="right">
-                    <div class="col-md-6 col-md-offset-4">
-                        <button id="notificacionCorreo" type="submit" class="btn btn-primary">Enviar Enlace</button>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

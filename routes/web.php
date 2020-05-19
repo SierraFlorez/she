@@ -11,6 +11,8 @@ Route::get('/inicio', 'HomeController@index')->name('/inicio');
 Route::get('/home', 'HomeController@index')->name('/home');
 Route::get('/', 'HomeController@index')->name('/');
 
+
+
 /*
 |--------------------------------------------------------------------------
 | RUTAS PRIVADAS
@@ -23,6 +25,9 @@ Auth::routes();
 
 // RETORNA LA VISTA DE CONSULTAR USUARIOS
 Route::get('/usuarios', 'UsuariosController@index')->name('/usuarios')->middleware('auth');
+
+// ENVIA EMAIL PARA RESTAURAR CONTRASENA
+Route::post('/restaurar_contrasena/{id}', 'RestablecerController@index')->name('/restaurar_contrasena/{id}');
 
 // RETORNA LA VISTA DEL MODAL CON LA INFORMACIÓN DEL USUARIO
 Route::post('/usuarios/detalle/{id}', 'UsuariosController@detalle')->name('/usuarios/detalle/{id}')->middleware('auth');

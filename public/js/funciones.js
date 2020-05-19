@@ -123,6 +123,34 @@ $(document).ready(function () {
 });
 //--------- MODULO DE USUARIOS --------------------
 
+// Función enviar correo de restaurar contraseña
+function restaurarContrasena() {
+  var url = "restaurar_contrasena";
+  $correo = $("#email_restaurar").val();
+
+
+  var obj = new Object();
+  obj.Correo = $correo;
+
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    $("#email_restaurar").val("");
+    $("#modalRestaurar").modal("hide"); //ocultamos el modal
+    console.log(data);
+    if (data == 1) {
+      Swal.fire(
+        "Completado!",
+        "Se ha enviado un correo al email para restablecer su contraseña",
+        "success"
+      );
+    } else {
+      Swal.fire("Error!", "Error al enviar email, " + data + ".", "error");
+    }
+  });
+}
+
 // Función para el modal de detalles de la cuenta iniciada
 function detallesUsuarioSesion(id) {
   var url = "usuarios/detalle";

@@ -15,6 +15,7 @@ class VerifyCsrfToken extends BaseVerifier
     protected $except = [
         // Usuarios
         '/logout',
+        '/restaurar_contrasena/*',
         '/usuarios/detalle/*',
         '/usuarios/detalleCargo/*',
         '/usuarios/cambiarCargo/*',

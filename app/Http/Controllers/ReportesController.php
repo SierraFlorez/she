@@ -32,6 +32,15 @@ class ReportesController extends Controller
             $msg = "Verifique si esta seleccionando un mes, un funcionario y un año";
             return redirect()->back()->with('warning', $msg);
         }
+        if (isset($dato['lhe']) && (isset($dato['sa']))) {
+            $msg = "Por favor, seleccione solo un tipo de reporte a la vez";
+            return redirect()->back()->with('warning', $msg);
+        }
+        if (!isset($dato['lhe']) && (!isset($dato['sa']))) {
+            $msg = "No has seleccionado algun reporte";
+            return redirect()->back()->with('warning', $msg);
+        }
+
         if (isset($dato['sa'])) {
             $solicitud = $this->solicitudAutorizacion($dato);
             if ($solicitud == 1) {
@@ -46,10 +55,8 @@ class ReportesController extends Controller
                 return redirect()->back()->with('actualizado', $msg);
             }
         }
-        if (!isset($dato['lhe']) && (!isset($dato['sa']))) {
-            $msg = "No has seleccionado algun reporte";
-            return redirect()->back()->with('warning', $msg);
-        }
+       
+       
     }
     // Reporte de solicitud
     public function solicitudAutorizacion($dato)

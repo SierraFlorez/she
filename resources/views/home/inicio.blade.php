@@ -16,7 +16,7 @@ Inicio
                 <br>
                 <div class="panel-body row">
                     <div class="col-md-6">
-                        <img src="images/imagotipo.png" width="100%">
+                        <img src="{{URL::asset('images/imagotipo.png')}}" width="100%">
                     </div>
                     <div class="col-md-6">
                         <form class="form-horizontal" method="POST" action="{{ route('login') }}">
@@ -49,9 +49,7 @@ Inicio
                                     <button type="submit" class="btn btn-primary">
                                         Iniciar Sesión
                                     </button>
-                                    <a class="btn btn-link" data-toggle="modal" data-target="#modalRestaurar"
-                                        style="color: #5969ff;">
-                                        ¿Olvido su contraseña?
+                                    <a class="btn linkr" data-toggle="modal" data-target="#modalRestaurar">                                        ¿Olvido su contraseña?
                                     </a>
                                 </div>
                             </div>

@@ -6,7 +6,7 @@ Gestión de Presupuesto
 @endsection
 {{-- contenido de la pagina principal (solo ventana) --}}
 @section('main-content')
-    <div class="row">            
+    <div class="row animated fadeInDown">            
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card" style="margin-top: 5%"><br>
                 <center><h1> Gestión de Presupuesto</h1></center><br>
