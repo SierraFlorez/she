@@ -14,7 +14,7 @@ Consultar usuarios
                 <h1> Lista de Usuarios </h1>
             </center><br>
             <div style="padding-left: 2%;">
-                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-success" style="color: white;background-color:#0275d8">
+                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-success" style="color: white;">
                     Registrar Usuario </a>
             </div>
             <div class="card-header" id="table_div_user">
@@ -44,7 +44,7 @@ Consultar usuarios
                                 </button></td>
                             @endif
                             <td>
-                                <center><button class="btn btn-primary" style="background-color: #29913A" data-toggle="modal" data-target="#modalDetalle"
+                                <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalle"
                                     onclick="detallesUsuario({{ $usuario->id}})">Ver Detalles</button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#modalCargo"
                                     onclick="detallesUsuarioCargo({{ $usuario->id}})">Ver Cargo</button> </center>
