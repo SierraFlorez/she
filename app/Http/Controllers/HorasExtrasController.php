@@ -226,8 +226,6 @@ class horasExtrasController extends Controller
                 }
             }
         }
-
-
         // // Retorna en caso que no cumpla ninguna de las condiciones y guarda la información
         return ($msg);
     }

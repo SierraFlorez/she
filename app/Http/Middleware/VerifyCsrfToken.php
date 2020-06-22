@@ -38,6 +38,7 @@ class VerifyCsrfToken extends BaseVerifier
         // Tipo Horas
         '/tipo_horas/detalle/*',
         '/tipo_horas/update/*',
+        '/tipo_horas/guardar/*',
         // Fechas especiales
         '/fechas_especiales/detalle/*',
         '/fechas_especiales/update/*',

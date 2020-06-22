@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\CargoUser;
 use App\Hora;
 use App\Solicitud;
+use App\Role;
 use App\Http\Controllers\Controller;
 use DateTime;
 // </Modelos>
@@ -20,8 +21,9 @@ class ReportesController extends Controller
     // Vista de descargar reportes y trae todos los usuarios con su cargo vigente
     public function index()
     {
+        $roles = Role::orderBy('id', 'DESC')->get();
         $usuarios = CargoUser::where('estado', 1)->get();
-        return view('reportes.index', compact('usuarios'));
+        return view('reportes.index', compact('usuarios','roles'));
     }
 
     // Descarga el reporte de solicitud de autorización
@@ -195,7 +197,7 @@ class ReportesController extends Controller
 
             ];
             //Carga la plantilla para generar el reporte
-            $pathTemplate = getcwd() . '\formatos\GTH_F_061_SOLICITUD_DE_AUTORIZACION_DE_HORAS_EXTRAS.xlsx';
+            $pathTemplate = getcwd() . '/formatos/GTH_F_061_SOLICITUD_DE_AUTORIZACION_DE_HORAS_EXTRAS.xlsx';
             //Selecciona la hoja en la que va a escribir el reporte
             $escritor = IOFactory::load($pathTemplate);
             $worksheet = $escritor->getActiveSheet(0);
@@ -429,7 +431,7 @@ class ReportesController extends Controller
 
             ];
             //Carga la plantilla para generar el reporte
-            $pathTemplate = getcwd() . '\formatos\GTH_F_060__FORMATO_LEGALIZACION_DE_HORAS_EXTRAS_RECARGOS_NOCTURNOS_DOMINICALES.xlsx';
+            $pathTemplate = getcwd() . '/formatos/GTH_F_060__FORMATO_LEGALIZACION_DE_HORAS_EXTRAS_RECARGOS_NOCTURNOS_DOMINICALES.xlsx';
             //Selecciona la hoja en la que va a escribir el reporte
             $escritor = IOFactory::load($pathTemplate);
             $worksheet = $escritor->getActiveSheet(0);

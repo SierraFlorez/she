@@ -10,21 +10,15 @@
       <div class="modal-body mx-3">
          {{-- Input del nombre --}}
         <div class="md-form mb-4">
-          <i class="fas fa-id-file-alt"></i>
+          <i class="fas fa-file-alt"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Descripción</label>
           <input required type="text" id="nombre_fecha_g" class="form-control validate">
         </div>
-        {{-- Input de fecha inicio --}}
+        {{-- Input de fecha --}}
         <div class="md-form mb-4">
-          <i class="fas fa-dollar-sign"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha Inicio</label>
+          <i class="fas fa-clock"></i>
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha</label>
           <input required type="date" id="fecha_inicio_g" class="form-control validate">
-        </div>
-        {{-- Input de fecha final --}}
-        <div class="md-form mb-4">
-          <i class="fas fa-dollar-sign"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-email">Fecha Final</label>
-          <input required type="date" id="fecha_fin_g" class="form-control validate">
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">

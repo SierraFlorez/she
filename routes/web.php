@@ -154,6 +154,9 @@ Route::post('/tipo_horas/detalle/{id}', 'TipoHorasController@detalle')->name('/t
 // ACTUALIZA EL TIPO DE HORAS
 Route::post('/tipo_horas/update/{id}', 'TipoHorasController@update')->name('/tipo_horas/update/{id}')->middleware('auth');
 
+// GUARDA TIPO DE HORA
+Route::post('/tipo_horas/guardar/{id}', 'TipoHorasController@guardar')->name('/tipo_horas/guardar/{id}')->middleware('auth');
+
 // ------------- MODULO DIÁS ESPECIALES -------------------------------
 
 // RETORNA LA VISTA DE TIPO DE HORAS

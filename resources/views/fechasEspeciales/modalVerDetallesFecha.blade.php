@@ -8,23 +8,17 @@
         </button>
       </div>
       <div class="modal-body mx-3">
-         {{-- Input del nombre --}}
+         {{-- Descripcion --}}
         <div class="md-form mb-4">
           <i class="fas fa-file-alt"></i>
           <label data-error="wrong" data-success="right" for="orangeForm-name">Descripción</label>
           <input required type="text" id="nombre_fecha_t" class="form-control validate">
         </div>
-        {{-- Input del sueldo --}}
+        {{-- Fecha --}}
         <div class="md-form mb-4">
           <i class="fas fa-clock"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha Inicio</label>
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Fecha</label>
           <input required type="date" id="fecha_inicio_t" class="form-control validate">
-        </div>
-        {{-- Input diurno --}}
-        <div class="md-form mb-4">
-          <i class="fas fa-clock"></i>
-          <label data-error="wrong" data-success="right" for="orangeForm-email">Fecha Fin</label>
-          <input required type="date" id="fecha_fin_t" class="form-control validate">
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">
@@ -34,10 +28,3 @@
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
-</script>

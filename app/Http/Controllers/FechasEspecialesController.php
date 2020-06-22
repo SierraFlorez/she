@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 // <modelos>
 use App\FechaEspecial;
 use Validator;
+use App\Role;
+
 use Illuminate\Support\Facades\Auth;
 // </modelos>
 
@@ -16,7 +18,8 @@ class FechasEspecialesController extends Controller
         $filtro = $this->administrador(Auth::user()->roles->id);
         // Retorna la vista de inicio
         $fechas = FechaEspecial::all();
-        return view('fechasEspeciales.index', compact('fechas'));
+        $roles = Role::orderBy('id', 'DESC')->get();
+        return view('fechasEspeciales.index', compact('fechas','roles'));
     }
     // Llena la información del modal
     public function detalle($id)

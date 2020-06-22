@@ -13,14 +13,6 @@
                 <ul class="navbar-nav flex-column">
                     @if (Auth::user() && (Auth::user()->role_id==1))
                     {{-- SIDEBAR ADMINISTRADOR --}}
-                    {{-- Gestion de Usuarios --}}
-                    <li class="nav-item ">
-                        <a class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="margin-bottom: 9px; color:white;font-size: 1.1rem">
-                            <i class="fas fa-users" style="color:white;"></i>Gestión de Usuarios<span
-                                class="badge badge-success"></span>
-                        </a>
-                    </li>
                     {{-- Gestion de Cargos --}}
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/cargos") }}" data-target="#submenu-1"
@@ -29,19 +21,27 @@
                                 class="badge badge-success"></span>
                         </a>
                     </li>
+                      {{-- Gestion de Usuarios --}}
+                    <li class="nav-item">
+                        <a  class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="margin-bottom: 9px; color:white;font-size: 1.1rem">
+                            <i class="fas fa-users" style="color:white;"></i>Gestión de Usuarios<span
+                                class="badge badge-success"></span>
+                        </a>
+                    </li>
+                     {{-- Presupuestos --}}
+                     <li class="nav-item ">
+                        <a class="nav-link" href="{{ url("/presupuestos") }}" data-target="#submenu-1"
+                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
+                            <i class="fas fa-briefcase" style="color: white;"></i>Gestión de Presupuestos<span
+                                class="badge badge-success">6</span>
+                        </a>
+                    </li>
                     {{-- Gestion de Horas Extras --}}
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horas_extras") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
                             <i class="fas fa-history" style="color: white;"></i>Gestión Horas Extras<span
-                                class="badge badge-success">6</span>
-                        </a>
-                    </li>
-                    {{-- Presupuestos --}}
-                    <li class="nav-item ">
-                        <a class="nav-link" href="{{ url("/presupuestos") }}" data-target="#submenu-1"
-                            aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
-                            <i class="fas fa-briefcase" style="color: white;"></i>Gestión de Presupuestos<span
                                 class="badge badge-success">6</span>
                         </a>
                     </li>

@@ -13,10 +13,10 @@ Consultar Tipo de Horas
             <center>
                 <h1> Tipo de Horas </h1>
             </center><br>
-            {{-- <div style="padding-left: 2%;">
-                <a data-toggle="modal" data-target="#modalRegistrarUsuario" id="modal" class="btn btn-outline-success">
-                    Registrar Tipo Hora</a>
-            </div> --}}
+            <div style="padding-left: 2%;">
+                <a data-toggle="modal" data-target="#modalRegistrarTipoHora" id="modal" class="btn btn-success" style="color: white;">
+                    Registrar Tipo de Hora </a>
+            </div>
             <div class="card-header" id="table_div_tipoHoras">
                 <table style="text-align: center" id="dtTipoHoras" class="table table-hover" cellspacing="0" width="100%">
                     <thead class="thead">
@@ -49,5 +49,6 @@ Consultar Tipo de Horas
     </div>
 </div>
 @include('tipoHora.modalVerDetallesTipoHora')
+@include('tipoHora.modalRegistrarTipoHora')
 
 @endsection

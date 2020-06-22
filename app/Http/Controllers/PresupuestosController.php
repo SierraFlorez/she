@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Presupuesto;
 use App\Solicitud;
 use App\TipoHora;
+use App\Role;
+
 use Illuminate\Support\Facades\Auth;
 // </modelos>
 use Validator;
@@ -14,10 +16,11 @@ class PresupuestosController extends Controller
     // Retorna la vista de presupuestos
     public function index()
     {
+        $roles = Role::orderBy('id', 'DESC')->get();
         $filtro = $this->administrador(Auth::user()->roles->id);
         $tipoHoras = TipoHora::all();
-        $presupuestos = Presupuesto::where('id', '!=', '0')->get();
-        return view('presupuestos.index', compact('presupuestos', 'tipoHoras'));
+        $presupuestos = Presupuesto::where('id', '!=', '0')->orderBy('año','mes')->get();
+        return view('presupuestos.index', compact('presupuestos', 'tipoHoras','roles'));
     }
     // Guarda la información de las horas extras
     public function guardar($data)

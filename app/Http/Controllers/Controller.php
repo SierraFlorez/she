@@ -34,4 +34,13 @@ class Controller extends BaseController
             abort(404);
         }
     }
+    // Función para colocar primera letra en mayuscula y quitar espacios en blanco
+    public function formatoTexto($dato)
+    {
+        if (is_string($dato)) {
+            $dato = trim($dato);
+            $dato = mb_convert_case($dato, MB_CASE_TITLE, "UTF-8");
+        }
+        return ($dato);
+    }
 }

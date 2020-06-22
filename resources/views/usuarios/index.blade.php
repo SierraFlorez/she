@@ -19,7 +19,7 @@ Consultar usuarios
             </div>
             <div class="card-header" id="table_div_user">
                 <table style="text-align: center" id="dtUsuarios" class="table table-hover" cellspacing="0" width="100%">
-                    <thead >
+                    <thead>
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Documento</th>
@@ -45,7 +45,7 @@ Consultar usuarios
                             @endif
                             <td>
                                 <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalle"
-                                    onclick="detallesUsuario({{ $usuario->id}})">Ver Detalles</button>
+                                    onclick="detallesUsuario({{ $usuario->id}})">Editar</button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#modalCargo"
                                     onclick="detallesUsuarioCargo({{ $usuario->id}})">Ver Cargo</button> </center>
                             </td>

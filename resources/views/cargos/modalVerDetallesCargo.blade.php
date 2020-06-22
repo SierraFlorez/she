@@ -47,15 +47,8 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="updateCargo">Editar</button>
+        <button class="btn btn-success" id="updateCargo">Guardar</button>
       </div>
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function () {
-    $('.documento_user').keyup(function () {
-      this.value = (this.value + '').replace(/[^0-9]/g, '');
-    });
-  });
-</script>

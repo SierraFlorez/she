@@ -20,11 +20,11 @@
             {{-- Input del tipo de documento --}}
             <div class="col">
               <i class="fas fa-id-card"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo De Documento</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo Documento</label>
               <select class="form-control validate" id="tipoDocumento_user_d" name="select_tipoDocumento">
-                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
-                <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
-                <option value="Cédula de Extranjenría">Cédula de Extranjería</option>
+                <option value="CC">Cédula de Ciudadanía</option>
+                <option value="TI">Tarjeta de Identidad</option>
+                <option value="CE">Cédula de Extranjería</option>
               </select>
             </div>
           </div>
@@ -61,19 +61,27 @@
             </div>
           </div>
         </div>
-        {{-- Input del cargo  --}}
+        {{-- Input del rol --}}
         <div class="md-form mb-4">
           <div class="form-row mb-6">
-            <div class="col">
+            <div class="col-6">
               <i class="fas fa-tag"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Cargo</label>
-              <input readonly class="form-control validate" id="cargo_user_d">
+              <label data-error="wrong" data-success="right" for="orangeForm-name">Cambiar Rol</label>
+              <select onclick="NoCargoD();" class="form-control validate" id="rol_user_d" name="select_rolv">
+                @foreach ($roles as $rol)
+                <option value='{{$rol['id']}}'>{{$rol['nombre']}}</option>
+                @endforeach
+              </select>
             </div>
-            {{-- Input del sueldo  --}}
-            <div class="col">
-              <i class="fas fa-dollar-sign"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Sueldo</label>
-              <input readonly type="number" id="sueldo_user_d" class="form-control validate">
+            {{-- Input del cargo  --}}
+            <div class="col-6" id="divCargoD">
+              <i class="fas fa-tag"></i>
+              <label data-error="wrong" data-success="right" for="orangeForm-name">Cambiar Cargo</label>
+              <select class="form-control validate" id="cargo_user_d" name="select_cargov">
+                @foreach ($cargos as $cargo)
+                <option value='{{$cargo['id']}}'>{{$cargo['nombre']}}</option>
+                @endforeach
+              </select>
             </div>
           </div>
         </div>
@@ -96,15 +104,8 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="update">Editar</button>
+        <button class="btn btn-success" id="update">Guardar</button>
       </div>
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
-</script>

@@ -10,7 +10,7 @@
     <section>
            
         <div class="dashboard-wrapper imgbackground"
-            style="background-image: url('images/ceaibackground1.png'); background-repeat: no-repeat; background-position: -20% 68%">
+            style="background-image: url('images/CEAIbackground1.png'); background-repeat: no-repeat; background-position: -20% 68%">
             <div class="dashboard-ecommerce">
                 <div class="container-fluid dashboard-content ">
                       

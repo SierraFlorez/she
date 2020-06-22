@@ -4,19 +4,22 @@ namespace App\Http\Controllers;
 // <modelos>
 use App\TipoHora;
 use Validator;
-use App\User;
+use App\Role;
+use App\Tipo;
 use Illuminate\Support\Facades\Auth;
 // </modelos>
 
 class TipoHorasController extends Controller
 {
-   
+
     // Vista de la lista de tipo horas
     public function index()
     {
         $filtro = $this->administrador(Auth::user()->roles->id);
+        $roles = Role::orderBy('id', 'DESC')->get();
         $tipoHoras = TipoHora::all();
-        return view('tipoHora.index', compact('tipoHoras'));
+        $tipos = Tipo::all();
+        return view('tipoHora.index', compact('tipoHoras', 'roles', 'tipos'));
     }
 
     // Llena la información del modal
@@ -41,8 +44,15 @@ class TipoHorasController extends Controller
         if ($ok->fails()) {
             return $ok->errors()->all();;
         } else {
-            $hora->update($tipoHora);
-            return (1);
+            $validador = $this->validar($tipoHora['hora_inicio'], $tipoHora['hora_fin']);
+            if ($validador==1){
+                $hora->update($tipoHora);
+                return (1);
+            }
+            else{
+                return $validador;
+            }
+            
         }
     }
 
@@ -54,5 +64,50 @@ class TipoHorasController extends Controller
             'hora_inicio' => 'required',
             'hora_fin' => 'required',
         ]);
+    }
+
+    // Guarda el tipo de hora
+    public function guardar($data)
+    {
+        $filtro = $this->administrador(Auth::user()->roles->id);
+        $dato = json_decode($data, true);
+        $tipoHora['nombre_hora'] = $dato["Descripcion"];
+        $tipoHora['hora_inicio'] = $dato["Inicio"];
+        $tipoHora['hora_fin'] = $dato["Fin"];
+        $tipoHora['tipo_id'] = $dato["Tipo"];
+        $validador = $this->validatorSave($tipoHora);
+        if ($validador->fails()) {
+            return $validador->errors()->all();
+        } else {
+            $validador = $this->validar($tipoHora['hora_inicio'], $tipoHora['hora_fin']);
+            if ($validador == 1) {
+                // Formato de string
+                $tipoHora['nombre_hora'] = $this->formatoTexto($tipoHora['nombre_hora']);
+                $save = TipoHora::create($tipoHora);
+                return (1);
+            }
+            else{
+                return $validador;
+            }
+        }
+    }
+    // Valida la información del tipo de hora que quiere registrar
+    public function validatorSave(array $data)
+    {
+        return Validator::make($data, [
+            'nombre_hora' => 'required|max:70',
+            'hora_inicio' => 'required',
+            'hora_fin' => 'required',
+            'tipo_id' => 'required',
+        ]);
+    }
+    // Valida que el inicio debe ser menor al fin
+    public function validar($inicio, $fin)
+    {
+        $msg = 1;
+        if ($inicio > $fin) {
+            $msg = "la fecha inicio debe ser menor a la fin";
+        }
+        return $msg;
     }
 }

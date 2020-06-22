@@ -69,7 +69,7 @@ Inicio
         <h1> Bienvenido(@)</h1>
         <h2> Rol: {{Auth::User()->roles->nombre}}</h2>
         <hr>
-        <h3> Bienvenido al Sistema de Horas Extras: <br> {{ Auth::user()->nombres }}
+        <h3> Bienvenido al Sistema de Horas Extras: <br> {{ Auth::user()->nombres }} {{Auth::user()->apellidos}}
             @if(Auth::User()->password=='$2y$10$vhKmPbvJOEwosRqFUIyV2eu7.gjOI7KVFJlJRxpbmqdHtPQuKdKp6')
             <br>
             <p style="color:#f0346e">Se recomienda cambiar su contraseña</p>

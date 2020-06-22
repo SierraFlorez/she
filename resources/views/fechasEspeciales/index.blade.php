@@ -23,8 +23,7 @@ Consultar Fechas Especiales
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Descripcion</th>
-                            <th class="th-sm">Fecha inicio</th>
-                            <th class="th-sm">Fecha fin</th>
+                            <th class="th-sm">Fecha</th>
                             <th class="th-sm"><center>Acción</center></th>
                         </tr>
                     </thead>
@@ -33,8 +32,7 @@ Consultar Fechas Especiales
                         <tr>
                             <td>{{$fecha->id}}</td>
                             <td>{{$fecha->descripcion}}</td>
-                            <td>{{$fecha->fecha_inicio}}</td>
-                            <td>{{$fecha->fecha_fin}}</td>
+                            <td>{{$fecha->fecha}}</td>
                             <td>
                                 <center><button class="btn btn-primary" data-toggle="modal" data-target="#modalDetalleFecha"
                                     onclick="detallesFecha({{$fecha->id}})">Editar</button>

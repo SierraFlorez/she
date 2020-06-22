@@ -14,17 +14,17 @@
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-id-card"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-name">Documento</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-name">Documento *</label>
               <input required type="number" id="documento_user_g" class="form-control validate">
             </div>
             {{-- Input del tipo de documento --}}
             <div class="col">
               <i class="fas fa-id-card"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo De Documento</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo Documento *</label>
               <select required class="form-control validate" id="tipoDocumento_user_g" name="select_tipoDocumento_g">
-                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
-                <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
-                <option value="Cédula de Extranjenría">Cédula de Extranjería</option>
+                <option value="CC">Cédula de Ciudadanía</option>
+                <option value="TI">Tarjeta de Identidad</option>
+                <option value="CE">Cédula de Extranjería</option>
               </select>
             </div>
           </div>
@@ -34,13 +34,13 @@
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-user"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-email">Nombres</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-email">Nombres *</label>
               <input required type="text" id="nombres_user_g" class="form-control validate">
             </div>
             {{-- Input de los apellidos  --}}
             <div class="col">
               <i class="fas fa-user"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Apellidos</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Apellidos *</label>
               <input required type="text" id="apellidos_user_g" class="form-control validate">
             </div>
           </div>
@@ -50,7 +50,7 @@
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-building"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Centro</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Centro *</label>
               <select required class="form-control validate" id="centro_user_g" name="select_centro_g">
                 <option value="CEAI">CEAI</option>
               </select>
@@ -58,40 +58,34 @@
             {{-- Input de la regional  --}}
             <div class="col">
               <i class="fas fa-building"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Regional</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Regional *</label>
               <select required class="form-control validate" id="regional_user_g" name="select_regional_g">
                 <option value="VALLE">Valle</option>
               </select>
             </div>
           </div>
         </div>
-        {{-- Input del cargo  --}}
+        {{-- Input del rol  --}}
         <div class="md-form mb-4">
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-tag"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Cargo</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Rol *</label>
+              <select onchange="NoCargo();" required class="form-control validate" id="cargo_user_g" name="select_rol_g">
+                <option value=""></option>
+                @foreach($roles as $rol)
+                <option value="{{$rol->id}}">{{$rol->nombre}}</option>
+                @endforeach
+              </select>
+            </div>
+            {{-- Input del cargo --}}
+            <div class="col" id="divCargo">
+              <i class="fas fa-tag"></i>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Cargo *</label>
               <select required class="form-control validate" id="cargo_user_g" name="select_cargo_g">
                 <option value=""></option>
                 @foreach($cargos as $cargo)
                 <option value="{{$cargo->id}}">{{$cargo->nombre}}</option>
-                @endforeach
-              </select>
-            </div>
-            {{-- Input del sueldo  --}}
-            {{-- <div class="col">
-              <i class="fas fa-user"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Sueldo</label>
-              <input readonly type="number" id="sueldo_user_d" class="form-control validate">
-            </div> --}}
-            {{-- Input del rol --}}
-            <div class="col">
-              <i class="fas fa-tag"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Rol</label>
-              <select required class="form-control validate" id="cargo_user_g" name="select_rol_g">
-                <option value=""></option>
-                @foreach($roles as $rol)
-                <option value="{{$rol->id}}">{{$rol->nombre}}</option>
                 @endforeach
               </select>
             </div>
@@ -102,13 +96,15 @@
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-envelope prefix grey-text"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Correo</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Correo *</label>
               <input required type="email" id="email_user_g" class="form-control validate">
             </div>
             <div class="col">
               <i class="fas fa-phone"></i>
               {{-- Input del telefono --}}
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Teléfono</label>
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Teléfono
+
+              </label>
               <input required type="number" id="telefono_user_g" class="form-control validate">
             </div>
           </div>
@@ -121,10 +117,3 @@
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
-</script>

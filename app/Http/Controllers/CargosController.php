@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 // <modelos>
 use App\Cargo;
 use Validator;
+use App\Role;
+
 // </modelos>
 use Illuminate\Support\Facades\Auth;
 
@@ -14,9 +16,10 @@ class CargosController extends Controller
     // Tabla de cargos
     public function index()
     {
+        $roles = Role::orderBy('id', 'DESC')->get();
         $filtro = $this->administrador(Auth::user()->roles->id);
-        $cargos = Cargo::all();
-        return view('cargos.index', compact('cargos'));
+        $cargos = Cargo::where('id','!=',0)->get();
+        return view('cargos.index', compact('cargos','roles'));
     }
 
     // Modal detalle cargo
@@ -52,13 +55,13 @@ class CargosController extends Controller
     {
         return Validator::make($cargo, [
             'nombre' => 'required|max:50|unique:cargos,nombre,' . $cargo['id'],
-            'sueldo' => 'required|numeric|max:10000000|min:1000000',
-            'valor_diurna' => 'required|numeric|min:1000|max:100000',
-            'valor_diurna' => 'required|numeric|min:1000|max:100000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:100000',
-            'valor_dominical' => 'required|numeric|min:1000|max:100000',
-            'valor_recargo' => 'required|numeric|min:1000|max:100000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:100000',
+            'sueldo' => 'required|numeric|max:10000000|min:500000',
+            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
+            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
+            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
+            'valor_dominical' => 'required|numeric|min:1000|max:1000000',
+            'valor_recargo' => 'required|numeric|min:1000|max:1000000',
+            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
         ]);
     }
     // Guarda cargo nuevo
@@ -85,13 +88,13 @@ class CargosController extends Controller
     {
         return Validator::make($cargo, [
             'nombre' => 'required|max:50|unique:cargos,nombre',
-            'sueldo' => 'required|numeric|max:10000000|min:1000000',
-            'valor_diurna' => 'required|numeric|min:1000|max:100000',
-            'valor_diurna' => 'required|numeric|min:1000|max:100000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:100000',
-            'valor_dominical' => 'required|numeric|min:1000|max:100000',
-            'valor_recargo' => 'required|numeric|min:1000|max:100000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:100000',
+            'sueldo' => 'required|numeric|max:10000000|min:500000',
+            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
+            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
+            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
+            'valor_dominical' => 'required|numeric|min:1000|max:1000000',
+            'valor_recargo' => 'required|numeric|min:1000|max:1000000',
+            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
         ]);
     }
 }

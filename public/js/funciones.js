@@ -162,7 +162,7 @@ function detallesUsuarioSesion(id) {
     $("#cargo_user").val(data.cargo.nombre);
     $("#centro_user").val(data.usuario.centro);
     $("#regional_user").val(data.usuario.regional);
-    $("#sueldo_user").val(data.cargo.sueldo);
+    $("#rol_user").val(data.usuario.role_id);
     $("#email_user").val(data.usuario.email);
     $("#telefono_user").val(data.usuario.telefono);
     $("#tipoDocumento_user").val(data.usuario.tipo_documento);
@@ -203,7 +203,6 @@ function updateUsuarioSesion(id) {
   var datos = JSON.stringify(obj);
   // console.log(datos);
   $.post(url + "/" + datos).done(function (data) {
-    $("#documento_user_d").val(data.documento);
     $("#modalCuenta").modal("hide"); //ocultamos el modal
     // console.log(data);
     if (data == 1) {
@@ -234,6 +233,12 @@ function updateUsuarioSesion(id) {
 // Muestra la información del cargo del usuario de la cuenta iniciada
 function detallesUsuarioCargoSesion(id) {
   var url = "usuarios/detalleCargo";
+  $("#cargov_s").val('');
+  $("#sueldov_s").val('');
+  $("#diurna_s").val('');
+  $("#nocturna_s").val('');
+  $("#dominical_s").val('');
+  $("#nocturno_s").val('');
   $.post(url + "/" + id).done(function (data) {
     // console.log(data.cargo);
     $("#cargov_s").val(data.cargo.nombre);
@@ -242,8 +247,6 @@ function detallesUsuarioCargoSesion(id) {
     $("#nocturna_s").val(data.cargo.valor_nocturna);
     $("#dominical_s").val(data.cargo.valor_dominical);
     $("#nocturno_s").val(data.cargo.valor_recargo);
-    // $('#cargov').val('');
-    // $("#updatecv_s").attr('onclick', 'cambiarCargo(' + data.usuario.id + ')');
   });
 }
 
@@ -260,18 +263,21 @@ function detallesUsuario(id) {
   $("#email_user_d").val("");
   $("#telefono_user_d").val("");
   $("#tipoDocumento_user_d").val("");
+  $("#rol_user_d").val("");
   $.post(url + "/" + id).done(function (data) {
     // console.log(data);
     $("#documento_user_d").val(data.usuario.documento);
     $("#nombres_user_d").val(data.usuario.nombres);
     $("#apellidos_user_d").val(data.usuario.apellidos);
-    $("#cargo_user_d").val(data.cargo.nombre);
+    $("#rol_user_d").val(data.usuario.role_id);
+    $("#cargo_user_d").val(data.cargo.id);
     $("#centro_user_d").val(data.usuario.centro);
     $("#regional_user_d").val(data.usuario.regional);
     $("#sueldo_user_d").val(data.cargo.sueldo);
     $("#email_user_d").val(data.usuario.email);
     $("#telefono_user_d").val(data.usuario.telefono);
     $("#tipoDocumento_user_d").val(data.usuario.tipo_documento);
+    var actualizar=NoCargoD();
     $("#update").attr("onclick", "updateUsuario(" + data.usuario.id + ")");
   });
 }
@@ -283,13 +289,12 @@ function updateUsuario(id) {
   $nombres = $("#nombres_user_d").val();
   $apellidos = $("#apellidos_user_d").val();
   $cargo = $("#cargo_user_d").val();
+  $rol = $("#rol_user_d").val();
   $centro = $("#centro_user_d").val();
   $regional = $("#regional_user_d").val();
-  $sueldo = $("#sueldo_user_d").val();
   $correo = $("#email_user_d").val();
   $telefono = $("#telefono_user_d").val();
   $tipoDocumento = $("#tipoDocumento_user_d").val();
-
   var obj = new Object();
   obj.Id = id;
   obj.Documento = $documento;
@@ -298,10 +303,10 @@ function updateUsuario(id) {
   obj.Cargo = $cargo;
   obj.Regional = $regional;
   obj.Centro = $centro;
-  obj.Sueldo = $sueldo;
   obj.Correo = $correo;
   obj.Telefono = $telefono;
   obj.TipoDocumento = $tipoDocumento;
+  obj.Rol = $rol;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -349,51 +354,8 @@ function detallesUsuarioCargo(id) {
     $("#nocturna_d").val(data.cargo.valor_nocturna);
     $("#dominical_d").val(data.cargo.valor_dominical);
     $("#nocturno_d").val(data.cargo.valor_recargo);
-    $("#cargov").val("");
-    $("#updatecv").attr("onclick", "cambiarCargo(" + data.usuario.id + ")");
   });
 }
-
-// Cambia el cargo de un usuario, solo puede tener uno vigente por usuario
-function cambiarCargo(id) {
-  var url = "usuarios/cambiarCargo";
-
-  $cambioCargo = $("#cargov").val();
-
-  var obj = new Object();
-  obj.Id = id;
-  obj.Cargo = $cambioCargo;
-  var datos = JSON.stringify(obj);
-  // console.log(datos);
-
-  $.post(url + "/" + datos).done(function (data) {
-    $("#modalCargo").modal("hide"); //ocultamos el modal
-    if (data == 1) {
-      Swal.fire(
-        "Completado!",
-        "Se cambio el cargo del usuario correctamente.",
-        "success"
-      );
-    } else {
-      Swal.fire("Error!", "Error al cambiar el cargo, " + data, "error");
-    }
-
-    $("#table_div_user").load(" #dtUsuarios", function () {
-      $("#dtUsuarios")
-        .addClass("table table-bordered")
-        .dataTable({
-          language: {
-            url: "DataTables/Spanish.json",
-          },
-          destroy: true,
-          responsive: true,
-          dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
-          buttons: ["copy", "excel", "csv"],
-        });
-    });
-  });
-}
-
 // Activa el estado del Usuario
 function activar(id) {
   var url = "usuarios/activar";
@@ -427,7 +389,7 @@ function inactivar(id) {
         .addClass("table table-bordered")
         .dataTable({
           language: {
-            url: ".DataTables/Spanish.json",
+            url: "DataTables/Spanish.json",
           },
           destroy: true,
           responsive: true,
@@ -436,6 +398,27 @@ function inactivar(id) {
         });
     });
   });
+}
+// Función para desactivar el input de cargo si es rol número 1 cuando se registra un usuario nuevo
+function NoCargo() {
+  $rol = $("[name = 'select_rol_g']").children("option:selected").val();
+  if ($rol == 1) {
+    $("#divCargo").children().prop('disabled', true);
+    $("[name = 'select_cargo_g']").val('');
+  } else {
+    $("#divCargo").children().prop('disabled', false);
+  }
+}
+
+// Función para desactivar el input de cargo si es rol número 1 cuando se actualiza un usuario
+function NoCargoD() {
+  $rol = $("[name = 'select_rolv']").children("option:selected").val();
+  if ($rol == 1) {
+    $("#divCargoD").children().prop('disabled', true);
+    $("[name = 'select_cargov']").val('');
+  } else {
+    $("#divCargoD").children().prop('disabled', false);
+  }
 }
 
 // Guarda usuario en la base de datos
@@ -474,6 +457,16 @@ function crearUsuario() {
     $("#modalRegistrarUsuario").modal("hide"); //ocultamos el modal
     // console.log(data);
     if (data == 1) {
+      $("#documento_user_g").val('');
+      $("#nombres_user_g").val('');
+      $("#apellidos_user_g").val('');
+      $("#email_user_g").val('');
+      $("#telefono_user_g").val('');
+      $("[name = 'select_tipoDocumento_g']").val('');
+      $("[name = 'select_rol_g']").val('');
+      $("[name = 'select_centro_g']").val('');
+      $("[name = 'select_regional_g']").val('');
+      $("[name = 'select_cargo_g']").val('');
       Swal.fire(
         "Completado!",
         "Se ha guardado exitosamente a " + $nombres,
@@ -588,7 +581,7 @@ function updateCargo(id) {
     } else {
       Swal.fire("Error!", "Error al editar Cargo, " + data + ".", "error");
     }
-    $("#table_div_cargos").load(" #dtCargos", function () {
+    $("#table_div_cargos").load("#dtCargos", function () {
       $("#dtCargos")
         .addClass("table table-bordered")
         .dataTable({
@@ -601,6 +594,7 @@ function updateCargo(id) {
           buttons: ["copy", "excel", "csv"],
         });
     });
+    
   });
 }
 // Guarda la información de un cargo nuevo
@@ -1070,16 +1064,72 @@ function updateHoras(id) {
 
 // ---------- MODULO TIPO DE HORAS ---------
 
+// Funcion para guardar tipo de hora
+function guardarTipoHora() {
+  var url = "tipo_horas/guardar";
+  $descripcion = $("#nombre_hora_g").val();
+  $inicio = $("#hora_inicio_g").val();
+  $fin = $("#hora_fin_g").val();
+  $tipo = $("[name = 'select_tipohora_g']").children("option:selected").val();
+
+  var obj = new Object();
+  obj.Descripcion = $descripcion;
+  obj.Inicio = $inicio;
+  obj.Fin = $fin;
+  obj.Tipo = $tipo;
+
+  var datos = JSON.stringify(obj);
+  // console.log(datos);
+  $.post(url + "/" + datos).done(function (data) {
+    // console.log(data);
+    if (data == 1) {
+      $("#modalRegistrarTipoHora").modal("hide"); //ocultamos el modal
+      Swal.fire(
+        "Completado!",
+        "Se han Guardado el Tipo de Horas correctamente",
+        "success"
+      );
+      $("#tipohoras_h").val("");
+      $("#date").val("");
+      $("#alt").val("");
+      $("#hora_inicio").val("");
+      $("#hora_fin").val("");
+      $("#justificacion").val("");
+      $("#table_div_tipoHoras").load(" #dtTipoHoras", function () {
+        $("#dtTipoHoras")
+          .addClass("table table-bordered")
+          .dataTable({
+            language: {
+              url: "DataTables/Spanish.json",
+            },
+            destroy: true,
+            responsive: true,
+            dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+            buttons: ["copy", "excel", "csv"],
+          });
+      });
+    } else {
+      Swal.fire(
+        "Error!",
+        "Error al guardar tipo de horas, " + data + ".",
+        "error"
+      );
+    }
+  });
+}
+
 // Función para el modal de detalles
 function detallesTipoHora(id) {
   var url = "tipo_horas/detalle";
   $("#nombre_hora_t").val("");
   $("#hora_inicio_t").val("");
   $("#hora_fin_t").val("");
+  $("#tipo_t").val("");
   $.post(url + "/" + id).done(function (data) {
     $("#nombre_hora_t").val(data.nombre_hora);
     $("#hora_inicio_t").val(data.hora_inicio);
     $("#hora_fin_t").val(data.hora_fin);
+    $("#tipo_t").val(data.tipo_id);
     $("#updateTipoHora").attr("onclick", "updateTipoHora(" + data.id + ")");
   });
 }

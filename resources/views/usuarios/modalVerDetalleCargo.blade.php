@@ -58,34 +58,10 @@
             </div>
           </div>
         </div>
-      {{-- Input del tipo de documento --}}
-      <div class="md-form mb-4">
-        <div class="form-row mb-6">
-            <div class="col">
-              <i class="fas fa-tag"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-name">Cambiar Cargo</label>
-              <select class="form-control validate" id="cargov" name="select_cargov">
-                <option value=''>Solo en caso de cambiar el cargo</option>
-                @foreach ($cargos as $cargo)
-                <option value='{{$cargo['id']}}'>{{$cargo['nombre']}}</option>
-                @endforeach
-              </select>
-              <input type="hidden">
-            </div>
-        </div>
-      </div>
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="updatecv">Editar Cargo</button>
       </div>
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function (){
-          $('.documento_user').keyup(function (){
-            this.value = (this.value + '').replace(/[^0-9]/g, '');
-          });
-        });
-</script>

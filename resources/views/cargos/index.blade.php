@@ -19,7 +19,7 @@ Consultar Cargos
             </div>
             <div class="card-header" id="table_div_cargos">
                 <table style="text-align: center" id="dtCargos" class="table table-hover" cellspacing="0" width="100%">
-                    <thead class="thead">
+                    <thead>
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Descripción</th>
