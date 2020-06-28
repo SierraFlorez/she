@@ -45,17 +45,14 @@ class TipoHorasController extends Controller
             return $ok->errors()->all();;
         } else {
             $validador = $this->validar($tipoHora['hora_inicio'], $tipoHora['hora_fin']);
-            if ($validador==1){
+            if ($validador == 1) {
                 $hora->update($tipoHora);
                 return (1);
-            }
-            else{
+            } else {
                 return $validador;
             }
-            
         }
     }
-
     // Verifica la actualización
     public function validatorUpdate($request)
     {
@@ -65,7 +62,6 @@ class TipoHorasController extends Controller
             'hora_fin' => 'required',
         ]);
     }
-
     // Guarda el tipo de hora
     public function guardar($data)
     {
@@ -85,8 +81,7 @@ class TipoHorasController extends Controller
                 $tipoHora['nombre_hora'] = $this->formatoTexto($tipoHora['nombre_hora']);
                 $save = TipoHora::create($tipoHora);
                 return (1);
-            }
-            else{
+            } else {
                 return $validador;
             }
         }

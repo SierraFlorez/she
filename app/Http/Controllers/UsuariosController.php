@@ -92,7 +92,6 @@ class UsuariosController extends Controller
             'estado' => 'required'
         ]);
     }
-
     // Trae toda la información del usuario para el modal detalle
     public function detalle($id)
     {
@@ -238,5 +237,12 @@ class UsuariosController extends Controller
             $msg = "No se pudo cambiar la contraseña";
             return $msg;
         }
+    }
+    // Detalles del usuario por id de cargo_user
+    public function detallesUsuarioCargoUser($id){
+        $funcionario=CargoUser::where('cargo_user.id',$id)
+        ->join('users', 'cargo_user.user_id', '=', 'users.id')
+        ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')->first();
+        return $funcionario;
     }
 }

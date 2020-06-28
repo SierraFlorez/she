@@ -48,5 +48,4 @@ Consultar Fechas Especiales
 </div>
 @include('fechasEspeciales.modalVerDetallesFecha')
 @include('fechasEspeciales.modalRegistrarFecha')
-
 @endsection

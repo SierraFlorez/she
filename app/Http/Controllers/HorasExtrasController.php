@@ -10,9 +10,11 @@ use App\CargoUser;
 use App\FechaEspecial;
 use App\User;
 use App\Solicitud;
+use App\Role;
 use DateTime;
 // </Modelos>
 use Validator;
+use DB;
 use Illuminate\Support\Facades\Auth;
 
 class horasExtrasController extends Controller
@@ -20,34 +22,38 @@ class horasExtrasController extends Controller
     // Retorna la vista de horas por autorizar
     public function index()
     {
+        $roles = Role::all();
         $tipoHoras = TipoHora::all();
         if (Auth::User()->role_id == 1) {
-            $usuarios = User::join('cargo_user', 'cargo_user.user_id', 'users.id')
-                ->join('cargos', 'cargos.id', 'cargo_user.cargo_id')
-                ->where('users.id', '!=', 0)->where('cargo_user.estado', '!=', 0)
+            $solicitudes = Solicitud::join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
+                ->join('users', 'users.id', '=', 'cargo_user.user_id')->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                ->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')->join('presupuestos','presupuestos.id','solicitudes.presupuesto_id')
                 ->select(
+                    DB::raw('(CASE 
+                    WHEN presupuestos.mes = 1 THEN "Enero"
+                    WHEN presupuestos.mes = 2 THEN "Febrero"
+                    WHEN presupuestos.mes = 3 THEN "Marzo"
+                    WHEN presupuestos.mes = 4 THEN "Abril"
+                    WHEN presupuestos.mes = 5 THEN "Mayo"
+                    WHEN presupuestos.mes = 6 THEN "Junio"
+                    WHEN presupuestos.mes = 7 THEN "Julio"
+                    WHEN presupuestos.mes = 8 THEN "Agosto"
+                    WHEN presupuestos.mes = 9 THEN "Septiembre"
+                    WHEN presupuestos.mes = 10 THEN "Octubre"
+                    WHEN presupuestos.mes = 11 THEN "Noviembre"
+                    WHEN presupuestos.mes = 12 THEN "Diciembre"
+                    END) AS mes'),
+                    'presupuestos.año',
+                    'solicitudes.id',
                     'users.nombres',
                     'users.apellidos',
                     'cargos.nombre',
-                    'cargo_user.id'
-                )
-                ->orderby('users.nombres')
-                ->get();
-            $horas = Hora::join('solicitudes', 'solicitudes.id', '=', 'horas.solicitud_id')->join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
-                ->join('users', 'users.id', '=', 'cargo_user.user_id')->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')
-                ->orderBy('fecha', 'desc')
-                ->select(
-                    'users.nombres',
-                    'users.apellidos',
-                    'cargos.nombre',
-                    'horas.id',
-                    'horas.fecha',
-                    'horas.hi_registrada',
-                    'horas.hf_registrada',
-                    'tipo_horas.nombre_hora'
+                    'solicitudes.hora_inicio',
+                    'solicitudes.hora_fin',
+                    'tipo_horas.nombre_hora',
+                    'solicitudes.autorizacion'
                 )->get();
-            // dd($usuarios);
-            return view('horas.index', compact('horas', 'tipoHoras', 'usuarios'));
+            return view('horas.index', compact('solicitudes', 'tipoHoras','roles'));
         } else {
             $id = CargoUser::where('estado', '1')->where('user_id', Auth::User()->id)->first();
             $solicitudes = Solicitud::join('presupuestos', 'presupuestos.id', 'presupuesto_id')->where('cargo_user_id', $id->id)->orderBy('año', 'asc')
@@ -56,7 +62,7 @@ class horasExtrasController extends Controller
                     'solicitudes.id',
                     'solicitudes.actividades'
                 )->get();
-            return view('horas.indexF', compact('solicitudes', 'tipoHoras'));
+            return view('horas.indexF', compact('solicitudes', 'tipoHoras','roles'));
         }
     }
     // Llena la tabla con cada peticion del js
@@ -88,6 +94,7 @@ class horasExtrasController extends Controller
     // Lleva a la vista los usuarios que sean funcionarios, tengan estado activo, y tengan un CargoUsuario activo
     public function registrar()
     {
+        $roles=Role::all();
         $funcionario =
             CargoUser::join('users', 'cargo_user.user_id', '=', 'users.id')
             ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')->where([['users.estado', '=', 1], ['cargo_user.estado', '=', '1']])
@@ -97,7 +104,7 @@ class horasExtrasController extends Controller
         $fecha = date('Y-m-d', strtotime('+1 days', strtotime($fecha)));
         $solicitudes = Solicitud::where('cargo_user_id', $funcionario->id)->where('autorizacion', '!=', 0)->get();
 
-        return view('horas.registrarHoras', compact('funcionario', 'fecha', 'solicitudes'));
+        return view('horas.registrarHoras', compact('funcionario', 'fecha', 'solicitudes','roles'));
     }
     // Guarda la información de las horas extras
     public function guardar($data)

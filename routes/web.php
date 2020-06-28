@@ -59,6 +59,9 @@ Route::post('/registrar/guardar/{id}', 'UsuariosController@save')->name('/regist
 // CAMBIA LA CONTRASEÑA DEL USUARIO QUE HAYA INICIADO SESIÓN
 Route::post('/passreset/{id}', 'UsuariosController@cambiar_password')->name('/registrar/guardar')->middleware('auth');
 
+// ENCUENTRA EL USUARIO POR EL ID CARGO_USER
+Route::post('/usuarios/detalleC/{id}', 'UsuariosController@detallesUsuarioCargoUser')->name('/usuarios/detalleC')->middleware('auth');
+
 
 // ----------- MODULO CARGOS -------------------------------------
 
@@ -77,8 +80,11 @@ Route::post('/cargos/guardar/{id}', 'CargosController@save')->name('/cargos/save
 
 // ----------- MODULO SOLICITUDES -------------------------------------
 
-// RETORNA LA VISTA DE HORAS EXTRAS
+// RETORNA LA VISTA DE REGISTRAR SOLICITUD
 Route::get('/registrar_solicitud', 'SolicitudesController@registrar')->name('/registrar_solicitud')->middleware('auth');
+
+// RETORNA LA VISTA DE REGISTRAR SOLICITUD VIA SAF
+Route::get('/registrar_solicitud_saf', 'SolicitudesController@horarioSaf')->name('/registrar_solicitud')->middleware('auth');
 
 // GUARDA SOLICITUD
 Route::post('/solicitud/guardar/{id}', 'SolicitudesController@guardar')->name('/solicitud/guardar/{id}')->middleware('auth');
@@ -95,6 +101,14 @@ Route::post('/solicitudes/update/{id}', 'SolicitudesController@update')->name('/
 // AUTORIZAR SOLICITUD
 Route::post('/solicitudes/autorizar/{id}', 'SolicitudesController@autorizar')->name('/solicitudes/autorizar/{id}')->middleware('auth');
 
+// CALCULAR TOTAL DE HORAS
+Route::post('/solicitudes/total_horas/{id}', 'SolicitudesController@totalHoras')->name('/solicitudes/autorizar/{id}')->middleware('auth');
+
+// VALIDA LA INFORMACION ANTES DE MANDARLA A SAF
+Route::post('/solicitudes/pre_guardar_saf/{id}', 'SolicitudesController@preGuardarSaf')->name('/solicitudes/pre_guardar_saf/{id}')->middleware('auth');
+
+// GUARDA LA INFORMACION DE SAF
+Route::post('/solicitudes/guardar_saf/{id1}/{id2}/{id3}', 'SolicitudesController@guardarSaf')->name('/solicitudes/guardar_saf/{id}')->middleware('auth');
 
 // ----------- MODULO HORAS EXTRAS -------------------------------------
 

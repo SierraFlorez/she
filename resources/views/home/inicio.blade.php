@@ -49,7 +49,8 @@ Inicio
                                     <button type="submit" class="btn btn-primary">
                                         Iniciar Sesión
                                     </button>
-                                    <a class="btn linkr" data-toggle="modal" data-target="#modalRestaurar">                                        ¿Olvido su contraseña?
+                                    <a class="btn linkr" data-toggle="modal" data-target="#modalRestaurar"> ¿Olvido su
+                                        contraseña?
                                     </a>
                                 </div>
                             </div>
@@ -62,8 +63,6 @@ Inicio
 </div>
 @else
 {{-- Si el usuario ya inicio sesión --}}
-{{-- <div class="row">
-    <div class="card w-100"> --}}
 <div class="col-md-5 col-md-offset-2 logind loginr animated fadeInDown">
     <div>
         <h1> Bienvenido(@)</h1>

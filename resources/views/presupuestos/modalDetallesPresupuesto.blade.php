@@ -63,7 +63,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="updatePresupuesto">Editar</button>
+        <button class="btn btn-success" id="updatePresupuesto">Guardar</button>
       </div>
     </div>
   </div>

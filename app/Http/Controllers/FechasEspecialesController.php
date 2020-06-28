@@ -33,14 +33,11 @@ class FechasEspecialesController extends Controller
         $filtro = $this->administrador(Auth::user()->roles->id);
         $dato = json_decode($data, true);
         $fecha['descripcion'] = $dato["Nombre"];
-        $fecha['fecha_inicio'] = $dato["Inicio"];
-        $fecha['fecha_fin'] = $dato["Fin"];
+        $fecha['fecha'] = $dato["Inicio"];
         $validador = $this->validatorSave($fecha);
         if ($validador->fails()) {
             return $validador->errors()->all();
-        } elseif ($fecha['fecha_inicio'] > $fecha['fecha_fin']) {
-            return ('La fecha inicio es mayor que la final');
-        }
+        } 
         FechaEspecial::create($fecha);
         return (1);
     }
@@ -49,8 +46,7 @@ class FechasEspecialesController extends Controller
     {
         return Validator::make($data, [
             'descripcion' => 'required|max:70',
-            'fecha_inicio' => 'required',
-            'fecha_fin' => 'required',
+            'fecha' => 'required',
         ]);
     }
     // Actualiza la fecha especial
@@ -61,13 +57,10 @@ class FechasEspecialesController extends Controller
         $fecha = FechaEspecial::find($dato['Id']);
         $fechaEspecial['id'] = $dato["Id"];
         $fechaEspecial['descripcion'] = $dato["Nombre"];
-        $fechaEspecial['fecha_inicio'] = $dato["Inicio"];
-        $fechaEspecial['fecha_fin'] = $dato["Fin"];
+        $fechaEspecial['fecha'] = $dato["Inicio"];
         $ok = $this->validatorUpdate($fechaEspecial);
         if ($ok->fails()) {
             return $ok->errors()->all();;
-        } elseif ($fechaEspecial['fecha_inicio'] > $fechaEspecial['fecha_fin']) {
-            return ('La fecha inicio es mayor que la final');
         }
         $fecha->update($fechaEspecial);
         return (1);
@@ -77,8 +70,7 @@ class FechasEspecialesController extends Controller
     {
         return Validator::make($request, [
             'descripcion' => 'required|max:100|unique:tipo_horas,nombre_hora,' . $request['id'],
-            'fecha_inicio' => 'required',
-            'fecha_fin' => 'required',
+            'fecha' => 'required',
         ]);
     }
 }

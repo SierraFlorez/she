@@ -17,6 +17,7 @@ class VerifyCsrfToken extends BaseVerifier
         '/logout',
         '/restaurar_contrasena/*',
         '/usuarios/detalle/*',
+        '/usuarios/detalleC/*',
         '/usuarios/detalleCargo/*',
         '/usuarios/cambiarCargo/*',
         '/usuarios/actualizar/*',
@@ -54,8 +55,8 @@ class VerifyCsrfToken extends BaseVerifier
         '/solicitudes/detalles/*',
         '/solicitudes/update/*',
         '/solicitudes/autorizar/*',
-
-
-
+        '/solicitudes/total_horas/*',
+        '/solicitudes/pre_guardar_saf/*',
+        '/solicitudes/guardar_saf/*',
     ];
 }

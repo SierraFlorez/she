@@ -144,7 +144,7 @@
             </div>
           </div>
         </div>
-        {{-- Input Justificacion --}}
+        {{-- Input actividades --}}
         <div class="md-form mb-4">
           <div class="form-row mb-6">
             <div class="col" style="margin-top:1%">
@@ -157,7 +157,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="update_solicitud">Editar</button>
+        <button class="btn btn-success" id="update_solicitud">Guardar</button>
       </div>
     </div>
   </div>

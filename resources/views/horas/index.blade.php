@@ -13,43 +13,55 @@ Gestión Horas Extras
                 <h1>Gestionar Horas Extras </h1>
             </center><br>
             <div class="row" style="padding-left: 2%;">
-                <div style="margin-bottom: 1%" class="col-md-9 col-6">
-                    <a class="btn btn-success" href="{{ url("/registrar_horas") }}">Registrar Horas Extras </a>
+                <div style="margin-bottom: 1%" class="col-md-2 col-6">
+                    <a class="btn btn-success" href="{{ url("/registrar_solicitud_saf") }}">Horario Instructor </a>
                 </div>
                 <div class="col-md-1 col-6">
                     <a class="btn btn-success" href="{{ url("/registrar_solicitud") }}">Registrar Solicitud </a>
                 </div>
             </div>
-            @if (Auth::User()->roles->id==1)
-            <div style="margin-top: 1%; padding-left: 2%;padding-right: 2%">
-                <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Usuario</label>
-                <select class="form-control validate" id="seleccionar_usuario" name="" onchange="selectSolicitud();">
-                    <option value="0"></option>
-                    @foreach ($usuarios as $usuario)
-                    <option value="{{$usuario->id}}">{{$usuario->nombres}} {{$usuario->apellidos}}</option>
-                    @endforeach
-                </select>
-            </div>
-            @endif
             <div style="margin-top:1%;padding-left: 2%" id="select_presupuesto" class="row">
             </div>
             <div class="card-header" id="div_horas">
-                <center><h2> Horas Registradas </h2></center>
+                <center>
+                    <h2> Solicitudes </h2>
+                </center>
                 <table id="dthorasExtras" class="table table-hover " cellspacing="0" width="100%"
                     style="text-align: center">
                     <thead class="thead">
                         <tr>
+                            <th class="th-sm">ID</th>
                             <th class="th-sm">Usuario</th>
-                            <th class="th-sm">Cargo</th>
-                            <th class="th-sm">Fecha</th>
+                            <th class="th-sm">Mes y Año</th>
                             <th class="th-sm">Hora Inicio</th>
                             <th class="th-sm">Hora Fin</th>
-                            <th class="th-sm">Tipo de Hora</th>
                             <th class="th-sm">Acción</th>
+                            <th class="th-sm">Autorizar</th>
                         </tr>
                     </thead>
-                    {{-- js 639 --}}
                     <tbody>
+                        @foreach ($solicitudes as $solicitud)
+                        <tr>
+                            <td>{{$solicitud->id}}</td>
+                            <td>{{$solicitud->nombres}} {{$solicitud->apellidos}}</td>
+                            <td>{{$solicitud->mes}} del {{$solicitud->año}}</td>
+                            <td>{{$solicitud->hora_inicio}}</td>
+                            <td>{{$solicitud->hora_fin}}</td>
+                            <td><button class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modalDetallesSolicitud"
+                                    onclick="detallesSolicitud({{$solicitud->id}})">Editar</button>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modalTableSolicitudes"
+                                    onclick="modalSolicitudes({{$solicitud->id}})">Horas</button>
+                            </td>
+                            <td> @if ($solicitud->autorizacion==0)
+                                <button class="btn btn-danger" onclick="autorizarSolicitud('{{$solicitud->id}}')"> No
+                                    Autorizado </button>
+                                @else
+                                <button class="btn btn-primary"> Autorizado </button>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

@@ -46,6 +46,7 @@ class CargosController extends Controller
         if ($ok->fails()) {
             return $ok->errors()->all();
         } else {
+            $cargo['nombre'] = $this->formatoTexto($cargo['nombre']);
             $Cargo->update($cargo);
             return (1);
         }
@@ -55,13 +56,13 @@ class CargosController extends Controller
     {
         return Validator::make($cargo, [
             'nombre' => 'required|max:50|unique:cargos,nombre,' . $cargo['id'],
-            'sueldo' => 'required|numeric|max:10000000|min:500000',
-            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
-            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
-            'valor_dominical' => 'required|numeric|min:1000|max:1000000',
-            'valor_recargo' => 'required|numeric|min:1000|max:1000000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
+            'sueldo' => 'required|numeric|min:0',
+            'valor_diurna' => 'required|numeric|min:0',
+            'valor_diurna' => 'required|numeric|min:0',
+            'valor_nocturna' => 'required|numeric|min:0',
+            'valor_dominical' => 'required|numeric|min:0',
+            'valor_recargo' => 'required|numeric|min:0',
+            'valor_nocturna' => 'required|numeric|min:0',
         ]);
     }
     // Guarda cargo nuevo
@@ -79,6 +80,7 @@ class CargosController extends Controller
         if ($validador->fails()) {
             return $validador->errors()->all();
         } else {
+            $cargo['nombre'] = $this->formatoTexto($cargo['nombre']);
             Cargo::create($cargo);
             return (1);
         }
@@ -88,13 +90,13 @@ class CargosController extends Controller
     {
         return Validator::make($cargo, [
             'nombre' => 'required|max:50|unique:cargos,nombre',
-            'sueldo' => 'required|numeric|max:10000000|min:500000',
-            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
-            'valor_diurna' => 'required|numeric|min:1000|max:1000000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
-            'valor_dominical' => 'required|numeric|min:1000|max:1000000',
-            'valor_recargo' => 'required|numeric|min:1000|max:1000000',
-            'valor_nocturna' => 'required|numeric|min:1000|max:1000000',
+            'sueldo' => 'required|numeric|min:0',
+            'valor_diurna' => 'required|numeric|min:0',
+            'valor_diurna' => 'required|numeric|min:0',
+            'valor_nocturna' => 'required|numeric|min:0',
+            'valor_dominical' => 'required|numeric|min:0',
+            'valor_recargo' => 'required|numeric|min:0',
+            'valor_nocturna' => 'required|numeric|min:0',
         ]);
     }
 }

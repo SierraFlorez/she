@@ -2,7 +2,7 @@
 @extends('app')
 {{-- da un nombre al titulo de la pestaña--}}
 @section('htmlheader_title')
-Consultar usuarios
+Reportes
 @endsection
 {{-- contenido de la pagina principal (solo ventana) --}}
 @section('main-content')

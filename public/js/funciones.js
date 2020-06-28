@@ -74,6 +74,25 @@ $(document).ready(function () {
       buttons: [],
     });
 });
+// Datatable modal solicitudes
+$(document).ready(function () {
+  $('#dtmSolicitudes').DataTable({
+    language: {
+      url: "DataTables/Spanish.json",
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.modal({
+          header: function (row) {
+            var data = row.data();
+            return 'Detalles de ' + data[0] + ' ' + data[1];
+          }
+        }),
+        renderer: $.fn.dataTable.Responsive.renderer.tableAll()
+      }
+    }
+  });
+});
 // Datatable cargos
 $(document).ready(function () {
   $("#dtCargos")
@@ -277,7 +296,7 @@ function detallesUsuario(id) {
     $("#email_user_d").val(data.usuario.email);
     $("#telefono_user_d").val(data.usuario.telefono);
     $("#tipoDocumento_user_d").val(data.usuario.tipo_documento);
-    var actualizar=NoCargoD();
+    var actualizar = NoCargoD();
     $("#update").attr("onclick", "updateUsuario(" + data.usuario.id + ")");
   });
 }
@@ -581,7 +600,7 @@ function updateCargo(id) {
     } else {
       Swal.fire("Error!", "Error al editar Cargo, " + data + ".", "error");
     }
-    $("#table_div_cargos").load("#dtCargos", function () {
+    $("#table_div_cargos").load(" #dtCargos", function () {
       $("#dtCargos")
         .addClass("table table-bordered")
         .dataTable({
@@ -594,7 +613,7 @@ function updateCargo(id) {
           buttons: ["copy", "excel", "csv"],
         });
     });
-    
+
   });
 }
 // Guarda la información de un cargo nuevo
@@ -653,27 +672,199 @@ function crearCargo() {
 
 // -------------- MODULO DE SOLICITUDES -----------
 
-// Guarda las horas extras
+
+// Muestra la información del funcionario seleccionado al registrar solicitud
+function infoFuncionario() {
+  $("#func").html("");
+  $("#docu").html("");
+  $("#cargv").html("");
+  $id = $("[name = 'select_funcionario']").children("option:selected").val();
+  var url = "usuarios/detalleC";
+  if ($id > 0) {
+    $.post(url + "/" + $id).done(function (data) {
+      $("#func").append(data.nombres + ' ' + data.apellidos);
+      $("#docu").append(data.documento);
+      $("#cargv").append(data.nombre);
+    });
+  }
+}
+
+// Muestra la información del funcionario seleccionado al registrar solicitud SAF
+function infoFuncionarioS() {
+  $("#funcS").html("");
+  $("#docuS").html("");
+  $("#cargvS").html("");
+  $id = $("[name = 'select_funcionario_s']").children("option:selected").val();
+  var url = "usuarios/detalleC";
+  if ($id > 0) {
+    $.post(url + "/" + $id).done(function (data) {
+      $("#funcS").append(data.nombres + ' ' + data.apellidos);
+      $("#docuS").append(data.documento);
+      $("#cargvS").append(data.nombre);
+    });
+  }
+}
+
+// Muestra la hora inicio y hora fin del tipo de hora
+function infoTipoHora() {
+  $("#th_s").html("");
+  $("#domingo").html("");
+  $id = $("[name = 'tipohoras_s']").children("option:selected").val();
+  var url = "tipo_horas/detalle";
+  if ($id > 0) {
+    $.post(url + "/" + $id).done(function (data) {
+      // Condicional si el tipo de hora es festivo
+      if (data.tipo_id == 4) {
+        var div = `<label style="margin-left: 5px" for="Dia7">Domingo</label>
+        <input onchange="calcularTotalHoras();" type="checkbox" id="Dia7" value="1">`;
+        $("#domingo").append(div);
+      } else {
+        // En caso contrario se agrega unos inputs de referencia
+        $("#Dia7").val('');
+        var div = `
+        <div class="col-md-6">
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de Hora inicio</label>
+          <input readonly class="form-control bfh-timepicker" type="time" value=` + data.hora_inicio + `>
+        </div>
+        <div class="col-md-6">
+         <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de Hora fin</label>
+         <input readonly class="form-control" type="time" value=` + data.hora_fin + `>
+        </div> `;
+        $("#th_s").append(div);
+      }
+    });
+  }
+}
+
+// Muestra la hora inicio y hora fin del tipo de hora SAF
+function infoTipoHoraS() {
+  $("#th_saf").html("");
+  $id = $("[name = 'tipohoras_saf']").children("option:selected").val();
+  var url = "tipo_horas/detalle";
+  if ($id > 0) {
+    $.post(url + "/" + $id).done(function (data) {
+      // Condicional si el tipo de hora es festivo
+      if (data.tipo_id != 4) {
+        var div = `
+        <div class="col-md-6">
+          <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de Hora inicio</label>
+          <input id="inicio_saf" readonly class="form-control bfh-timepicker" type="time" value=` + data.hora_inicio + `>
+        </div>
+        <div class="col-md-6">
+         <label data-error="wrong" data-success="right" for="orangeForm-name">Tipo de Hora fin</label>
+         <input id="fin_saf" readonly class="form-control" type="time" value=` + data.hora_fin + `>
+        </div> `;
+        $("#th_saf").append(div);
+      }
+    });
+  }
+}
+// Calcula el total de horas
+function calcularTotalHoras() {
+  $("#horas_s").val("");
+  $horaInicio = $("#hora_inicio_s").val();
+  $horaFin = $("#hora_fin_s").val();
+  $fechaInicio = $("#inicio_s").val();
+  $fechaFin = $("#fin_s").val();
+  $lunes = $("#Dia1");
+  $martes = $("#Dia2");
+  $miercoles = $("#Dia3");
+  $jueves = $("#Dia4");
+  $viernes = $("#Dia5");
+  $sabado = $("#Dia6");
+  $domingo = $("#Dia7");
+  // Validaciòn en que esos campos deben estar llenos y que se debe marcar al menos un dia de la semana
+  if (($horaInicio != '' && $horaFin != '' && $fechaInicio != '' && $fechaFin != '') && ($lunes.prop('checked') || $martes.prop('checked') || $miercoles.prop('checked') || $jueves.prop('checked') || $viernes.prop('checked') || $sabado.prop('checked') || $domingo.prop('checked'))) {
+    var obj = new Object();
+    obj.HoraInicio = $horaInicio;
+    obj.HoraFin = $horaFin;
+    obj.FechaInicio = $fechaInicio;
+    obj.FechaFin = $fechaFin;
+    if ($lunes.prop('checked')) {
+      obj.Lunes = $lunes.val();
+    }
+    if ($martes.prop('checked')) {
+      obj.Martes = $martes.val();
+    }
+    if ($miercoles.prop('checked')) {
+      obj.Miercoles = $miercoles.val();
+    }
+    if ($jueves.prop('checked')) {
+      obj.Jueves = $jueves.val();
+    }
+    if ($viernes.prop('checked')) {
+      obj.Viernes = $viernes.val();
+    }
+    if ($sabado.prop('checked')) {
+      obj.Sabado = $sabado.val();
+    }
+
+    if ($domingo.prop('checked')) {
+      obj.Domingo = $domingo.val();
+    }
+    var url = "solicitudes/total_horas";
+    var datos = JSON.stringify(obj);
+    $.post(url + "/" + datos).done(function (data) {
+      $("#horas_s").val(data);
+    });
+
+  }
+}
+
+// Guarda la solicitud
 function guardarSolicitud() {
   var url = "solicitud/guardar";
-  $funcionario = $("#funcionario_cargo_user_s").val();
-  $año = $("[name = 'año_solicitud']").children("option:selected").val();
-  $mes = $("[name = 'mes_solicitud']").children("option:selected").val();
+  $funcionario = $("[name = 'select_funcionario']").children("option:selected").val();
   $tipoHora = $("[name = 'tipohoras_s']").children("option:selected").val();
   $horaInicio = $("#hora_inicio_s").val();
   $horaFin = $("#hora_fin_s").val();
   $horas = $("#horas_s").val();
+  $creado = $("#created").val();
   $actividades = $("#actividades_s").val();
+  $lunes = $("#Dia1");
+  $martes = $("#Dia2");
+  $miercoles = $("#Dia3");
+  $jueves = $("#Dia4");
+  $viernes = $("#Dia5");
+  $sabado = $("#Dia6");
+  $domingo = $("#Dia7");
+  $fechaInicio = $("#inicio_s").val();
+  $fechaFin = $("#fin_s").val();
 
   var obj = new Object();
   obj.Id = $funcionario;
-  obj.Año = $año;
-  obj.Mes = $mes;
   obj.Inicio = $horaInicio;
   obj.Fin = $horaFin;
   obj.Horas = $horas;
   obj.TipoHora = $tipoHora;
   obj.Actividad = $actividades;
+  obj.FechaInicio = $fechaInicio;
+  obj.FechaFin = $fechaFin;
+  obj.Creado = $creado;
+  var dias = new Object();
+  if ($lunes.prop('checked')) {
+    dias.Lunes = $lunes.val();
+  }
+  if ($martes.prop('checked')) {
+    dias.Martes = $martes.val();
+  }
+  if ($miercoles.prop('checked')) {
+    dias.Miercoles = $miercoles.val();
+  }
+  if ($jueves.prop('checked')) {
+    dias.Jueves = $jueves.val();
+  }
+  if ($viernes.prop('checked')) {
+    dias.Viernes = $viernes.val();
+  }
+  if ($sabado.prop('checked')) {
+    dias.Sabado = $sabado.val();
+  }
+
+  if ($domingo.prop('checked')) {
+    dias.Domingo = $domingo.val();
+  }
+  obj.Dias = dias;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -686,14 +877,144 @@ function guardarSolicitud() {
       $("#hora_fin_s").val("");
       $("#horas_s").val("");
       $("#actividades_s").val("");
-      $("#justificacion").val("");
-      $("#mes_s").val("");
-      $("#año_s").val("");
       $("#tipohoras_s").val("");
+      $("#horas_s").val("");
+      $("#select_f").val("");
+      $("#inicio_s").val("");
+      $("#fin_s").val("");
+      infoFuncionario();
+      infoTipoHora();
+      $('input[type=checkbox]').prop('checked', false);
+
     } else {
       Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
     }
   });
+}
+
+// Guarda la solicitud SAF
+function guardarSolicitudSaf() {
+  var url1 = "solicitudes/pre_guardar_saf";
+  $funcionario = $("[name = 'select_funcionario_s']").children("option:selected").val();
+  $tipoHora = $("[name = 'tipohoras_saf']").children("option:selected").val();
+  $año = $("[name = 'year_saf']").children("option:selected").val();
+  $horaInicio = $("#inicio_saf").val();
+  $horaFin = $("#fin_saf").val();
+  $creado = $("#created_by").val();
+  $enero = $("#Mes1");
+  $febrero = $("#Mes2");
+  $marzo = $("#Mes3");
+  $abril = $("#Mes4");
+  $mayo = $("#Mes5");
+  $junio = $("#Mes6");
+  $julio = $("#Mes7");
+  $agosto = $("#Mes8");
+  $septiembre = $("#Mes9");
+  $octubre = $("#Mes10");
+  $noviembre = $("#Mes11");
+  $diciembre = $("#Mes12");
+  var obj = new Object();
+  obj.Id = $funcionario;
+  obj.Inicio = $horaInicio;
+  obj.Fin = $horaFin;
+  obj.Creado = $creado;
+  obj.Año = $año;
+  obj.Th = $tipoHora;
+  var meses = new Object();
+  if ($enero.prop('checked')) {
+    meses.Enero = $enero.val();
+  }
+  if ($febrero.prop('checked')) {
+    meses.Febrero = $febrero.val();
+  }
+  if ($marzo.prop('checked')) {
+    meses.Marzo = $marzo.val();
+  }
+  if ($abril.prop('checked')) {
+    meses.Abril = $abril.val();
+  }
+  if ($mayo.prop('checked')) {
+    meses.Mayo = $mayo.val();
+  }
+  if ($junio.prop('checked')) {
+    meses.Junio = $junio.val();
+  }
+  if ($julio.prop('checked')) {
+    meses.Julio = $julio.val();
+  }
+  if ($agosto.prop('checked')) {
+    meses.Agosto = $agosto.val();
+  }
+  if ($septiembre.prop('checked')) {
+    meses.Septiembre = $septiembre.val();
+  }
+  if ($octubre.prop('checked')) {
+    meses.Octubre = $octubre.val();
+  }
+  if ($noviembre.prop('checked')) {
+    meses.Noviembre = $noviembre.val();
+  }
+  if ($diciembre.prop('checked')) {
+    meses.Diciembre = $diciembre.val();
+  }
+  obj.Meses = meses;
+
+  var datos = JSON.stringify(obj);
+  // Primero organizamos la informacion dentro de la misma aplicacion de horas extras
+  $.post(url1 + "/" + datos).done(function (data) {
+    json = isJson(data);
+    if (json == true) {
+      // URL que se dirige a SAF
+      url2 = "http://" + document.domain + "/Saf/rest_horarios/getByUsuarioHE";
+      $.ajax({
+        type: "POST",
+        data: data,
+        url: url2,
+        success: function (data) {
+          esJson = isJson(data);
+          if (esJson == true) {
+            var url3 = "solicitudes/guardar_saf";
+            // URL para guardar la información dentro de horas extras
+            $.post(url3 + "/" + data+"/"+$tipoHora+"/"+$funcionario).done(function (data) {
+              if (data==1){
+                Swal.fire("Completado!", 'Bien', "success");
+
+              }else{
+                Swal.fire("Completado!", 'Salio algo mal', "success");
+
+              }
+
+            });
+          } else {
+            Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
+          }
+
+        }
+      });
+    } else {
+      Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
+
+
+    }
+  });
+}
+
+function isJson(item) {
+  item = typeof item !== "string" ?
+    JSON.stringify(item) :
+    item;
+
+  try {
+    item = JSON.parse(item);
+  } catch (e) {
+    return false;
+  }
+
+  if (typeof item === "object" && item !== null) {
+    return true;
+  }
+
+  return false;
 }
 
 // Modal de detalles de solicitud
@@ -816,6 +1137,19 @@ function autorizarSolicitud(id) {
         } else {
           Swal.fire("Error!", "Error al autorizar; " + data + ".", "error");
         }
+        $("#div_horas").load(" #dthorasExtras", function () {
+          $("#dthorasExtras")
+            .addClass("table table-bordered")
+            .dataTable({
+              language: {
+                url: "DataTables/Spanish.json",
+              },
+              destroy: true,
+              responsive: true,
+              dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+              buttons: ["copy", "excel", "csv"],
+            });
+        });
       });
     }
   });
@@ -1187,12 +1521,10 @@ function updateTipoHora(id) {
 function detallesFecha(id) {
   $("#nombre_fecha_t").val("");
   $("#fecha_inicio_t").val("");
-  $("#fecha_fin_t").val("");
   var url = "fechas_especiales/detalle";
   $.post(url + "/" + id).done(function (data) {
     $("#nombre_fecha_t").val(data.descripcion);
-    $("#fecha_inicio_t").val(data.fecha_inicio);
-    $("#fecha_fin_t").val(data.fecha_fin);
+    $("#fecha_inicio_t").val(data.fecha);
     $("#updateFecha").attr("onclick", "updateFecha(" + data.id + ")");
   });
 }
@@ -1202,13 +1534,11 @@ function updateFecha(id) {
   var url = "fechas_especiales/update";
   $nombre = $("#nombre_fecha_t").val();
   $inicio = $("#fecha_inicio_t").val();
-  $fin = $("#fecha_fin_t").val();
 
   var obj = new Object();
   obj.Id = id;
   obj.Nombre = $nombre;
   obj.Inicio = $inicio;
-  obj.Fin = $fin;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -1218,7 +1548,7 @@ function updateFecha(id) {
     if (data == 1) {
       Swal.fire(
         "Completado!",
-        "Se ha editado la fecha correctamente correctamente",
+        "Se ha editado la fecha correctamente",
         "success"
       );
     } else {
@@ -1245,12 +1575,10 @@ function saveFecha() {
   var url = "fechas_especiales/save";
   $nombre = $("#nombre_fecha_g").val();
   $inicio = $("#fecha_inicio_g").val();
-  $fin = $("#fecha_fin_g").val();
 
   var obj = new Object();
   obj.Nombre = $nombre;
   obj.Inicio = $inicio;
-  obj.Fin = $fin;
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -1260,7 +1588,6 @@ function saveFecha() {
     if (data == 1) {
       $("#nombre_fecha_g").val("");
       $("#fecha_inicio_g").val("");
-      $("#fecha_fin_g").val("");
       Swal.fire(
         "Completado!",
         "Se ha guardado exitosamente la fecha.",
@@ -1338,48 +1665,23 @@ function savePresupuesto() {
 }
 
 // Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
-function tabla_de_presupuestos() {
-  var seleccion = document.getElementById("seleccionar_presupuesto");
-  var id = seleccion.options[seleccion.selectedIndex].value;
+function modalSolicitudes(id) {
   var url = "presupuesto/tabla";
-  var boton_presupuesto =
-    `<div class="col-md-12">
-    <button class="btn btn-success" data-toggle="modal" data-target="#modalDetallePresupuesto" 
-    onclick="detallesPresupuesto(` +
-    id +
-    `)">Detalles de presupuesto</button>
-    </div>
-    <div style="margin-top:2%" class="col-md-6"><label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto restante</label>
-    <input readonly type="text" id="presupuesto_restantes" class="form-control validate"></div>`;
 
   $.post(url + "/" + id).done(function (data) {
-    var t = $("#dtPresupuestos").DataTable();
+    var t = $("#dtmSolicitudes").DataTable();
     t.clear().draw();
-    if (id > 0) {
-      $("#informacion_presupuesto").html("");
-      $("#informacion_presupuesto").append(boton_presupuesto);
-      $("#presupuesto_restantes").val(data.restante);
-    } else {
-      $("#informacion_presupuesto").html("");
-    }
-    $("#cuerpo_presupuesto").html("");
-    // console.log(data);
-    var t = $("#dtPresupuestos").DataTable();
+
     for (var i = 0; i < data.solicitudes.length; i++) {
-      var boton =
-        `<button class="btn btn-success" onclick="detallesSolicitudP(` +
-        data.solicitudes[i].id +
-        `)" data-toggle="modal" data-target="#modalDetallesSolicitudPresupuesto">Detalles
-      </button>`;
       t.row
         .add([
+          data.solicitudes[i].id,
           data.solicitudes[i].nombres + " " + data.solicitudes[i].apellidos,
           data.solicitudes[i].nombre,
           data.solicitudes[i].total_horas,
           data.solicitudes[i].hora_inicio,
           data.solicitudes[i].hora_fin,
           data.solicitudes[i].nombre_hora,
-          boton,
         ])
         .draw(false);
     }

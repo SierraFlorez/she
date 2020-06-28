@@ -11,4 +11,8 @@ class TipoHora extends Model
     protected $fillable = [
         'id','nombre_hora','hora_inicio','hora_fin','tipo_id'
     ];
+     public function tipo()
+    {
+        return $this->belongsTo('App\Tipo', 'tipo_id');
+    }
 }

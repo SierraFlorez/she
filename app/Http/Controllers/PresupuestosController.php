@@ -6,6 +6,7 @@ use App\Presupuesto;
 use App\Solicitud;
 use App\TipoHora;
 use App\Role;
+use DB;
 
 use Illuminate\Support\Facades\Auth;
 // </modelos>
@@ -19,7 +20,22 @@ class PresupuestosController extends Controller
         $roles = Role::orderBy('id', 'DESC')->get();
         $filtro = $this->administrador(Auth::user()->roles->id);
         $tipoHoras = TipoHora::all();
-        $presupuestos = Presupuesto::where('id', '!=', '0')->orderBy('año','mes')->get();
+        $presupuestos = Presupuesto::where('id', '!=', '0')->orderBy('año','mes')
+        ->select('presupuestos.*',DB::raw('(CASE 
+        WHEN presupuestos.mes = 1 THEN "Enero"
+        WHEN presupuestos.mes = 2 THEN "Febrero"
+        WHEN presupuestos.mes = 3 THEN "Marzo"
+        WHEN presupuestos.mes = 4 THEN "Abril"
+        WHEN presupuestos.mes = 5 THEN "Mayo"
+        WHEN presupuestos.mes = 6 THEN "Junio"
+        WHEN presupuestos.mes = 7 THEN "Julio"
+        WHEN presupuestos.mes = 8 THEN "Agosto"
+        WHEN presupuestos.mes = 9 THEN "Septiembre"
+        WHEN presupuestos.mes = 10 THEN "Octubre"
+        WHEN presupuestos.mes = 11 THEN "Noviembre"
+        WHEN presupuestos.mes = 12 THEN "Diciembre"
+         END) AS mes'))
+        ->get();
         return view('presupuestos.index', compact('presupuestos', 'tipoHoras','roles'));
     }
     // Guarda la información de las horas extras
@@ -36,6 +52,7 @@ class PresupuestosController extends Controller
         if ($validador->fails()) {
             return $validador->errors()->all();
         }
+        // En caso que exista un presupuesto ya en ese mes y año
         $presupuestoExistente = Presupuesto::where('mes', '=', $presupuesto['mes'])->where('año', '=', $presupuesto['año'])->first();
         if ($presupuestoExistente == !NULL) {
             $msg = "ese mes ya tiene un presupuesto asignado";
@@ -48,7 +65,7 @@ class PresupuestosController extends Controller
     public function validatorGuardar(array $data)
     {
         return Validator::make($data, [
-            'presupuesto_inicial' => 'required|numeric|max:100000000|min:1000000',
+            'presupuesto_inicial' => 'required|numeric|min:1',
             'mes' => 'required',
             'año' => 'required',
         ]);
@@ -100,7 +117,7 @@ class PresupuestosController extends Controller
         return Validator::make($request, [
             'año' => 'required',
             'mes' => 'required',
-            'presupuesto_inicial' => 'required|numeric|max:100000000|min:1000000',
+            'presupuesto_inicial' => 'required|numeric|min:1',
         ]);
     }
 }
