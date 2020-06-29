@@ -15,17 +15,22 @@ class TipoHorasController extends Controller
     // Vista de la lista de tipo horas
     public function index()
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
-        $roles = Role::orderBy('id', 'DESC')->get();
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $tipoHoras = TipoHora::all();
         $tipos = Tipo::all();
-        return view('tipoHora.index', compact('tipoHoras', 'roles', 'tipos'));
+        return view('tipoHora.index', compact('tipoHoras','tipos'));
     }
 
     // Llena la información del modal
     public function detalle($id)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $tipoHora = TipoHora::find($id);
         return ($tipoHora);
     }
@@ -33,7 +38,10 @@ class TipoHorasController extends Controller
     // Actualiza la hora extra
     public function update($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $hora = TipoHora::find($dato['Id']);
         $tipoHora['id'] = $dato["Id"];
@@ -65,7 +73,10 @@ class TipoHorasController extends Controller
     // Guarda el tipo de hora
     public function guardar($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }  
         $dato = json_decode($data, true);
         $tipoHora['nombre_hora'] = $dato["Descripcion"];
         $tipoHora['hora_inicio'] = $dato["Inicio"];

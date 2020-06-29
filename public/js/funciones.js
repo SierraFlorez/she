@@ -93,6 +93,25 @@ $(document).ready(function () {
     }
   });
 });
+// Datatable modal horas
+$(document).ready(function () {
+  $('#dtmHoras').DataTable({
+    language: {
+      url: "DataTables/Spanish.json",
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.modal({
+          header: function (row) {
+            var data = row.data();
+            return 'Detalles de ' + data[0] + ' ' + data[1];
+          }
+        }),
+        renderer: $.fn.dataTable.Responsive.renderer.tableAll()
+      }
+    }
+  });
+});
 // Datatable cargos
 $(document).ready(function () {
   $("#dtCargos")
@@ -181,8 +200,10 @@ function detallesUsuarioSesion(id) {
     $("#cargo_user").val(data.cargo.nombre);
     $("#centro_user").val(data.usuario.centro);
     $("#regional_user").val(data.usuario.regional);
-    $("#rol_user").val(data.usuario.role_id);
+    $("#rol_user_a").val(data.rol.nombre);
     $("#email_user").val(data.usuario.email);
+    $("#rol_hidden").val(data.usuario.role_id);
+    $("#cargo_hidden").val(data.cargo.id);
     $("#telefono_user").val(data.usuario.telefono);
     $("#tipoDocumento_user").val(data.usuario.tipo_documento);
     $("#updateSesion").attr(
@@ -198,12 +219,13 @@ function updateUsuarioSesion(id) {
   $documento = $("#documento_user").val();
   $nombres = $("#nombres_user").val();
   $apellidos = $("#apellidos_user").val();
-  $cargo = $("#cargo_user").val();
+  $cargo = $("#cargo_hidden").val();
   $centro = $("#centro_user").val();
   $regional = $("#regional_user").val();
   $sueldo = $("#sueldo_user").val();
   $correo = $("#email_user").val();
   $telefono = $("#telefono_user").val();
+  $rol = $("#rol_hidden").val();
   $tipoDocumento = $("#tipoDocumento_user").val();
 
   var obj = new Object();
@@ -215,6 +237,7 @@ function updateUsuarioSesion(id) {
   obj.Regional = $regional;
   obj.Centro = $centro;
   obj.Sueldo = $sueldo;
+  obj.Rol = $rol;
   obj.Correo = $correo;
   obj.Telefono = $telefono;
   obj.TipoDocumento = $tipoDocumento;
@@ -761,53 +784,55 @@ function infoTipoHoraS() {
 }
 // Calcula el total de horas
 function calcularTotalHoras() {
-  $("#horas_s").val("");
-  $horaInicio = $("#hora_inicio_s").val();
-  $horaFin = $("#hora_fin_s").val();
-  $fechaInicio = $("#inicio_s").val();
-  $fechaFin = $("#fin_s").val();
-  $lunes = $("#Dia1");
-  $martes = $("#Dia2");
-  $miercoles = $("#Dia3");
-  $jueves = $("#Dia4");
-  $viernes = $("#Dia5");
-  $sabado = $("#Dia6");
-  $domingo = $("#Dia7");
-  // Validaciòn en que esos campos deben estar llenos y que se debe marcar al menos un dia de la semana
-  if (($horaInicio != '' && $horaFin != '' && $fechaInicio != '' && $fechaFin != '') && ($lunes.prop('checked') || $martes.prop('checked') || $miercoles.prop('checked') || $jueves.prop('checked') || $viernes.prop('checked') || $sabado.prop('checked') || $domingo.prop('checked'))) {
-    var obj = new Object();
-    obj.HoraInicio = $horaInicio;
-    obj.HoraFin = $horaFin;
-    obj.FechaInicio = $fechaInicio;
-    obj.FechaFin = $fechaFin;
-    if ($lunes.prop('checked')) {
-      obj.Lunes = $lunes.val();
-    }
-    if ($martes.prop('checked')) {
-      obj.Martes = $martes.val();
-    }
-    if ($miercoles.prop('checked')) {
-      obj.Miercoles = $miercoles.val();
-    }
-    if ($jueves.prop('checked')) {
-      obj.Jueves = $jueves.val();
-    }
-    if ($viernes.prop('checked')) {
-      obj.Viernes = $viernes.val();
-    }
-    if ($sabado.prop('checked')) {
-      obj.Sabado = $sabado.val();
-    }
+  $id = $("[name = 'tipohoras_s']").children("option:selected").val();
+  if ($id != 7) {
+    $("#horas_s").val("");
+    $horaInicio = $("#hora_inicio_s").val();
+    $horaFin = $("#hora_fin_s").val();
+    $fechaInicio = $("#inicio_s").val();
+    $fechaFin = $("#fin_s").val();
+    $lunes = $("#Dia1");
+    $martes = $("#Dia2");
+    $miercoles = $("#Dia3");
+    $jueves = $("#Dia4");
+    $viernes = $("#Dia5");
+    $sabado = $("#Dia6");
+    $domingo = $("#Dia7");
+    // Validaciòn en que esos campos deben estar llenos y que se debe marcar al menos un dia de la semana
+    if (($horaInicio != '' && $horaFin != '' && $fechaInicio != '' && $fechaFin != '') && ($lunes.prop('checked') || $martes.prop('checked') || $miercoles.prop('checked') || $jueves.prop('checked') || $viernes.prop('checked') || $sabado.prop('checked') || $domingo.prop('checked'))) {
+      var obj = new Object();
+      obj.HoraInicio = $horaInicio;
+      obj.HoraFin = $horaFin;
+      obj.FechaInicio = $fechaInicio;
+      obj.FechaFin = $fechaFin;
+      if ($lunes.prop('checked')) {
+        obj.Lunes = $lunes.val();
+      }
+      if ($martes.prop('checked')) {
+        obj.Martes = $martes.val();
+      }
+      if ($miercoles.prop('checked')) {
+        obj.Miercoles = $miercoles.val();
+      }
+      if ($jueves.prop('checked')) {
+        obj.Jueves = $jueves.val();
+      }
+      if ($viernes.prop('checked')) {
+        obj.Viernes = $viernes.val();
+      }
+      if ($sabado.prop('checked')) {
+        obj.Sabado = $sabado.val();
+      }
 
-    if ($domingo.prop('checked')) {
-      obj.Domingo = $domingo.val();
+      if ($domingo.prop('checked')) {
+        obj.Domingo = $domingo.val();
+      }
+      var url = "solicitudes/total_horas";
+      var datos = JSON.stringify(obj);
+      $.post(url + "/" + datos).done(function (data) {
+        $("#horas_s").val(data);
+      });
     }
-    var url = "solicitudes/total_horas";
-    var datos = JSON.stringify(obj);
-    $.post(url + "/" + datos).done(function (data) {
-      $("#horas_s").val(data);
-    });
-
   }
 }
 
@@ -958,7 +983,7 @@ function guardarSolicitudSaf() {
     meses.Diciembre = $diciembre.val();
   }
   obj.Meses = meses;
-
+  $("#submit").prop("disabled", true);
   var datos = JSON.stringify(obj);
   // Primero organizamos la informacion dentro de la misma aplicacion de horas extras
   $.post(url1 + "/" + datos).done(function (data) {
@@ -975,35 +1000,43 @@ function guardarSolicitudSaf() {
           if (esJson == true) {
             var url3 = "solicitudes/guardar_saf";
             // URL para guardar la información dentro de horas extras
-            $.post(url3 + "/" + data+"/"+$tipoHora+"/"+$funcionario).done(function (data) {
-              if (data==1){
-                Swal.fire("Completado!", 'Bien', "success");
-
-              }else{
-                Swal.fire("Completado!", 'Salio algo mal', "success");
-
+            $.post(url3 + "/" + data + "/" + $tipoHora + "/" + $funcionario).done(function (data) {
+              $("#submit").removeAttr('disabled');
+              // Caso en que se hayan cumplido los casos
+              if (data == 1) {
+                Swal.fire("Completado!", 'se guardaron las solicitudes', "success");
+                $("[name = 'select_funcionario_s']").val('');
+                $("[name = 'tipohoras_saf']").val('');
+                $("[name = 'year_saf']").val('');
+                $("#inicio_saf").val('');
+                $("#fin_saf").val('');
+                $("#created_by").val('');
+                infoFuncionarioS();
+                infoTipoHoraS();
+                $('input[type=checkbox]').prop('checked', false);
+              } else {
+                Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
+                $("#submit").removeAttr('disabled');
               }
-
             });
           } else {
             Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
+            $("#submit").removeAttr('disabled');
           }
-
         }
       });
     } else {
       Swal.fire("Error!", "Error al Guardar Solicitud, " + data + ".", "error");
-
-
+      $("#submit").removeAttr('disabled');
     }
   });
 }
 
+// Indentifica si el parametro es json
 function isJson(item) {
   item = typeof item !== "string" ?
     JSON.stringify(item) :
     item;
-
   try {
     item = JSON.parse(item);
   } catch (e) {
@@ -1013,7 +1046,6 @@ function isJson(item) {
   if (typeof item === "object" && item !== null) {
     return true;
   }
-
   return false;
 }
 
@@ -1047,6 +1079,7 @@ function detallesSolicitud(id) {
     $("#horas_s").val(data.total_horas);
     $("#horas_restantes_s").val(data.horas_restantes);
     $("#autorizado_s").val(data.autorizacion);
+    $("#creado_s").val(data.creado);
     $("#actividades_s").val(data.actividades);
     $("#update_solicitud").attr("onclick", "updateSolicitud(" + id + ")");
   });
@@ -1155,6 +1188,68 @@ function autorizarSolicitud(id) {
   });
 }
 
+// Autoriza la solicitud
+function eliminarSolicitud(id) {
+  // console.log(id);
+  // console.log(idUser);
+  Swal.fire({
+    title: "¿Deseas ELIMINAR esta solicitud?",
+    text: "No se puede revertir esta acción",
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.value) {
+      var url = "solicitudes/eliminar";
+      var obj = new Object();
+      obj.Id = id;
+      var datos = JSON.stringify(obj);
+      $.post(url + "/" + datos).done(function (data) {
+        if (data == 1) {
+          Swal.fire("Completado!", "Se ha eliminado la solicitud", "success");
+          $("#botonSolicitud").html("");
+        } else {
+          Swal.fire("Error!", "Error al eliminar; " + data + ".", "error");
+        }
+        $("#div_horas").load(" #dthorasExtras", function () {
+          $("#dthorasExtras")
+            .addClass("table table-bordered")
+            .dataTable({
+              language: {
+                url: "DataTables/Spanish.json",
+              },
+              destroy: true,
+              responsive: true,
+              dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
+              buttons: ["copy", "excel", "csv"],
+            });
+        });
+      });
+    }
+  });
+}
+// Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
+function modalHoras(id) {
+  var url = "horas/solicitud";
+
+  $.post(url + "/" + id).done(function (data) {
+    var t = $("#dtmHoras").DataTable();
+    t.clear().draw();
+    for (var i = 0; i < data.length; i++) {
+      t.row
+        .add([
+          data[i].id,
+          data[i].fecha,
+          data[i].hi_registrada,
+          data[i].hf_registrada,
+        ])
+        .draw(false);
+    }
+  });
+}
 // ------------MODULO DE HORAS EXTRAS ----------------
 
 // Función para mostrar la solicitud

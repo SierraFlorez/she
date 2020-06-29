@@ -15,29 +15,37 @@ class FechasEspecialesController extends Controller
     // Retorna la pagina de inicio
     public function index()
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
-        // Retorna la vista de inicio
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $fechas = FechaEspecial::all();
-        $roles = Role::orderBy('id', 'DESC')->get();
-        return view('fechasEspeciales.index', compact('fechas','roles'));
+        return view('fechasEspeciales.index', compact('fechas'));
     }
     // Llena la información del modal
     public function detalle($id)
     {
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $detalle = FechaEspecial::find($id);
         return ($detalle);
     }
     // Guarda la fecha
     public function save($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $fecha['descripcion'] = $dato["Nombre"];
         $fecha['fecha'] = $dato["Inicio"];
         $validador = $this->validatorSave($fecha);
         if ($validador->fails()) {
             return $validador->errors()->all();
-        } 
+        }
         FechaEspecial::create($fecha);
         return (1);
     }
@@ -52,7 +60,10 @@ class FechasEspecialesController extends Controller
     // Actualiza la fecha especial
     public function update($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $fecha = FechaEspecial::find($dato['Id']);
         $fechaEspecial['id'] = $dato["Id"];

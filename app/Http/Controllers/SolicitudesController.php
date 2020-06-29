@@ -14,6 +14,7 @@ use App\Hora;
 use DateTime;
 use Validator;
 use DB;
+use App\FechaEspecial;
 use Illuminate\Support\Facades\Auth;
 
 class SolicitudesController extends Controller
@@ -21,7 +22,6 @@ class SolicitudesController extends Controller
     // Vista para registrar solicitudes
     public function registrar()
     {
-        $roles = Role::all();
         $funcionarios =
             CargoUser::join('users', 'cargo_user.user_id', '=', 'users.id')
             ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')->where([['users.estado', '=', 1], ['cargo_user.estado', '=', '1'], ['cargos.id', '!=', '0']])
@@ -30,14 +30,13 @@ class SolicitudesController extends Controller
         $fecha = date('Y-m-d');
         $fecha = date('Y-m-d', strtotime('+1 days', strtotime($fecha)));
         $tipoHoras = TipoHora::all();
-        return view('solicitudes.registrarSolicitud', compact('funcionarios', 'fecha', 'tipoHoras', 'id', 'roles'));
+        return view('solicitudes.registrarSolicitud', compact('funcionarios', 'fecha', 'tipoHoras', 'id'));
     }
 
     // Guarda la solicitud
     public function guardar($data)
     {
         $dato = json_decode($data, true);
-        // dd($dato);
         $solicitud['cargo_user_id'] = $dato["Id"];
         $solicitud['tipo_hora_id'] = $dato["TipoHora"];
         $solicitud['total_horas'] = $dato["Horas"];
@@ -54,8 +53,9 @@ class SolicitudesController extends Controller
         $mes = date('m', $fecha);
         $mes = (int) $mes;
         $presupuesto = Presupuesto::where('año', $año)->where('mes', $mes)->first();
-        if ($presupuesto == NULL) {
-            $msg = "El mes y el año seleccionado, no cuentan con un presupuesto";
+        // Si no encuentra presupuesto
+        if ($presupuesto == null) {
+            $msg['msg'] = "El mes y el año seleccionado, no cuentan con un presupuesto";
             return ($msg);
         }
         $solicitud['presupuesto_id'] = $presupuesto['id'];
@@ -66,26 +66,37 @@ class SolicitudesController extends Controller
         }
         // Validacion de solicitud
         $msg = $this->validacion($solicitud);
-        if ($msg['msg'] == 1) {
-            $valorSolicitud['presupuesto_gastado'] = $msg['valor_total'] + $presupuesto['presupuesto_gastado'];
-            // Validación de cada hora extra
-            $msg = $this->validarHorasExtras($solicitud);
-            if ($msg['msg'] == 1) {
-                $solicitudN = Solicitud::create($solicitud);
-                // Comentar la siguiente linea en caso que quieran desco
-                $presupuesto->update($valorSolicitud);
-                //  Ciclo para crear cada hora extra
-                foreach ($msg['hora'] as $horaExtra) {
-                    $horaExtra['solicitud_id'] = $solicitudN['id'];
-                    Hora::create($horaExtra);
-                }
-                $msg = 1;
-            } else {
-                return $msg['msg'];
-            }
-        } else {
+        if ($msg['msg'] != 1) {
+            return ($msg['msg']);
+        }
+        $th = TipoHora::find($solicitud['tipo_hora_id']);
+        $festivos = false;
+        // Si es tipo de hora festivo
+        if ($th['tipo_id'] == 4) {
+            $festivos = true;
+        }
+        // Validación de cada hora extra
+        $msg = $this->validarHorasExtras($solicitud, $festivos);
+        if ($msg['msg'] != 1) {
             return $msg['msg'];
         }
+        // Valida que como minimo debe haber una hora extra
+        if ($msg['cantidad'] == 0) {
+            $msg['msg'] = "No se pudo crear una sola hora extra, verifique los campos y las fechas especiales";
+            return ($msg['msg']);
+        }
+        // Llama función para descontar presupuesto
+        $presupuesto = $this->descontarPresupuesto($solicitud, true);
+        if ($presupuesto != 1) {
+            return $presupuesto;
+        }
+        $solicitudN = Solicitud::create($solicitud);
+        //  Ciclo para crear cada hora extra
+        foreach ($msg['hora'] as $horaExtra) {
+            $horaExtra['solicitud_id'] = $solicitudN['id'];
+            Hora::create($horaExtra);
+        }
+        $msg = 1;
         return ($msg);
     }
     // Valida la información de la hora extra
@@ -122,19 +133,11 @@ class SolicitudesController extends Controller
         $th = TipoHora::find($solicitud['tipo_hora_id']);
         // Condicional para comparar si esta dentro del rango de horas del tipo de hora
         if (($solicitud['hora_inicio'] < $th['hora_inicio']) || ($solicitud['hora_fin'] > $th['hora_fin'])) {
-            $msg['msg'] = 'ese intervalo de tiempo no se consideran horas ' . $th['nombre_hora'];
-            return ($msg);
+            if ($th['tipo_id'] != 4) {
+                $msg['msg'] = 'ese intervalo de tiempo no se consideran horas ' . $th['nombre_hora'];
+                return ($msg);
+            }
         }
-        // Comienza la validacion del presupuesto
-        $valorTotal = $this->calcularValorHoras($solicitud);
-        $presupuesto = Presupuesto::find($solicitud['presupuesto_id']);
-        $presupuesto['sumaRestante'] = $valorTotal['valor_total'] + $presupuesto['presupuesto_gastado'];
-        // Caso en que supere el presupuesto
-        if ($presupuesto['sumaRestante'] > $presupuesto['presupuesto_inicial']) {
-            $msg['msg'] = "excede el presupuesto restante";
-        }
-        // Retorna en caso que no cumpla ninguna de las condiciones
-        $msg['valor_total'] = $valorTotal['valor_total'];
         return ($msg);
     }
     // Función para calcular el valor de la solicitud
@@ -163,13 +166,16 @@ class SolicitudesController extends Controller
         return ($valores);
     }
     // Valida las horas extras automaticas de la solicitud antes de ingresarlas
-    public function validarHorasExtras($solicitud)
+    public function validarHorasExtras($solicitud, $festivos = false)
     {
         $fechaInicio = strtotime($solicitud['FechaInicio']);
         $fechaFin = strtotime($solicitud['FechaFin']);
         $dias = $solicitud['dias'];
         $msg = [];
         $msg['msg'] = 1;
+        $msg['cantidad'] = 0;
+        $msg['cantidad_horas'] = 0;
+
         // Ciclo para recorrer la diferencia entre la fecha inicio y fecha fin
         for ($i = $fechaInicio; $i <= $fechaFin; $i += 86400) {
             $dia = date('N', $i);
@@ -177,8 +183,19 @@ class SolicitudesController extends Controller
             $horaExtra['fecha'] = $fecha;
             $horaExtra['hi_registrada'] = $solicitud['hora_inicio'];
             $horaExtra['hf_registrada'] = $solicitud['hora_fin'];
-            $horaExtra['autorizado'] = 0;
-
+            $horaInicio = new DateTime($horaExtra['hi_registrada']);
+            $horaFin = new DateTime($horaExtra['hf_registrada']);
+            $intervalo = $horaInicio->diff($horaFin);
+            $horaExtra['total_horas'] = $intervalo->h + ($intervalo->i / 60);
+            $diaFestivo = $this->esFestivo($fecha, $dia);
+            // Caso en que hayan seleccionado festivos y dominicales pero el día no es festivo
+            if ($festivos == true && $diaFestivo == false) {
+                continue;
+            }
+            // Caso en que no haya seleccionado dias festivos y dominicales pero el día si es festivo
+            if ($festivos == false && $diaFestivo == true) {
+                continue;
+            }
             // Valida si existe la variable
             if (isset($dias['Lunes'])) {
                 // Valida si es el día que corresponde
@@ -189,7 +206,9 @@ class SolicitudesController extends Controller
                         return $msg;
                     }
                     // Lo va guardando en un arreglo si cumple las condiciones para luego guardarla
+                    $msg['cantidad']++;
                     $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
             if (isset($dias['Martes'])) {
@@ -198,7 +217,9 @@ class SolicitudesController extends Controller
                     if ($msg['msg'] != 1) {
                         return $msg;
                     }
+                    $msg['cantidad']++;
                     $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
             if (isset($dias['Miercoles'])) {
@@ -207,7 +228,9 @@ class SolicitudesController extends Controller
                     if ($msg['msg'] != 1) {
                         return $msg;
                     }
+                    $msg['cantidad']++;
                     $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
             if (isset($dias['Jueves'])) {
@@ -216,7 +239,9 @@ class SolicitudesController extends Controller
                     if ($msg['msg'] != 1) {
                         return $msg;
                     }
+                    $msg['cantidad']++;
                     $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
             if (isset($dias['Viernes'])) {
@@ -225,7 +250,9 @@ class SolicitudesController extends Controller
                     if ($msg['msg'] != 1) {
                         return $msg;
                     }
+                    $msg['cantidad']++;
                     $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
             if (isset($dias['Sabado'])) {
@@ -234,12 +261,20 @@ class SolicitudesController extends Controller
                     if ($msg['msg'] != 1) {
                         return $msg;
                     }
+                    $msg['cantidad']++;
                     $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
             if (isset($dias['Domingo'])) {
                 if ($dia == 7) {
                     $msg['msg'] = $this->validarHoraExtra($horaExtra, $solicitud['cargo_user_id']);
+                    if ($msg['msg'] != 1) {
+                        return $msg;
+                    }
+                    $msg['cantidad']++;
+                    $msg['hora'][] = $horaExtra;
+                    $msg['total_horas'] += $horaExtra['total_horas'];
                 }
             }
         }
@@ -256,12 +291,13 @@ class SolicitudesController extends Controller
             ->join('users', 'users.id', 'cargo_user.user_id')->get();
         $msg = 1;
         if (!empty($horasNoDisponibles)) {
+            // Recorre cada hora de la fecha dada para ver si esta dentro del rango horario
             foreach ($horasNoDisponibles as $horaNoDisponible) {
                 if (($horaExtra['hi_registrada'] == $horaNoDisponible['hi_registrada']) && ($horaExtra['hf_registrada'] == $horaNoDisponible['hf_registrada'])) {
                     $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
                     return ($msg);
                 }
-                if (($horaExtra['hi_registrada'] <= $horaNoDisponible['hi_registrada']) && ($horaExtra['hf_registrada'] <= $horaNoDisponible['hf_registrada'])) {
+                if (($horaExtra['hi_registrada'] >= $horaNoDisponible['hi_registrada']) && ($horaExtra['hf_registrada'] <= $horaNoDisponible['hf_registrada'])) {
                     $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
                     return ($msg);
                 }
@@ -273,8 +309,40 @@ class SolicitudesController extends Controller
         }
         return ($msg);
     }
-    public function descontarPresupuesto($solicitud){
-        
+    // Descuenta el presupuesto de acuerdo a la solicitud que reciba de parametro y el segundo acepta un booleano preguntando si quiere descontar
+    public function descontarPresupuesto($solicitud, $descontar)
+    {
+        // Comienza la validacion del presupuesto
+        $valorTotal = $this->calcularValorHoras($solicitud);
+        $presupuesto = Presupuesto::find($solicitud['presupuesto_id']);
+        $presupuestoDescontado = $valorTotal['valor_total'] + $presupuesto['presupuesto_gastado'];
+        // Caso en que supere el presupuesto
+        if ($presupuestoDescontado > $presupuesto['presupuesto_inicial']) {
+            $mes = (int) $presupuesto['mes'];
+            $mes = $this->mesEspañol($mes);
+            $msg = "excede el presupuesto restante del año " . $presupuesto['año'] . " del mes de " . $mes;
+            return ($msg);
+        }
+        if ($descontar == true) {
+            // Descuenta el presupuesto
+            $val['valor_total'] = $valorTotal['valor_total'];
+            $valorSolicitud['presupuesto_gastado'] = $val['valor_total'] + $presupuesto['presupuesto_gastado'];
+            $presupuesto->update($valorSolicitud);
+        }
+        return 1;
+    }
+    // Función que recibe por parametro la fecha y dice si es festivo o no
+    public function esFestivo($fecha, $dia)
+    {
+        $esFestivo = false;
+        $festivo = FechaEspecial::where('fecha', $fecha)->first();
+        if (!empty($festivo)) {
+            $esFestivo = true;
+        }
+        if ($dia == 7) {
+            $esFestivo = true;
+        }
+        return $esFestivo;
     }
 
     // Todas las solicitudes del cargo vigente
@@ -310,7 +378,8 @@ class SolicitudesController extends Controller
                 'solicitudes.total_horas',
                 'solicitudes.autorizacion',
                 'solicitudes.actividades',
-                'solicitudes.tipo_hora_id'
+                'solicitudes.tipo_hora_id',
+                'solicitudes.created_by'
             )
             ->first();
         $valores = $this->calcularValorHoras($solicitud);
@@ -328,8 +397,10 @@ class SolicitudesController extends Controller
             $solicitud['autorizacion'] = "La solicitud no ha sido autorizada";
         } else {
             $autorizado = User::find($solicitud['autorizacion']);
-            $solicitud['autorizacion'] = "Fue autorizado por " . $autorizado['nombres'] . " " . $autorizado['apellidos'];
+            $solicitud['autorizacion'] = "Fue autorizada por " . $autorizado['nombres'] . " " . $autorizado['apellidos'];
         }
+        $creado = User::find($solicitud['created_by']);
+        $solicitud['creado'] = "Fue creada por " . $creado['nombres'] . " " . $creado['apellidos'];
         return ($solicitud);
     }
     // Actualiza la información de solicitud
@@ -348,22 +419,29 @@ class SolicitudesController extends Controller
         $solicitudE['update'] = 1;
         $mesPresupuesto = $dato["Mes"];
         $añoPresupuesto = $dato["Año"];
-        $presupuesto = Presupuesto::where('mes', '=', $mesPresupuesto)->where('año', '=', $añoPresupuesto)->first();
-        if ($presupuesto == NULL) {
+        // Nuevo presupuesto
+        $presupuestoN = Presupuesto::where('mes', '=', $mesPresupuesto)->where('año', '=', $añoPresupuesto)->first();
+        // Viejo presupuesto
+        $presupuestoV = Presupuesto::where('id', $solicitud['presupuesto_id'])->first();
+        if ($presupuestoN == NULL) {
             $msg = "No se tiene un presupuesto asignado para la fecha dada";
             return ($msg);
         }
         if ($solicitud['autorizacion'] != 0) {
-            $msg = "No se puede editar una hora ya autorizada";
+            $msg = "No se puede editar una solicitud ya autorizada";
             return ($msg);
         }
-        $solicitudE['presupuesto_id'] = $presupuesto['id'];
+        $solicitudE['presupuesto_id'] = $presupuestoN['id'];
         $ok = $this->validatorUpdate($solicitudE);
         if ($ok->fails()) {
             return $ok->errors()->all();;
         }
-        $msg = $this->validacion($solicitudE);
+        $valores = $this->calcularValorHoras($solicitud);
+        $msg = $this->descontarPresupuesto($solicitudE, false);
         if ($msg == 1) {
+            $sumarPresupuesto['presupuesto_gastado'] = $presupuestoV['presupuesto_gastado'] - $valores['valor_total'];
+            $presupuestoV->update($sumarPresupuesto);
+            $this->descontarPresupuesto($solicitudE, true);
             $solicitud->update($solicitudE);
             return (1);
         } else {
@@ -404,6 +482,31 @@ class SolicitudesController extends Controller
             // $presupuesto->update($presupuestoRestante);
         } else {
             $msg = 'estas horas ya se encuentran autorizadas; se recomienda recargar la pagina';
+        }
+        return $msg;
+    }
+
+    // Autoriza la solicitud
+    public function eliminar($data)
+    {
+        if (Auth::User()->roles->id != 1) {
+            $msg = "no tienes el permiso para ejecutar esta acción";
+            return ($msg);
+        }
+        $dato = json_decode($data, true);
+        $solicitud = Solicitud::find($dato['Id']);
+        if ($solicitud['autorizacion'] != 0) {
+            $msg = "no se puede eliminar una hora ya autorizada";
+            return ($msg);
+        } else {
+            $presupuesto = Presupuesto::find($solicitud['presupuesto_id']);
+            $valor = $this->calcularValorHoras($solicitud);
+            // Se suma el presupuesto ya quitado
+            $presupuestoRestante['presupuesto_gastado'] = $presupuesto['presupuesto_gastado'] - $valor['valor_total'];
+            $presupuesto->update($presupuestoRestante);
+            Hora::where('solicitud_id', $dato)->delete();
+            Solicitud::where('id', $dato)->delete();
+            $msg = 1;
         }
         return $msg;
     }
@@ -466,7 +569,6 @@ class SolicitudesController extends Controller
     // Vista para sincronizar los horarios de saf con horas extras
     public function horarioSaf()
     {
-        $roles = Role::all();
         $funcionarios =
             CargoUser::join('users', 'cargo_user.user_id', '=', 'users.id')
             ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')->where([['users.estado', '=', 1], ['cargo_user.estado', '=', '1'], ['cargos.id', '!=', '0']])
@@ -477,7 +579,7 @@ class SolicitudesController extends Controller
         $fecha = date('Y-m-d');
         $fecha = date('Y-m-d', strtotime('+1 days', strtotime($fecha)));
         $tipoHoras = TipoHora::where('tipo_id', '!=', '4')->get();
-        return view('solicitudes.registrarSolicitudSaf', compact('funcionarios', 'fecha', 'tipoHoras', 'id', 'roles'));
+        return view('solicitudes.registrarSolicitudSaf', compact('funcionarios', 'fecha', 'tipoHoras'));
     }
     // Valida la información y la organiza antes de mandarla a saf
     public function preGuardarSaf($data)
@@ -536,7 +638,6 @@ class SolicitudesController extends Controller
                 $horas['hi_registrada'] = $solicitud['Horario']['horainicio'] . ":00";
                 $horas['hf_registrada'] = $solicitud['Horario']['horafin'] . ":00";
                 $horas['fecha'] = $solicitud['Diashorario']['fechacita'];
-                $horas['autorizado'] = 0;
                 $horaInicio = new DateTime($horas['hi_registrada']);
                 $horaFin = new DateTime($horas['hf_registrada']);
                 $intervalo = $horaInicio->diff($horaFin);
@@ -559,9 +660,9 @@ class SolicitudesController extends Controller
             $solicitudG['hora_inicio'] = $mes[0]['hi_registrada'];
             $solicitudG['hora_fin'] = $mes[0]['hf_registrada'];
             $solicitudG['total_horas'] = 0;
-            $solicitudG['actividades'] = "prueba";
+            $solicitudG['actividades'] = "Actividades Instructor";
             $solicitudG['created_by'] = Auth::User()->id;
-            $diasHorarios=[];
+            $diasHorarios = [];
             // Recorremos cada dia de ese mes
             foreach ($mes as $diaHorario) {
                 $solicitudG['total_horas'] += $diaHorario['total_horas'];
@@ -572,18 +673,32 @@ class SolicitudesController extends Controller
                 if ($diaHorario['hf_registrada'] > $solicitudG['hora_fin']) {
                     $solicitudG['hora_fin'] = $diaHorario['hf_registrada'];
                 }
-                $diasHorarios[]=$diaHorario;
+                // Función para validar que el funcionario se encuentra disponible
+                $disponibilidad = $this->validarHoraExtra($diaHorario, $funcionario);
+                if ($disponibilidad != 1) {
+                    return ($disponibilidad);
+                }
+                // Función para validar si se puede descontar presupuesto
+                $descontarPresupuesto = $this->descontarPresupuesto($solicitudG, false);
+                if ($descontarPresupuesto != 1) {
+                    return ($descontarPresupuesto);
+                }
+                $diasHorarios[] = $diaHorario;
             }
-            $solicitudG['horas_extras']=$diasHorarios;
-            $solicitudesG[]=$solicitudG;
+            $solicitudG['horas_extras'] = $diasHorarios;
+            $solicitudesG[] = $solicitudG;
         }
         // Proceso para guardar cada solicitud
         foreach ($solicitudesG as $solicitud) {
-            $solicitudCreada = Solicitud::create($solicitud);
-            // Recorremos cada hora extra de la solicitud y la guardamos
-            foreach ($solicitud['horas_extras'] as $horasExtras) {
-                $horasExtras['solicitud_id'] = $solicitudCreada->id;
-                Hora::create($horasExtras);
+            // Se descuenta el presupuesto
+            $descontarPresupuesto = $this->descontarPresupuesto($solicitud, true);
+            if ($descontarPresupuesto == 1) {
+                $solicitudCreada = Solicitud::create($solicitud);
+                // Recorremos cada hora extra de la solicitud y la guardamos
+                foreach ($solicitud['horas_extras'] as $horasExtras) {
+                    $horasExtras['solicitud_id'] = $solicitudCreada->id;
+                    Hora::create($horasExtras);
+                }
             }
         }
         return 1;

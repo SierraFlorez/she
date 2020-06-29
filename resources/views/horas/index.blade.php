@@ -50,12 +50,14 @@ Gestión Horas Extras
                             <td><button class="btn btn-primary" data-toggle="modal"
                                     data-target="#modalDetallesSolicitud"
                                     onclick="detallesSolicitud({{$solicitud->id}})">Editar</button>
-                                <button class="btn btn-success" data-toggle="modal" data-target="#modalTableSolicitudes"
-                                    onclick="modalSolicitudes({{$solicitud->id}})">Horas</button>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modalTableHoras"
+                                    onclick="modalHoras({{$solicitud->id}})">Horas</button>
                             </td>
                             <td> @if ($solicitud->autorizacion==0)
                                 <button class="btn btn-danger" onclick="autorizarSolicitud('{{$solicitud->id}}')"> No
                                     Autorizado </button>
+                                    <button class="btn btn-danger" onclick="eliminarSolicitud('{{$solicitud->id}}')">
+                                        Eliminar </button>
                                 @else
                                 <button class="btn btn-primary"> Autorizado </button>
                                 @endif
@@ -68,6 +70,6 @@ Gestión Horas Extras
         </div>
     </div>
 </div>
-@include('horas.modalVerDetallesHora')
+@include('horas.modalVerHoras')
 @include('solicitudes.modalDetallesSolicitud')
 @endsection

@@ -14,9 +14,9 @@
                 <ul class="navbar-nav ml-auto navbar-right-top">
                     @if (Auth::User())
                     <li class="nav-item dropdown nav-user" style="margin-right: 0px; border-right-width: 0px;">
-                        <a class="nav-link nav-user-img btn btn-primary" 
-                            href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false"><i class="fa fa-tag" style="color:white"></i></a>
+                        <a class="nav-link nav-user-img btn btn-primary" href="#" id="navbarDropdownMenuLink2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-tag"
+                                style="color:white"></i></a>
                         <div class="dropdown-menu dropdown-menu-right nav-user-dropdown"
                             aria-labelledby="navbarDropdownMenuLink2">
                             <div class="nav-user-info" style="background-color: #4FB342 !important;">
@@ -27,10 +27,11 @@
                                     class="fas fa-user mr-2"></i>Cargo</a>
                         </div>
                     </li>
-                    <li class="nav-item dropdown nav-user" >
+                    <li class="nav-item dropdown nav-user">
                         <a class="nav-link nav-user-img btn btn-primary" href="#" id="navbarDropdownMenuLink2"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"
-                                style="color:white"></i></a>
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span style="color: white">{{Auth::User()->nombres}} {{Auth::User()->apellidos}}</span>
+                            <i class="fa fa-user" style="color:white"></i></a>
                         <div class="dropdown-menu dropdown-menu-right nav-user-dropdown"
                             aria-labelledby="navbarDropdownMenuLink2">
                             <div class="nav-user-info" style="background-color: #4FB342 !important;">

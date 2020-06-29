@@ -11,8 +11,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column">
-                    @if (Auth::user() && (Auth::user()->role_id==1))
+                    <li class="nav-item ">
+                        <a class="nav-link " href="{{ url("/") }}" data-target="#submenu-1" aria-controls="submenu-1"
+                            style="margin-bottom: 9px; color:white;font-size: 1.1rem">
+                            <i class="fas fa-home" style="color:white;"></i>Inicio<span
+                                class="badge badge-success"></span>
+                        </a>
+                    </li>
                     {{-- SIDEBAR ADMINISTRADOR --}}
+                    @if (Auth::user() && (Auth::user()->role_id==1 || Auth::user()->role_id==4))
                     {{-- Gestion de Cargos --}}
                     <li class="nav-item ">
                         <a class="nav-link " href="{{ url("/cargos") }}" data-target="#submenu-1"
@@ -21,16 +28,16 @@
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                      {{-- Gestion de Usuarios --}}
+                    {{-- Gestion de Usuarios --}}
                     <li class="nav-item">
-                        <a  class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
+                        <a class="nav-link " href="{{ url("/usuarios") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="margin-bottom: 9px; color:white;font-size: 1.1rem">
                             <i class="fas fa-users" style="color:white;"></i>Gestión de Usuarios<span
                                 class="badge badge-success"></span>
                         </a>
                     </li>
-                     {{-- Presupuestos --}}
-                     <li class="nav-item ">
+                    {{-- Presupuestos --}}
+                    <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/presupuestos") }}" data-target="#submenu-1"
                             aria-controls="submenu-1" style="color:white;margin-bottom: 9px;font-size: 1.1rem ">
                             <i class="fas fa-briefcase" style="color: white;"></i>Gestión de Presupuestos<span
@@ -70,9 +77,8 @@
                         </a>
                     </li>
                     @endif
-                    @if (Auth::user() && (Auth::user()->role_id==2))
-                    {{-- ------------------------------------------------------------------------------------------------- --}}
-                    {{-- SIDEBAR FUNCIONARIOS --}}
+                    {{-- SIDEBAR FUNCIONARIOS E INSTRUCTORES --}}
+                    @if (Auth::user() && (Auth::User()->role_id==2 || Auth::User()->role_id==3))
                     {{-- Gestion de Horas Extras --}}
                     <li class="nav-item ">
                         <a class="nav-link" href="{{ url("/horas_extras") }}" data-target="#submenu-1"
@@ -115,7 +121,9 @@
                                 <li class="nav-item dropdown nav-user fully">
                                     <a class="nav-link nav-user-img btn btn-primary fully" href="#"
                                         id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false"><i class="fa fa-user fully" style="color:white"></i></a>
+                                        aria-expanded="false">
+                                        <i class="fa fa-user fully"
+                                            style="color:white"></i></a>
                                     <div class="dropdown-menu dropdown-menu-left nav-user-dropdown fully"
                                         aria-labelledby="navbarDropdownMenuLink2">
                                         <div class="nav-user-info fully" style="background-color: #4FB342 !important;">

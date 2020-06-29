@@ -118,7 +118,7 @@ Registrar Solicitud Instructor
         </div><br>
         <div class="row">
           <div class="col">
-            <button class="btn btn-success" onclick="guardarSolicitudSaf()"> Guardar </button>
+            <button id="submit" class="btn btn-success" onclick="guardarSolicitudSaf()"> Guardar </button>
           </div>
           <div class="col-4">
             <a class="btn btn-success" href="{{ url("/horas_extras") }}"> Volver </a>

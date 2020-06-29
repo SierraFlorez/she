@@ -101,6 +101,9 @@ Route::post('/solicitudes/update/{id}', 'SolicitudesController@update')->name('/
 // AUTORIZAR SOLICITUD
 Route::post('/solicitudes/autorizar/{id}', 'SolicitudesController@autorizar')->name('/solicitudes/autorizar/{id}')->middleware('auth');
 
+// ELIMINA LA SOLICITUD
+Route::post('/solicitudes/eliminar/{id}', 'SolicitudesController@eliminar')->name('/solicitudes/eliminar/{id}')->middleware('auth');
+
 // CALCULAR TOTAL DE HORAS
 Route::post('/solicitudes/total_horas/{id}', 'SolicitudesController@totalHoras')->name('/solicitudes/autorizar/{id}')->middleware('auth');
 
@@ -115,8 +118,8 @@ Route::post('/solicitudes/guardar_saf/{id1}/{id2}/{id3}', 'SolicitudesController
 // RETORNA LA VISTA PARA AUTORIZAR HORAS EXTRAS
 Route::get('/horas_extras', 'HorasExtrasController@index')->name('/horas_extras')->middleware('auth');
 
-// TABLA DE HORAS EXTRAS
-Route::post('/horas/tabla/{id}', 'HorasExtrasController@tabla')->name('/horas/table/{id}')->middleware('auth');
+// // TABLA DE HORAS EXTRAS
+// Route::post('/horas/tabla/{id}', 'HorasExtrasController@tabla')->name('/horas/table/{id}')->middleware('auth');
 
 // RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
 Route::get('/registrar_horas', 'HorasExtrasController@registrar')->name('/registrar_horas')->middleware('auth');
@@ -129,6 +132,9 @@ Route::post('/horas/detalle/{id}', 'HorasExtrasController@detalle')->name('/hora
 
 // ACTUALIZA LAS HORAS
 Route::post('/horas/update/{id}', 'HorasExtrasController@update')->name('/horas/update/{id}')->middleware('auth');
+
+// TRAE HORAS EXTRAS SEGUN SOLICITUD_ID
+Route::post('/horas/solicitud/{id}', 'HorasExtrasController@horasSolicitud')->name('/horas/tabla/{id}')->middleware('auth');
 
 // ----------- MODULO DE PRESUPUESTO -------------------------------------
 
@@ -154,7 +160,10 @@ Route::post('/presupuesto/update/{id}', 'PresupuestosController@update')->name('
 Route::get('/reportes', 'ReportesController@index')->name('/registrar/horas')->middleware('auth');
 
 // DESCARGA EL REPORTE DE SOLICITUD AUTORIZACIÓN
-Route::get('/reportes/solicitudAutorizacion', 'ReportesController@reportes')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+Route::get('/reportes/solicitudAutorizacion', 'ReportesController@solicitudAutorizacion')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
+
+// DESCARGA EL REPORTE DE LEGALIZACION DE HORAS
+Route::get('/reportes/legalizacion/', 'ReportesController@legalizacionHoras')->name('/reportes/solicitudAutorizacion/{id}')->middleware('auth');
 
 
 // ------------- MODULO DE TIPO DE HORAS -------------------------------

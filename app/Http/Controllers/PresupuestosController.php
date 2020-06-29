@@ -17,11 +17,14 @@ class PresupuestosController extends Controller
     // Retorna la vista de presupuestos
     public function index()
     {
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $roles = Role::orderBy('id', 'DESC')->get();
-        $filtro = $this->administrador(Auth::user()->roles->id);
         $tipoHoras = TipoHora::all();
-        $presupuestos = Presupuesto::where('id', '!=', '0')->orderBy('año','mes')
-        ->select('presupuestos.*',DB::raw('(CASE 
+        $presupuestos = Presupuesto::where('id', '!=', '0')->orderBy('año', 'mes')
+            ->select('presupuestos.*', DB::raw('(CASE 
         WHEN presupuestos.mes = 1 THEN "Enero"
         WHEN presupuestos.mes = 2 THEN "Febrero"
         WHEN presupuestos.mes = 3 THEN "Marzo"
@@ -35,13 +38,16 @@ class PresupuestosController extends Controller
         WHEN presupuestos.mes = 11 THEN "Noviembre"
         WHEN presupuestos.mes = 12 THEN "Diciembre"
          END) AS mes'))
-        ->get();
-        return view('presupuestos.index', compact('presupuestos', 'tipoHoras','roles'));
+            ->get();
+        return view('presupuestos.index', compact('presupuestos', 'tipoHoras', 'roles'));
     }
     // Guarda la información de las horas extras
     public function guardar($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         // dd($dato);
         $presupuesto['presupuesto_inicial'] = $dato["Presupuesto"];
@@ -70,10 +76,13 @@ class PresupuestosController extends Controller
             'año' => 'required',
         ]);
     }
-    // Llena la tabla de presupuestos mostrando las horas extras de dicho presupuesto
+    // Llena la tabla de presupuestos mostrando las solicitudes de dicho presupuesto
     public function tabla($id)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $presupuesto = Presupuesto::Find($id);
         $presupuesto['restante'] = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
         $solicitudes = Solicitud::where('presupuesto_id', '=', $id)
@@ -88,7 +97,10 @@ class PresupuestosController extends Controller
     //  Llena el modulo de detalles del presupuesto
     public function detalle($id)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $presupuesto = Presupuesto::find($id);
         $restante = $presupuesto['presupuesto_inicial'] - $presupuesto['presupuesto_gastado'];
         $presupuesto['restante'] = $restante;
@@ -97,7 +109,10 @@ class PresupuestosController extends Controller
     // Actualiza la información del presupuesto
     public function update($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $presupuesto = Presupuesto::find($dato['Id']);
         $Presupuesto['id'] = $dato["Id"];

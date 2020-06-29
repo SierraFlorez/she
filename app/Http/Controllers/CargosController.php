@@ -16,22 +16,31 @@ class CargosController extends Controller
     // Tabla de cargos
     public function index()
     {
-        $roles = Role::orderBy('id', 'DESC')->get();
-        $filtro = $this->administrador(Auth::user()->roles->id);
-        $cargos = Cargo::where('id','!=',0)->get();
-        return view('cargos.index', compact('cargos','roles'));
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
+        $cargos = Cargo::where('id', '!=', 0)->get();
+        return view('cargos.index', compact('cargos'));
     }
 
     // Modal detalle cargo
     public function detalle($id)
     {
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $cargo = Cargo::find($id);
         return ($cargo);
     }
     // Actualizar cargo
     public function update($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $Cargo = Cargo::find($dato['Id']);
         $cargo['id'] = $dato["Id"];
@@ -68,7 +77,10 @@ class CargosController extends Controller
     // Guarda cargo nuevo
     public function save($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $cargo['nombre'] = $dato["Nombre"];
         $cargo['sueldo'] = $dato["Sueldo"];

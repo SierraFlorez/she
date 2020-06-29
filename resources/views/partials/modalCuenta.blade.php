@@ -1,6 +1,5 @@
 {{-- Modal Detalles de cuenta --}}
-<div class="modal fade" id="modalCuenta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" 
-  aria-hidden="true">
+<div class="modal fade" id="modalCuenta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header text-center" style="background: #29913A;">
@@ -69,16 +68,14 @@
               <i class="fas fa-tag"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Cargo</label>
               <input readonly class="form-control validate" id="cargo_user">
+              <input hidden id="cargo_hidden">
             </div>
             {{-- Input del rol  --}}
             <div class="col-6">
               <i class="fas fa-tag"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-name">Rol</label>
-              <select readonly class="form-control validate" id="rol_user">
-                @foreach ($roles as $rol)
-                <option value='{{$rol['id']}}'>{{$rol['nombre']}}</option>
-                @endforeach
-              </select>
+              <input readonly class="form-control validate" id="rol_user_a">
+              <input hidden id="rol_hidden">
             </div>
           </div>
         </div>

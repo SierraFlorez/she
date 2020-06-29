@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Hora extends Model
 {
     protected $table='horas';
-    protected $fillable = ['solicitud_id','fecha','hi_registrada','hf_registrada','autorizado']; 
+    protected $fillable = ['solicitud_id','fecha','hi_registrada','hf_registrada']; 
 
     public function solicitud()
     {

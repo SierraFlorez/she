@@ -18,16 +18,22 @@ class UsuariosController extends Controller
     // Trae a la lista de usuarios a la datatable
     public function index()
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
+        $roles = Role::orderBy('id', 'DESC')->get();
         $cargos = Cargo::where('id', '!=', 0)->get();
         $usuarios = User::select('id', 'nombres', 'apellidos', 'documento', 'estado')->where('id', '!=', 0)->get();
-        $roles = Role::orderBy('id', 'DESC')->get();
         return view('usuarios.index', compact('usuarios', 'cargos', 'roles'));
     }
     // Guarda el usuario en la bd
     public function save($data)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $dato = json_decode($data, true);
         $usuario['nombres'] = $dato["Nombres"];
         $usuario['apellidos'] = $dato["Apellidos"];
@@ -41,8 +47,7 @@ class UsuariosController extends Controller
         $usuario['regional'] = $dato['Regional'];
         if ($usuario['role_id'] == 1) {
             $usuario['cargo_id'] = 0;
-        }
-        else{
+        } else {
             $usuario['cargo_id'] = $dato['cargo'];
         }
         $usuario['cargo'] = $dato['cargo'];
@@ -97,14 +102,13 @@ class UsuariosController extends Controller
     {
         $usuario = User::find($id);
         $cargoVigente = $usuario->cargos()->where('estado', '1')->first();
-        if (empty($cargoVigente)) {
-            $cargo['nombre'] = "Administrador";
-        } else {
-            $cargo = Cargo::find($cargoVigente->cargo_id);
-        }
+        $cargo = Cargo::find($cargoVigente->cargo_id);
+        $rol = Role::find($usuario->role_id);
         $usuarioDetalle = [];
         $usuarioDetalle['usuario'] = $usuario;
         $usuarioDetalle['cargo'] = $cargo;
+        $usuarioDetalle['cargo_user'] = $cargoVigente;
+        $usuarioDetalle['rol']=$rol;
         return ($usuarioDetalle);
     }
     // Actualiza la información del usuario
@@ -122,9 +126,9 @@ class UsuariosController extends Controller
         $usuario['telefono'] = $dato["Telefono"];
         $usuario['tipo_documento'] = $dato["TipoDocumento"];
         $usuario['role_id'] = $dato["Rol"];
-        if ($usuario['role_id']==1){
+        if ($usuario['role_id'] == 1) {
             $usuario['cargo'] = 0;
-        }else{
+        } else {
             $usuario['cargo'] = $dato['Cargo'];
         }
         $cargoActual = $user->cargos->where('estado', 1)->first();
@@ -171,7 +175,6 @@ class UsuariosController extends Controller
     // Cambia el cargo de un usuario, solo puede tener uno vigente
     public function cambiarCargo($cargo, $usuario)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
         $cargoVigente['user_id'] = $usuario;
         $cargoVigente['cargo_id'] = $cargo;
         $cargoVigente['estado'] = 1;
@@ -209,7 +212,10 @@ class UsuariosController extends Controller
     // Cambia el estado a activo
     public function activar($id)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $usuario = User::find($id);
         $usuario->estado = '1';
         $usuario->save();
@@ -218,7 +224,10 @@ class UsuariosController extends Controller
     // Cambia el estado a inactivo
     public function inactivar($id)
     {
-        $filtro = $this->administrador(Auth::user()->roles->id);
+        $seguridad = $this->seguridad(['Administrador']);
+        if ($seguridad[0] === false) {
+            abort(404);
+        }
         $usuario = User::find($id);
         $usuario->estado = '0';
         $usuario->save();
@@ -239,10 +248,11 @@ class UsuariosController extends Controller
         }
     }
     // Detalles del usuario por id de cargo_user
-    public function detallesUsuarioCargoUser($id){
-        $funcionario=CargoUser::where('cargo_user.id',$id)
-        ->join('users', 'cargo_user.user_id', '=', 'users.id')
-        ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')->first();
+    public function detallesUsuarioCargoUser($id)
+    {
+        $funcionario = CargoUser::where('cargo_user.id', $id)
+            ->join('users', 'cargo_user.user_id', '=', 'users.id')
+            ->join('cargos', 'cargo_user.cargo_id', '=', 'cargos.id')->first();
         return $funcionario;
     }
 }
