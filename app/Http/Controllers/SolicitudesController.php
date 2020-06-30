@@ -520,6 +520,13 @@ class SolicitudesController extends Controller
         $fechaFin = strtotime($dato['FechaFin']);
         $horaInicio = new DateTime($dato['HoraInicio']);
         $horaFin = new DateTime($dato['HoraFin']);
+        $fecha = strtotime($dato['FechaInicio']);
+        $año = date('Y', $fecha);
+        $mes = date('m', $fecha);
+        $mes = (int) $mes;
+        $presupuesto = Presupuesto::where('año', $año)->where('mes', $mes)->first();
+        $th = TipoHora::find($dato['TipoHora']);
+
         // Condicional para validar que la hora fin sea mayor y que la fecha fin sea mayor
         if (($horaFin > $horaInicio) && ($fechaFin >= $fechaInicio)) {
             $intervalo = $horaInicio->diff($horaFin);
@@ -565,7 +572,29 @@ class SolicitudesController extends Controller
                 }
             }
             $totalHoras = $cantidadDias * $cantidadHoras;
-            return $totalHoras;
+            $cargoUser = CargoUser::find($dato['Funcionario']);
+            $cargo = Cargo::find($cargoUser['cargo_id']);
+            $valorTotal = 0;
+            if ($th['tipo_id'] == 1) {
+                $valorTotal =  $totalHoras * $cargo['valor_diurna'];
+                $valor = $cargo['valor_diurna'];
+            } elseif ($th['tipo_id'] == 2) {
+                $valorTotal =  $totalHoras * $cargo['valor_nocturna'];
+                $valor = $cargo['valor_nocturna'];
+            } elseif ($th['tipo_id'] == 3) {
+                $valorTotal =  $totalHoras * $cargo['valor_recargo'];
+                $valor = $cargo['valor_recargo'];
+            } elseif ($th['tipo_id'] == 4) {
+                $valorTotal =  $totalHoras * $cargo['valor_dominical'];
+                $valor = $cargo['valor_dominical'];
+            }
+            $valorTotal = number_format($valorTotal);
+            $presupuestoR=$presupuesto['presupuesto_inicial']-$presupuesto['presupuesto_gastado'];
+            $presupuestoR = number_format($presupuestoR);
+            $valores['total_horas'] = $totalHoras;
+            $valores['valor_total'] = $valorTotal;
+            $valores['restante'] = $presupuestoR;
+            return $valores;
         }
     }
     // Vista para sincronizar los horarios de saf con horas extras
@@ -630,6 +659,7 @@ class SolicitudesController extends Controller
         ]);
     }
     // Guarda la información entregada por SAF
+    // RestHorariosController
     public function guardarSaf($data, $tipoHora, $funcionario)
     {
         $datos = json_decode($data, true);

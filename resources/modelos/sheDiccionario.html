@@ -1,0 +1,251 @@
+<html><head>
+<title>Diccionario de Datos: she</title>
+<style>
+        body{
+        font-family: 'Verdana';
+        }
+        td,th {
+        text-align:left;
+        vertical-align:middle;
+        }
+        table {
+        border-collapse: collapse;
+        border: 1px solid;
+        }
+        caption, th, td {
+        padding: .2em .8em;
+        border: 1px solid #000000;
+        }
+        caption {
+        background: #0275d8;
+        font-size: 1.1em;
+        color: white;
+        }
+        th {
+        background: #29913A;
+        color: white;
+        }
+        td {
+        background: #FFFFFF;
+        }
+        </style>
+      </head>
+     <body>
+<h1>Diccionario de Datos: she</h1>
+<a id="home">Lista de Tablas </a><br /><ul>
+<li><a href="#cargo_user">cargo_user </a></li>
+<li><a href="#cargos">cargos </a></li>
+<li><a href="#fechas_especiales">fechas_especiales </a></li>
+<li><a href="#horas">horas </a></li>
+<li><a href="#presupuestos">presupuestos </a></li>
+<li><a href="#roles">roles </a></li>
+<li><a href="#solicitudes">solicitudes </a></li>
+<li><a href="#tipo_horas">tipo_horas </a></li>
+<li><a href="#tipos">tipos </a></li>
+<li><a href="#users">users </a></li>
+</ul>
+<a id="cargo_user"></a><table style="width:100%"><caption>Tabla: cargo_user </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registra cada cargo de cada usuario</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(10)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>user_id</td><td>INT(10)</td><td>Sí</td><td>No</td><td>Sí</td><td></td><td>Foránea que identifica al usuario</td></tr>
+<tr><td>cargo_id</td><td>INT(10)</td><td>Sí</td><td>No</td><td>Sí</td><td></td><td>Foránea que identifica el cargo</td></tr>
+<tr><td>estado</td><td>INT(1)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Si el cargo se encuentra vigente en el usuario (solo puede tener un cargo vigente a la vez)</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="cargos"></a><table style="width:100%"><caption>Tabla: cargos </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registran la información de cada cargo</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(10)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>nombre</td><td>VARCHAR(50)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Nombre del cargo</td></tr>
+<tr><td>sueldo</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Sueldo del cargo</td></tr>
+<tr><td>valor_diurna</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Valor de la hora diurna del cargo</td></tr>
+<tr><td>valor_nocturna</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Valor de la hora nocturna del cargo</td></tr>
+<tr><td>valor_dominical</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Valor de la hora de festivos y dominicales del cargo</td></tr>
+<tr><td>valor_recargo</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Valor de la hora del recargo nocturno del cargo</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="fechas_especiales"></a><table style="width:100%"><caption>Tabla: fechas_especiales </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registran la información de fechas especiales para las horas dominicales y festivas</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(11)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>fecha</td><td>DATE</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Fecha que identifica la fecha especial</td></tr>
+<tr><td>descripcion</td><td>VARCHAR(50)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Nombre que identifica la fecha especial</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="horas"></a><table style="width:100%"><caption>Tabla: horas </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registran las horas extras realizadas</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(11)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>solicitud_id</td><td>INT(11)</td><td>Sí</td><td>No</td><td>Sí</td><td>'0'</td><td>Cabecera de la hora extra</td></tr>
+<tr><td>fecha</td><td>DATE</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Fecha de ejecución de hora extra</td></tr>
+<tr><td>hi_registrada</td><td>TIME</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Hora inicial de la hora extra</td></tr>
+<tr><td>hf_registrada</td><td>TIME</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Hora fin de la hora extra</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="presupuestos"></a><table style="width:100%"><caption>Tabla: presupuestos </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registran los presupuestos</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(11)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>presupuesto_inicial</td><td>DOUBLE</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Presupuesto inicial </td></tr>
+<tr><td>presupuesto_gastado</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Cantidad de presupuesto gastado</td></tr>
+<tr><td>mes</td><td>VARCHAR(10)</td><td>Sí</td><td>No</td><td>No</td><td>'0'</td><td>Mes del presupuesto</td></tr>
+<tr><td>año</td><td>VARCHAR(10)</td><td>Sí</td><td>No</td><td>No</td><td>'0'</td><td>Año del presupuesto</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="roles"></a><table style="width:100%"><caption>Tabla: roles </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registra la información de cada rol del sistema</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(10)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>nombre</td><td>VARCHAR(50)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Nombre que identifica al rol</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="solicitudes"></a><table style="width:100%"><caption>Tabla: solicitudes </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registran las solicitudes de cada cargo_usuario y siendo la cabecera de horas</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(11)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>presupuesto_id</td><td>INT(11)</td><td>Sí</td><td>No</td><td>Sí</td><td>'0'</td><td>Foránea que identifica el presupuesto</td></tr>
+<tr><td>tipo_hora_id</td><td>INT(11)</td><td>Sí</td><td>No</td><td>Sí</td><td>'0'</td><td>Foránea que identifica el tipo de hora</td></tr>
+<tr><td>cargo_user_id</td><td>INT(10)</td><td>Sí</td><td>No</td><td>Sí</td><td>'0'</td><td>Foránea que identifica el cargo y el usuario que hizo la solicitud</td></tr>
+<tr><td>total_horas</td><td>DOUBLE</td><td>Sí</td><td>No</td><td>No</td><td>'0'</td><td>Cantidad de horas de la solicitud</td></tr>
+<tr><td>hora_inicio</td><td>TIME</td><td>Sí</td><td>No</td><td>No</td><td>'00:00:00'</td><td>Hora inicio de la solicitud</td></tr>
+<tr><td>hora_fin</td><td>TIME</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Hora fin de la solicitud</td></tr>
+<tr><td>actividades</td><td>VARCHAR(255)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Actividades a ejecutar del funcionaro durante las horas extras</td></tr>
+<tr><td>created_by</td><td>INT(11)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Usuario que creo la solicitud</td></tr>
+<tr><td>autorizacion</td><td>INT(11)</td><td>No</td><td>No</td><td>No</td><td>'0'</td><td>Usuario que autorizo la solicitud</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="tipo_horas"></a><table style="width:100%"><caption>Tabla: tipo_horas </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registra la información de cada tipo de hora</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(11)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>nombre_hora</td><td>VARCHAR(50)</td><td>Sí</td><td>No</td><td>No</td><td>''</td><td>Nombre que identifica al tipo de hora</td></tr>
+<tr><td>hora_inicio</td><td>TIME</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Hora inicial del tipo de hora</td></tr>
+<tr><td>hora_fin</td><td>TIME</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Hora fin del tipo de hora</td></tr>
+<tr><td>tipo_id</td><td>INT(11)</td><td>Sí</td><td>No</td><td>Sí</td><td>'0'</td><td>Tipo que identifica el tipo de hora</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>Sí</td><td>No</td><td>No</td><td>'0000-00-00 00:00:00'</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="tipos"></a><table style="width:100%"><caption>Tabla: tipos </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registra cada tipo para el tipo de hora</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(11)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>descripcion</td><td>VARCHAR(50)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Nombre de tipo</td></tr>
+</table><a href="#home">Tabla List </a></br>
+<a id="users"></a><table style="width:100%"><caption>Tabla: users </caption>
+<tr><td>Tabla Comentario</td><td colspan="6">Es la tabla donde se registran los usuarios del sistema</td></tr>
+<tr><td colspan="7">Columnas</td></tr>
+        <tr>
+        <th>Campo</th>
+        <th>Tipo de Dato</th>
+        <th>¿Puede ser Nulo?</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Predeterminado</th>
+        <th>Comentario</th>
+        </tr>
+<tr><td>id</td><td>INT(10)</td><td>Sí</td><td>Sí</td><td>No</td><td></td><td>Campo único consecutivo</td></tr>
+<tr><td>documento</td><td>VARCHAR(20)</td><td>Sí</td><td>No</td><td>No</td><td>''</td><td>Número de documento único</td></tr>
+<tr><td>tipo_documento</td><td>CHAR(2)</td><td>Sí</td><td>No</td><td>No</td><td>''</td><td>Tipo de documento del usuario</td></tr>
+<tr><td>nombres</td><td>VARCHAR(100)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Nombres completos del usuario</td></tr>
+<tr><td>apellidos</td><td>VARCHAR(100)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Apellidos completos del usuario</td></tr>
+<tr><td>centro</td><td>VARCHAR(40)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Centro del usuario</td></tr>
+<tr><td>regional</td><td>VARCHAR(40)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Regional del usuario</td></tr>
+<tr><td>email</td><td>VARCHAR(191)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Correo electrónico</td></tr>
+<tr><td>telefono</td><td>VARCHAR(15)</td><td>Sí</td><td>No</td><td>No</td><td>''</td><td>Teléfono del usuario</td></tr>
+<tr><td>role_id</td><td>INT(10)</td><td>Sí</td><td>No</td><td>Sí</td><td></td><td>Rol del usuario</td></tr>
+<tr><td>estado</td><td>INT(1)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Estado del usuario si se encuentra habilitado para iniciar sesión o no</td></tr>
+<tr><td>password</td><td>VARCHAR(255)</td><td>Sí</td><td>No</td><td>No</td><td></td><td>Contraseña encriptada del usuario</td></tr>
+<tr><td>remember_token</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Token del usuario al presionar "Recordarme"</td></tr>
+<tr><td>created_at</td><td>TIMESTAMP</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Fecha de creación</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMP</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td>Fecha de última actualización</td></tr>
+</table><a href="#home">Tabla List </a></br>
+</body></html>

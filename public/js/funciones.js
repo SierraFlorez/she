@@ -170,10 +170,13 @@ function restaurarContrasena() {
   var obj = new Object();
   obj.Correo = $correo;
 
-
   var datos = JSON.stringify(obj);
   // console.log(datos);
+  $("#notificacionCorreo").prop("disabled", true);
+
   $.post(url + "/" + datos).done(function (data) {
+    $("#notificacionCorreo").removeAttr('disabled');
+
     $("#email_restaurar").val("");
     $("#modalRestaurar").modal("hide"); //ocultamos el modal
     console.log(data);
@@ -183,6 +186,7 @@ function restaurarContrasena() {
         "Se ha enviado un correo al email para restablecer su contraseña",
         "success"
       );
+
     } else {
       Swal.fire("Error!", "Error al enviar email, " + data + ".", "error");
     }
@@ -721,6 +725,7 @@ function infoFuncionarioS() {
   var url = "usuarios/detalleC";
   if ($id > 0) {
     $.post(url + "/" + $id).done(function (data) {
+      calcularTotalHoras();
       $("#funcS").append(data.nombres + ' ' + data.apellidos);
       $("#docuS").append(data.documento);
       $("#cargvS").append(data.nombre);
@@ -736,12 +741,16 @@ function infoTipoHora() {
   var url = "tipo_horas/detalle";
   if ($id > 0) {
     $.post(url + "/" + $id).done(function (data) {
+      calcularTotalHoras();
       // Condicional si el tipo de hora es festivo
       if (data.tipo_id == 4) {
         var div = `<label style="margin-left: 5px" for="Dia7">Domingo</label>
         <input onchange="calcularTotalHoras();" type="checkbox" id="Dia7" value="1">`;
         $("#domingo").append(div);
       } else {
+        $("#horas_s").val('');
+        $("#val_s").val('');
+        $("#presupuesto_s").val('');
         // En caso contrario se agrega unos inputs de referencia
         $("#Dia7").val('');
         var div = `
@@ -786,7 +795,11 @@ function infoTipoHoraS() {
 function calcularTotalHoras() {
   $id = $("[name = 'tipohoras_s']").children("option:selected").val();
   if ($id != 7) {
-    $("#horas_s").val("");
+    $("#horas_s").val('');
+    $("#val_s").val('');
+    $("#presupuesto_s").val('');
+
+
     $horaInicio = $("#hora_inicio_s").val();
     $horaFin = $("#hora_fin_s").val();
     $fechaInicio = $("#inicio_s").val();
@@ -798,6 +811,8 @@ function calcularTotalHoras() {
     $viernes = $("#Dia5");
     $sabado = $("#Dia6");
     $domingo = $("#Dia7");
+    $funcionario = $("[name = 'select_funcionario']").children("option:selected").val();
+    $tipoHora = $("[name = 'tipohoras_s']").children("option:selected").val();
     // Validaciòn en que esos campos deben estar llenos y que se debe marcar al menos un dia de la semana
     if (($horaInicio != '' && $horaFin != '' && $fechaInicio != '' && $fechaFin != '') && ($lunes.prop('checked') || $martes.prop('checked') || $miercoles.prop('checked') || $jueves.prop('checked') || $viernes.prop('checked') || $sabado.prop('checked') || $domingo.prop('checked'))) {
       var obj = new Object();
@@ -805,6 +820,10 @@ function calcularTotalHoras() {
       obj.HoraFin = $horaFin;
       obj.FechaInicio = $fechaInicio;
       obj.FechaFin = $fechaFin;
+      obj.Funcionario = $funcionario;
+      obj.TipoHora = $tipoHora;
+
+
       if ($lunes.prop('checked')) {
         obj.Lunes = $lunes.val();
       }
@@ -830,7 +849,13 @@ function calcularTotalHoras() {
       var url = "solicitudes/total_horas";
       var datos = JSON.stringify(obj);
       $.post(url + "/" + datos).done(function (data) {
-        $("#horas_s").val(data);
+        $("#horas_s").val('');
+        $("#val_s").val('');
+        $("#presupuesto_s").val('');
+        $("#horas_s").val(data.total_horas);
+        $("#val_s").val(data.valor_total);
+        $("#presupuesto_s").val(data.restante);
+
       });
     }
   }
@@ -1246,7 +1271,7 @@ function modalHoras(id, rol) {
 
   $.post(url + "/" + id).done(function (data) {
     if (data.horas[0].autorizacion == 0 && (rol == 1 || rol == 4)) {
-      botonAgregar = `<button onclick="preGuardarHora(` + id + `,`+rol+`);" data-toggle="modal" data-target="#modalRegistrarHora" style="margin-bottom:1%" class="btn btn-success">Registrar Hora </button>`;
+      botonAgregar = `<button onclick="preGuardarHora(` + id + `,` + rol + `);" data-toggle="modal" data-target="#modalRegistrarHora" style="margin-bottom:1%" class="btn btn-success">Registrar Hora </button>`;
       $('#agregarHora').append(botonAgregar);
     }
     $('#horas_faltantes').val(data.faltantes);
@@ -1254,7 +1279,7 @@ function modalHoras(id, rol) {
     t.clear().draw();
     for (var i = 0; i < data.horas.length; i++) {
       if ((data.horas[i].autorizacion == 0) && (rol == 1 || rol == 4)) {
-        botones = `<button onclick="detallesHora(` + data.horas[i].id + `,` + id + `);" class="btn btn-primary" data-toggle="modal" data-target="#modalDetallesHora">Editar</button><button onclick="eliminarHora(` + data.horas[i].id + `,` + id + `,`+rol+`);" class="btn btn-danger">Eliminar</button>`;
+        botones = `<button onclick="detallesHora(` + data.horas[i].id + `,` + id + `);" class="btn btn-primary" data-toggle="modal" data-target="#modalDetallesHora">Editar</button><button onclick="eliminarHora(` + data.horas[i].id + `,` + id + `,` + rol + `);" class="btn btn-danger">Eliminar</button>`;
       } else {
         if (data.horas[i].autorizacion == 0 && (rol == 2 || rol == 3)) {
           botones = `<button class="btn btn-danger">Por autorizar</button>`;
@@ -1278,7 +1303,7 @@ function modalHoras(id, rol) {
   });
 }
 
-function preGuardarHora(solicitud,rol) {
+function preGuardarHora(solicitud, rol) {
   $("#guardarHoraE").prop("disabled", true);
   if (solicitud > 0) {
     $("#rol_hidden_h").val(rol);
@@ -1288,7 +1313,7 @@ function preGuardarHora(solicitud,rol) {
 
 }
 
-function eliminarHora(id, solicitud,rol) {
+function eliminarHora(id, solicitud, rol) {
   // console.log(id);
   // console.log(idUser);
   Swal.fire({
@@ -1313,7 +1338,7 @@ function eliminarHora(id, solicitud,rol) {
         } else {
           Swal.fire("Error!", "Error al eliminar; " + data + ".", "error");
         }
-        modalHoras(solicitud,rol);
+        modalHoras(solicitud, rol);
       });
     }
   });
@@ -1326,7 +1351,7 @@ function guardarHoras() {
   $solicitud = $("#solicitud_hs").val();
   $horaInicio = $("#hora_inicio").val();
   $horaFin = $("#hora_fin").val();
-  rol=$("#rol_hidden_h").val();
+  rol = $("#rol_hidden_h").val();
 
 
   var obj = new Object();
@@ -1350,7 +1375,7 @@ function guardarHoras() {
       $("#hora_inicio").val("");
       $("#hora_fin").val("");
       $("#solicitud_hs").val("");
-      modalHoras($solicitud,rol);
+      modalHoras($solicitud, rol);
 
     } else {
       Swal.fire(

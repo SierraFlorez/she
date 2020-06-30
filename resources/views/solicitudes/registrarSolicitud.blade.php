@@ -109,6 +109,14 @@ Registrar Solicitud
             <label data-error="wrong" data-success="right" for="orangeForm-name">Total de Horas de Solicitud</label>
             <input class="form-control" type="number" id="horas_s">
           </div>
+          <div class="col-md-3">
+            <label data-error="wrong" data-success="right" for="orangeForm-name">Valor Solicitud</label>
+            <input title="Calcula el valor de la solicitud(no tiene en cuenta fechas especiales)"readonly class="form-control" type="text" id="val_s">
+          </div>
+          <div class="col-md-3">
+            <label data-error="wrong" data-success="right" for="orangeForm-name">Presupuesto Actual</label>
+            <input title="Este campo es el presupuesto actual" readonly class="form-control" type="text" id="presupuesto_s">
+          </div>
         </div>
         {{-- Input actividades --}}
         <div class="form-row mb-6" style="margin-top:1%">
