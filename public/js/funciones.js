@@ -1050,11 +1050,16 @@ function isJson(item) {
 }
 
 // Modal de detalles de solicitud
-function detallesSolicitud(id) {
+function detallesSolicitud(id, disabled) {
+  $("#update_solicitud").removeAttr('disabled');
+  if (disabled == 0) {
+    $('#update_solicitud').prop('disabled', true);
+  }
   var url = "solicitudes/detalles";
   $("#funcionario_s").val("");
   $("#cargo_s").val("");
   $("#th_solicitud_s").val("");
+  $("#th_solicitud_hidden").val("");
   $("#año_solicitud_s").val("");
   $("#mes_solicitud_sd").val("");
   $("#hora_inicio_s").val("");
@@ -1069,7 +1074,7 @@ function detallesSolicitud(id) {
     $("#funcionario_s").val(data.nombres + " " + data.apellidos);
     $("#cargo_s").val(data.nombre);
     $("#cargo_user_s").val(data.cargo_user_id);
-    $("#th_solicitud_s").val(data.tipo_hora_id);
+    $("#th_solicitud_s").val(data.nombre_hora);
     $("#año_solicitud_s").val(data.año);
     $("#mes_solicitud_sd").val(data.mes);
     $("#hora_inicio_s").val(data.hora_inicio);
@@ -1077,6 +1082,7 @@ function detallesSolicitud(id) {
     $("#valor_total_s").val(data.valor_total);
     $("#valor_hora_s").val(data.valor_hora);
     $("#horas_s").val(data.total_horas);
+    $("#th_solicitud_hidden").val(data.tipo_hora_id);
     $("#horas_restantes_s").val(data.horas_restantes);
     $("#autorizado_s").val(data.autorizacion);
     $("#creado_s").val(data.creado);
@@ -1090,7 +1096,7 @@ function updateSolicitud(id) {
   var url = "solicitudes/update";
 
   $cargo_user = $("#cargo_user_s").val();
-  $th = $("#th_solicitud_s").val();
+  $th = $("#th_solicitud_hidden").val();
   $año = $("#año_solicitud_s").val();
   $mes = $("#mes_solicitud_sd").val();
   $inicio = $("#hora_inicio_s").val();
@@ -1188,7 +1194,7 @@ function autorizarSolicitud(id) {
   });
 }
 
-// Autoriza la solicitud
+// elimina la solicitud
 function eliminarSolicitud(id) {
   // console.log(id);
   // console.log(idUser);
@@ -1231,123 +1237,84 @@ function eliminarSolicitud(id) {
     }
   });
 }
-// Carga la tabla de presupuesto y muestra las horas que han usado dicho presupuesto
-function modalHoras(id) {
+
+// ------------MODULO DE HORAS EXTRAS ----------------
+// Modal de horas cambia dependiendo si la solicitud es autorizada o no
+function modalHoras(id, rol) {
   var url = "horas/solicitud";
+  $('#agregarHora').html('');
 
   $.post(url + "/" + id).done(function (data) {
+    if (data.horas[0].autorizacion == 0 && (rol == 1 || rol == 4)) {
+      botonAgregar = `<button onclick="preGuardarHora(` + id + `,`+rol+`);" data-toggle="modal" data-target="#modalRegistrarHora" style="margin-bottom:1%" class="btn btn-success">Registrar Hora </button>`;
+      $('#agregarHora').append(botonAgregar);
+    }
+    $('#horas_faltantes').val(data.faltantes);
     var t = $("#dtmHoras").DataTable();
     t.clear().draw();
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.horas.length; i++) {
+      if ((data.horas[i].autorizacion == 0) && (rol == 1 || rol == 4)) {
+        botones = `<button onclick="detallesHora(` + data.horas[i].id + `,` + id + `);" class="btn btn-primary" data-toggle="modal" data-target="#modalDetallesHora">Editar</button><button onclick="eliminarHora(` + data.horas[i].id + `,` + id + `,`+rol+`);" class="btn btn-danger">Eliminar</button>`;
+      } else {
+        if (data.horas[i].autorizacion == 0 && (rol == 2 || rol == 3)) {
+          botones = `<button class="btn btn-danger">Por autorizar</button>`;
+
+        } else {
+          botones = `<button class="btn btn-primary">Ejecutada</button>`;
+
+        }
+      }
       t.row
         .add([
-          data[i].id,
-          data[i].fecha,
-          data[i].hi_registrada,
-          data[i].hf_registrada,
+          data.horas[i].id,
+          data.horas[i].fecha,
+          data.horas[i].hi_registrada,
+          data.horas[i].hf_registrada,
+          botones,
         ])
         .draw(false);
     }
-  });
-}
-// ------------MODULO DE HORAS EXTRAS ----------------
 
-// Función para mostrar la solicitud
-function selectSolicitud() {
-  var seleccion = document.getElementById("seleccionar_usuario");
-  var id = seleccion.options[seleccion.selectedIndex].value;
-  var url = "solicitudes";
-  $.post(url + "/" + id).done(function (data) {
-    var t = $("#dthorasExtras").DataTable();
-    t.clear().draw();
-    $("#select_presupuesto").html("");
-    if (data.length > 0) {
-      var divSolicitud = `<div class="col-md-6">
-      <label data-error="wrong" data-success="right" for="orangeForm-name">Seleccionar Solicitud</label>
-      <select class="form-control validate" id="seleccionar_solicitud" name="" onchange="tabla_de_horas();">
-      <option value="0"></option>`;
-      $("#select_presupuesto").html("");
-
-      for (var i = 0; i < data.length; i++) {
-        var options =
-          `<option value="` +
-          data[i].id +
-          `">` +
-          data[i].actividades +
-          `/ ` +
-          data[i].presupuesto.año +
-          `-` +
-          data[i].presupuesto.mes +
-          ` / ` +
-          data[i].tipo_horas.nombre_hora +
-          `</option>`;
-        var divSolicitud = divSolicitud + options;
-      }
-
-      divSolicitud =
-        divSolicitud +
-        `</select></div><div style="margin-top:2%"id="botonSolicitud" class="col-md-6"></div>`;
-      $("#select_presupuesto").append(divSolicitud);
-    } else {
-      var divSolicitud = `<div class="col-md-6"><p>El cargo vigente del usuario no tiene ninguna solicitud.</p></div>`;
-      $("#select_presupuesto").append(divSolicitud);
-    }
   });
 }
 
-// Carga la tabla de horas
-function tabla_de_horas() {
-  var seleccion = document.getElementById("seleccionar_solicitud");
-  var id = seleccion.options[seleccion.selectedIndex].value;
+function preGuardarHora(solicitud,rol) {
+  $("#guardarHoraE").prop("disabled", true);
+  if (solicitud > 0) {
+    $("#rol_hidden_h").val(rol);
+    $("#solicitud_hs").val(solicitud);
+    $("#guardarHoraE").removeAttr('disabled');
+  }
 
-  $("#botonSolicitud").html("");
-  var url = "horas/tabla";
-  var obj = new Object();
-  obj.Id = id;
+}
 
-  var datos = JSON.stringify(obj);
-  $.post(url + "/" + datos).done(function (data) {
-    if (data.solicitud == null) {
-      var t = $("#dthorasExtras").DataTable();
-      t.clear().draw();
-    } else {
-
-      var boton = 0;
-      var boton =
-        `<button style="margin-right:1%"  data-toggle="modal" data-target="#modalDetallesSolicitud" class="btn btn-success" onclick="detallesSolicitud(` +
-        data.solicitud.id +
-        `);">Detalles de Solicitud</button>`;
-      if (data.solicitud.autorizacion == 0) {
-        var boton =
-          boton +
-          `<button class="btn btn-danger" onclick="autorizarSolicitud(` + data.solicitud.id + `)"> No Autorizado </button>`;
-      }
-      if (data.solicitud.autorizacion != 0) {
-        var boton =
-          boton +
-          `<button class="btn btn-primary"> Autorizado </button>`;
-      }
-      $("#botonSolicitud").append(boton);
-      var t = $("#dthorasExtras").DataTable();
-      t.clear().draw();
-      // console.log(data);
-      for (var i = 0; i < data.horas.length; i++) {
-        var botonEditar =
-          `<button class="btn btn-success" data-toggle="modal" data-target="#modalDetallesHora" onclick="detallesHora(` +
-          data.horas[i].id +
-          `)">Detalles</button>`;
-        t.row
-          .add([
-            data.horas[i].nombres + " " + data.horas[i].apellidos,
-            data.horas[i].nombre,
-            data.horas[i].fecha,
-            data.horas[i].hi_registrada,
-            data.horas[i].hf_registrada,
-            data.horas[i].nombre_hora,
-            botonEditar,
-          ])
-          .draw(false);
-      }
+function eliminarHora(id, solicitud,rol) {
+  // console.log(id);
+  // console.log(idUser);
+  Swal.fire({
+    title: "¿Deseas ELIMINAR esta hora extra?",
+    text: "No se puede revertir esta acción",
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.value) {
+      var url = "horas/eliminar";
+      var obj = new Object();
+      obj.Id = id;
+      var datos = JSON.stringify(obj);
+      $.post(url + "/" + datos).done(function (data) {
+        if (data == 1) {
+          Swal.fire("Completado!", "Se ha eliminado la hora extra", "success");
+          $("#botonSolicitud").html("");
+        } else {
+          Swal.fire("Error!", "Error al eliminar; " + data + ".", "error");
+        }
+        modalHoras(solicitud,rol);
+      });
     }
   });
 }
@@ -1355,20 +1322,19 @@ function tabla_de_horas() {
 // Guarda las horas extras
 function guardarHoras() {
   var url = "horas/guardar";
-  $funcionario = $("#funcionario_cargo_user").val();
-  $fecha = $("#date").val();
-  $solicitud = $("[name = 'solicitud_h']").children("option:selected").val();
+  $fecha = $("#fecha_hs").val();
+  $solicitud = $("#solicitud_hs").val();
   $horaInicio = $("#hora_inicio").val();
   $horaFin = $("#hora_fin").val();
-  $horasT = $("#horas_trabajadas").val();
+  rol=$("#rol_hidden_h").val();
+
 
   var obj = new Object();
-  obj.Id = $funcionario;
   obj.Fecha = $fecha;
   obj.Inicio = $horaInicio;
   obj.Fin = $horaFin;
   obj.Solicitud = $solicitud;
-  obj.Horas = $horasT;
+
 
   var datos = JSON.stringify(obj);
   // console.log(datos);
@@ -1380,12 +1346,12 @@ function guardarHoras() {
         "Se han Guardado las Horas Extras correctamente",
         "success"
       );
-      $("#tipohoras_h").val("");
-      $("#date").val("");
-      $("#alt").val("");
+      $("#fecha_hs").val("");
       $("#hora_inicio").val("");
       $("#hora_fin").val("");
-      $("#justificacion").val("");
+      $("#solicitud_hs").val("");
+      modalHoras($solicitud,rol);
+
     } else {
       Swal.fire(
         "Error!",
@@ -1426,6 +1392,7 @@ function detallesHora(id) {
   $("#cargo_h").val("");
   $("#fecha_h").val("");
   $("#th_h").val("");
+  $("solicitud_h").val("");
   $("#hora_inicio_h").val("");
   $("#hora_fin_h").val("");
   $("#horas_h").val("");
@@ -1437,9 +1404,10 @@ function detallesHora(id) {
     $("#cargo_h").val(data.cargo.nombre);
     $("#fecha_h").val(data.hora.fecha);
     $("#th_h").val(data.tipoHora.id);
+    $("#solicitud_h").val(data.solicitud.id);
     $("#hora_inicio_h").val(data.hora.hi_registrada);
     $("#hora_fin_h").val(data.hora.hf_registrada);
-    $("#horas_h").val(data.hora.horas_trabajadas);
+    $("#horas_h").val(data.hora.cantidad_horas);
     $("#valor_hora_h").val(data.valor);
     $("#valor_total_h").val(data.valorTotal);
     $("#update_h").attr("onclick", "updateHoras(" + data.hora.id + ")");
@@ -1450,15 +1418,14 @@ function detallesHora(id) {
 function updateHoras(id) {
   var url = "horas/update";
   $fecha = $("#fecha_h").val();
-  $horas = $("#horas_h").val();
   $hora_inicio = $("#hora_inicio_h").val();
   $hora_fin = $("#hora_fin_h").val();
+  $solicitud = $("#solicitud_h").val();
   // console.log($th);
   var obj = new Object();
   obj.Id = id;
   obj.Fecha = $fecha;
   obj.Inicio = $hora_inicio;
-  obj.Horas = $horas;
   obj.Fin = $hora_fin;
 
   var datos = JSON.stringify(obj);
@@ -1472,19 +1439,8 @@ function updateHoras(id) {
         "Se ha editado correctamente las Horas Extras ",
         "success"
       );
-      $("#div_horas").load(" #dthorasExtras", function () {
-        $("#dthorasExtras")
-          .addClass("table table-bordered")
-          .dataTable({
-            language: {
-              url: "DataTables/Spanish.json",
-            },
-            destroy: false,
-            responsive: true,
-            dom: 'B<"salto"><"panel-body"<"row"<"col-sm-6"l><"col-sm-6"f>>>rtip',
-            buttons: ["copy", "excel", "csv"],
-          });
-      });
+      console.log($solicitud);
+      modalHoras($solicitud);
     } else {
       Swal.fire("Error!", "Error al editar horas; " + data + ".", "error");
     }

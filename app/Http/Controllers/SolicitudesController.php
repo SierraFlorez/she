@@ -75,18 +75,23 @@ class SolicitudesController extends Controller
         if ($th['tipo_id'] == 4) {
             $festivos = true;
         }
-        // Validación de cada hora extra
+        // Validación de cada hora extra y trae las horas extras si pasa la validacion
         $msg = $this->validarHorasExtras($solicitud, $festivos);
         if ($msg['msg'] != 1) {
             return $msg['msg'];
         }
         // Valida que como minimo debe haber una hora extra
-        if ($msg['cantidad'] == 0) {
+        if ($msg['cantidad'] <= 0) {
             $msg['msg'] = "No se pudo crear una sola hora extra, verifique los campos y las fechas especiales";
             return ($msg['msg']);
         }
-        // Llama función para descontar presupuesto
-        $presupuesto = $this->descontarPresupuesto($solicitud, true);
+        // Valida que la cantidad de horas extras sea menor o igual al total de horas solicitadas
+        if ($msg['total_horas'] > $solicitud['total_horas']) {
+            $msg['msg'] = "la cantidad de horas extras superan al total de horas de la solicitud";
+            return ($msg['msg']);
+        }
+        // Valida si se puede descontar presupuesto
+        $presupuesto = $this->descontarPresupuesto($solicitud, false);
         if ($presupuesto != 1) {
             return $presupuesto;
         }
@@ -174,7 +179,7 @@ class SolicitudesController extends Controller
         $msg = [];
         $msg['msg'] = 1;
         $msg['cantidad'] = 0;
-        $msg['cantidad_horas'] = 0;
+        $msg['total_horas'] = 0;
 
         // Ciclo para recorrer la diferencia entre la fecha inicio y fecha fin
         for ($i = $fechaInicio; $i <= $fechaFin; $i += 86400) {
@@ -463,6 +468,7 @@ class SolicitudesController extends Controller
     // Autoriza la solicitud
     public function autorizar($data)
     {
+        // Permiso para autorizar
         if (Auth::User()->roles->id != 1) {
             $msg = "no tienes el permiso para ejecutar esta acción";
             return ($msg);
@@ -472,17 +478,17 @@ class SolicitudesController extends Controller
         // dd($dato);
         $solicitud = Solicitud::find($dato['Id']);
         // En caso que la solicitud no este autorizada
-        if ($solicitud['autorizacion'] == 0) {
-            $solicitudA['autorizacion'] = Auth::user()->id;
-            $solicitud->update($solicitudA);
-            // -- Descomentar en caso que deseen descontar presupuesto al momento de autorizar
-            // $presupuesto = Presupuesto::find($solicitud['presupuesto_id']);
-            // $valor = $this->calcularValorHoras($solicitud);
-            // $presupuestoRestante['presupuesto_gastado'] = $presupuesto['presupuesto_gastado'] + $valor['valor_total'];
-            // $presupuesto->update($presupuestoRestante);
-        } else {
+        if ($solicitud['autorizacion'] != 0) {
             $msg = 'estas horas ya se encuentran autorizadas; se recomienda recargar la pagina';
+            return ($msg);
         }
+        // Valida y descuenta el presupuesto
+        $descuento = $this->descontarPresupuesto($solicitud, true);
+        if ($descuento != 1) {
+            return $descuento;
+        }
+        $solicitudA['autorizacion'] = Auth::user()->id;
+        $solicitud->update($solicitudA);
         return $msg;
     }
 
@@ -499,11 +505,7 @@ class SolicitudesController extends Controller
             $msg = "no se puede eliminar una hora ya autorizada";
             return ($msg);
         } else {
-            $presupuesto = Presupuesto::find($solicitud['presupuesto_id']);
-            $valor = $this->calcularValorHoras($solicitud);
             // Se suma el presupuesto ya quitado
-            $presupuestoRestante['presupuesto_gastado'] = $presupuesto['presupuesto_gastado'] - $valor['valor_total'];
-            $presupuesto->update($presupuestoRestante);
             Hora::where('solicitud_id', $dato)->delete();
             Solicitud::where('id', $dato)->delete();
             $msg = 1;
@@ -690,15 +692,11 @@ class SolicitudesController extends Controller
         }
         // Proceso para guardar cada solicitud
         foreach ($solicitudesG as $solicitud) {
-            // Se descuenta el presupuesto
-            $descontarPresupuesto = $this->descontarPresupuesto($solicitud, true);
-            if ($descontarPresupuesto == 1) {
-                $solicitudCreada = Solicitud::create($solicitud);
-                // Recorremos cada hora extra de la solicitud y la guardamos
-                foreach ($solicitud['horas_extras'] as $horasExtras) {
-                    $horasExtras['solicitud_id'] = $solicitudCreada->id;
-                    Hora::create($horasExtras);
-                }
+            $solicitudCreada = Solicitud::create($solicitud);
+            // Recorremos cada hora extra de la solicitud y la guardamos
+            foreach ($solicitud['horas_extras'] as $horasExtras) {
+                $horasExtras['solicitud_id'] = $solicitudCreada->id;
+                Hora::create($horasExtras);
             }
         }
         return 1;

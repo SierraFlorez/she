@@ -30,7 +30,7 @@
                     <li class="nav-item dropdown nav-user">
                         <a class="nav-link nav-user-img btn btn-primary" href="#" id="navbarDropdownMenuLink2"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span style="color: white">{{Auth::User()->nombres}} {{Auth::User()->apellidos}}</span>
+                            <span style="color: white;margin-right: 1%">{{Auth::User()->nombres}} {{Auth::User()->apellidos}}</span>
                             <i class="fa fa-user" style="color:white"></i></a>
                         <div class="dropdown-menu dropdown-menu-right nav-user-dropdown"
                             aria-labelledby="navbarDropdownMenuLink2">

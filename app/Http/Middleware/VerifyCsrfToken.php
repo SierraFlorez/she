@@ -35,6 +35,7 @@ class VerifyCsrfToken extends BaseVerifier
         '/horas/update/*',
         '/horas/tabla/*',
         '/horas/solicitud/*',
+        '/horas/eliminar/*',
         // Reportes
         '/reportes/solicitudAutorizacion/*',
         // Tipo Horas

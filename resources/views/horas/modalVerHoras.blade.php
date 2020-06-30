@@ -10,21 +10,30 @@
       </div>
       <div class="modal-body mx-3">
         <div class="md-form mb-4">
-          <div>
+          <div class="row">
+            <div class="col-md-3" id="agregarHora">
+            </div>
+            <div class="col-md-6">
+              <input readonly type="text" id="horas_faltantes" class="form-control validate">
+            </div>
           </div>
-          <table style="text-align: center" id="dtmHoras" class="table table-hover" cellspacing="0" width="100%">
-            <thead class="thead">
-              <tr>
-                <th class="th-sm">ID</th>
-                <th class="th-sm">Fecha</th>
-                <th class="th-sm">Hora Inicio</th>
-                <th class="th-sm">Hora Fin</th>
+          <div id="modal_horas">
+            <table style="text-align: center" id="dtmHoras" class="table table-hover" cellspacing="0" width="100%">
+              <thead class="thead">
+                <tr>
+                  <th class="th-sm">ID</th>
+                  <th class="th-sm">Fecha</th>
+                  <th class="th-sm">Hora Inicio</th>
+                  <th class="th-sm">Hora Fin</th>
+                  <th class="th-sm">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
 
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+
         </div>
         <div class="modal-footer d-flex justify-content-center">
           <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>

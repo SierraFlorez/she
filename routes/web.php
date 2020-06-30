@@ -118,11 +118,12 @@ Route::post('/solicitudes/guardar_saf/{id1}/{id2}/{id3}', 'SolicitudesController
 // RETORNA LA VISTA PARA AUTORIZAR HORAS EXTRAS
 Route::get('/horas_extras', 'HorasExtrasController@index')->name('/horas_extras')->middleware('auth');
 
-// // TABLA DE HORAS EXTRAS
-// Route::post('/horas/tabla/{id}', 'HorasExtrasController@tabla')->name('/horas/table/{id}')->middleware('auth');
-
 // RETORNA LA VISTA DE REGISTRO DE HORAS EXTRAS
 Route::get('/registrar_horas', 'HorasExtrasController@registrar')->name('/registrar_horas')->middleware('auth');
+
+// ELIMINA LA HORA
+Route::post('/horas/eliminar/{id}', 'HorasExtrasController@eliminar')->name('/horas/eliminar/{id}')->middleware('auth');
+
 
 // GUARDA LAS HORAS EXTRAS
 Route::post('/horas/guardar/{id}', 'HorasExtrasController@guardar')->name('/horas/guardar')->middleware('auth');

@@ -9,7 +9,7 @@
           <span aria-hidden="true" style="color: white">&times;</span>
         </button>
       </div>
-      <div class="modal-body mx-3">
+      <div class="modal-body mx-3" id="formDS">
         {{-- Input del usuario --}}
         <div class="md-form mb-4">
           <div class="form-row mb-6">
@@ -33,11 +33,8 @@
             <div class="col-6">
               <i class="fas fa-moon"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Tipo de Hora</label>
-              <select class="form-control validate" id="th_solicitud_s" name="tipohoras_s">
-                @foreach($tipoHoras as $tipoHora)
-                <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
-                @endforeach
-              </select>
+              <input readonly type="text" id="th_solicitud_s" class="form-control validate">
+              <input readonly hidden type="text" id="th_solicitud_hidden" class="form-control validate">
             </div>
           </div>
         </div>
@@ -48,7 +45,7 @@
               <i class="fas fa-clock"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-name">Año de Solicitud</label>
               <br>
-              <select class="form-control validate" id="año_solicitud_s" name="año_solicitud_s">
+              <select readonly class="form-control validate" id="año_solicitud_s" name="año_solicitud_s">
                 <option value=""></option>
                 <option value="2019">2019</option>
                 <option value="2020">2020</option>
@@ -68,7 +65,7 @@
             <div class="col">
               <i class="fas fa-clock"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-name">Mes de Solicitud</label>
-              <select class="form-control validate" id="mes_solicitud_sd" name="mes_solicitud_s">
+              <select readonly class="form-control validate" id="mes_solicitud_sd" name="mes_solicitud_s">
                 <option value=""></option>
                 <option value="1">Enero</option>
                 <option value="2">Febrero</option>
@@ -92,13 +89,13 @@
             <div class="col">
               <i class="fas fa-clock"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Hora Inicio</label>
-              <input type="time" id="hora_inicio_s" class="form-control validate">
+              <input readonly type="time" id="hora_inicio_s" class="form-control validate">
             </div>
             {{-- Hora fin  --}}
             <div class="col">
               <i class="fas fa-clock"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Hora Fin</label>
-              <input type="time" id="hora_fin_s" class="form-control validate">
+              <input readonly type="time" id="hora_fin_s" class="form-control validate">
             </div>
           </div>
         </div>
@@ -206,11 +203,7 @@
             <div class="col-6">
               <i class="fas fa-moon"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-pass">Tipo de Hora</label>
-              <select readonly class="form-control validate" id="th_solicitud_s" name="tipohoras_s">
-                @foreach($tipoHoras as $tipoHora)
-                <option value="{{$tipoHora->id}}">{{$tipoHora->nombre_hora}}</option>
-                @endforeach
-              </select>
+              <input readonly type="text" id="th_solicitud_s" class="form-control validate">
             </div>
           </div>
         </div>

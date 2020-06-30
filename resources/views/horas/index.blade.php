@@ -32,7 +32,7 @@ Gestión Horas Extras
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Usuario</th>
-                            <th class="th-sm">Mes y Año</th>
+                            <th class="th-sm">Mes Año</th>
                             <th class="th-sm">Hora Inicio</th>
                             <th class="th-sm">Hora Fin</th>
                             <th class="th-sm">Acción</th>
@@ -44,24 +44,36 @@ Gestión Horas Extras
                         <tr>
                             <td>{{$solicitud->id}}</td>
                             <td>{{$solicitud->nombres}} {{$solicitud->apellidos}}</td>
-                            <td>{{$solicitud->mes}} del {{$solicitud->año}}</td>
+                            <td>{{$solicitud->mes}} {{$solicitud->año}}</td>
                             <td>{{$solicitud->hora_inicio}}</td>
                             <td>{{$solicitud->hora_fin}}</td>
-                            <td><button class="btn btn-primary" data-toggle="modal"
+                            @if ($solicitud->autorizacion==0)
+                            <td>
+                                <button class="btn btn-primary" data-toggle="modal"
                                     data-target="#modalDetallesSolicitud"
-                                    onclick="detallesSolicitud({{$solicitud->id}})">Editar</button>
+                                    onclick="detallesSolicitud({{$solicitud->id}},1)">Editar</button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#modalTableHoras"
-                                    onclick="modalHoras({{$solicitud->id}})">Horas</button>
+                                    onclick="modalHoras({{$solicitud->id}},{{Auth::User()->roles->id}})">Horas</button>
                             </td>
-                            <td> @if ($solicitud->autorizacion==0)
+                            <td>
                                 <button class="btn btn-danger" onclick="autorizarSolicitud('{{$solicitud->id}}')"> No
                                     Autorizado </button>
-                                    <button class="btn btn-danger" onclick="eliminarSolicitud('{{$solicitud->id}}')">
-                                        Eliminar </button>
-                                @else
-                                <button class="btn btn-primary"> Autorizado </button>
-                                @endif
+                                <button class="btn btn-danger" onclick="eliminarSolicitud('{{$solicitud->id}}')">
+                                    Eliminar </button>
                             </td>
+                            @else
+                            <td>
+                                <button class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modalDetallesSolicitud"
+                                    onclick="detallesSolicitud({{$solicitud->id}},0)">Detalles</button>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modalTableHoras"
+                                    onclick="modalHoras({{$solicitud->id}},{{Auth::User()->roles->id}})">Horas</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary"> Autorizado </button>
+                            </td>
+                            @endif
+
                         </tr>
                         @endforeach
                     </tbody>
@@ -71,5 +83,7 @@ Gestión Horas Extras
     </div>
 </div>
 @include('horas.modalVerHoras')
+@include('horas.modalVerDetallesHora')
+@include('horas.modalRegistrarHora')
 @include('solicitudes.modalDetallesSolicitud')
 @endsection

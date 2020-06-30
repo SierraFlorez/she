@@ -61,10 +61,10 @@ class horasExtrasController extends Controller
         if ($seguridad[0] === true) {
             $id = CargoUser::where('estado', '1')->where('user_id', Auth::User()->id)->first();
             $solicitudes = Solicitud::join('presupuestos', 'presupuestos.id', 'presupuesto_id')
-            ->join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
-            ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
-            ->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')
-            ->where('cargo_user_id', $id->id)->orderBy('año', 'asc')
+                ->join('cargo_user', 'cargo_user.id', '=', 'solicitudes.cargo_user_id')
+                ->join('cargos', 'cargos.id', '=', 'cargo_user.cargo_id')
+                ->join('tipo_horas', 'solicitudes.tipo_hora_id', '=', 'tipo_horas.id')
+                ->where('cargo_user_id', $id->id)->orderBy('año', 'asc')
                 ->orderBy('mes', 'asc')
                 ->select(
                     DB::raw('(CASE 
@@ -143,7 +143,6 @@ class horasExtrasController extends Controller
         $horasextras['hi_registrada'] = $dato["Inicio"] . ':00';
         $horasextras['hf_registrada'] = $dato["Fin"];
         $horasextras['solicitud_id'] = $dato["Solicitud"];
-        $horasextras['horas_trabajadas'] = $dato["Horas"];
         $validador = $this->validatorHoraGuardar($horasextras);
         if ($validador->fails()) {
             return $validador->errors()->all();
@@ -164,7 +163,6 @@ class horasExtrasController extends Controller
             'hi_registrada' => 'required',
             'hf_registrada' => 'required',
             'solicitud_id' => 'required',
-            'horas_trabajadas' => 'required',
         ]);
     }
     // Funcion para validar cada tipo de hora e intervalo de tiempo
@@ -172,6 +170,7 @@ class horasExtrasController extends Controller
     {
         $msg = 1;
         $id = 0;
+        // En caso de venir del update
         if (isset($horasextras['id'])) {
             $id = $horasextras['id'];
         }
@@ -179,95 +178,98 @@ class horasExtrasController extends Controller
         $inicio = new DateTime($horasextras['hi_registrada']);
         $fin = new DateTime($horasextras['hf_registrada']);
         $intervalo = $inicio->diff($fin);
-        $totalHoras = $intervalo->format('%H:%i:00');
-        $fraccionHoras = explode(":", $totalHoras);
-        $minutosDecimales = $fraccionHoras['1'] / 60;
-        $minutosDecimales = explode("0", $minutosDecimales);
-        $horasDecimales = $fraccionHoras['0'] . $minutosDecimales[1];
-        $horasDecimal = (float) $horasDecimales;
-        // En caso que las horas trabajadas sean superiores
-        if ($horasextras['horas_trabajadas'] > $horasDecimal) {
-            $msg = "las horas trabajadas son superiores a la resta de la hora fin con la inicial";
+        $cantidadHoras = $intervalo->h + ($intervalo->i / 60);
+        $totalHoras = $cantidadHoras;
+        // Caso en que la fecha inicio supere a la fin  
+        if ($inicio >= $fin) {
+            $msg = "la hora fin debe ser mayor a la hora inicial";
+            return $msg;
+        }
+        $solicitud = Solicitud::where('solicitudes.id', $horasextras['solicitud_id'])->join('presupuestos', 'presupuestos.id', 'solicitudes.presupuesto_id')->first();
+        $primerDiaMes = $solicitud['año'] . "-" . $solicitud['mes'] . "-01";
+        $ultimoDiaMes = date('Y-m-t', strtotime($primerDiaMes));
+        // Caso en que no este dentro del mes de la solicitud
+        if ($horasextras['fecha'] < $primerDiaMes && $horasextras['fecha'] > $ultimoDiaMes) {
+            $msg = "la fecha debe estar ubicada dentro del mes de la solicitud";
             return ($msg);
         }
-        $horaExistente = Hora::where([
-            ['solicitud_id', '=', $horasextras['solicitud_id']], ['fecha', '=', $horasextras['fecha']],
-            ['hi_registrada', '=', $horasextras['hi_registrada']], ['hf_registrada', '=', $horasextras['hf_registrada']], ['id', '!=', $id]
-        ])->first();
-        // En caso que exista una hora exactamente igual
-        if ($horaExistente == !NULL) {
-            $msg = "ya existe esa misma hora en esa misma fecha";
+        // Condicional para comparar si esta dentro del rango de horas de la solicitud
+        if (($horasextras['hi_registrada'] < $solicitud['hora_inicio']) || ($horasextras['hf_registrada'] > $solicitud['hora_fin'])) {
+            $msg = 'el intervalo de tiempo no esta dentro de la hora inicial y final de la solicitud';
             return ($msg);
         }
-        $solicitud = Solicitud::find($horasextras['solicitud_id']);
-        $mes = date('m', strtotime($horasextras['fecha']));
-        $año = date('Y', strtotime($horasextras['fecha']));
-        $presupuesto = $solicitud->presupuesto;
-        // Validación para saber si el mes y el año corresponden con el presupuesto y solicitud
-        if (($presupuesto['mes'] != $mes) || ($presupuesto['año'] != $año)) {
-            $msg = "la fecha dada no corresponde con el presupuesto de la solicitud";
+
+        $horasSolicitud = Hora::where('solicitud_id', $solicitud['id'])->where('id', '!=', $id)->get();
+        foreach ($horasSolicitud as $hora) {
+            $inicio = new DateTime($hora['hi_registrada']);
+            $fin = new DateTime($hora['hf_registrada']);
+            $intervalo = $inicio->diff($fin);
+            $cantidadHoras = $intervalo->h + ($intervalo->i / 60);
+            $totalHoras += $cantidadHoras;
+        }
+        // En caso que se supere el total de horas de la solicitud
+        if ($totalHoras > $solicitud['total_horas']) {
+            $msg = "al registrar esa hora, supera la cantidad de total de horas de la solicitud";
             return ($msg);
         }
-        // Comienza la validación para saber si las horas corresponden con las solicitadas
-        if ($horasextras['hi_registrada'] < $solicitud['hora_inicio']) {
-            $msg = "la hora inicial no corresponde con la solicitud";
+        $th = TipoHora::find($solicitud['tipo_hora_id']);
+        $festivos = false;
+        if ($th['tipo_id'] == 4) {
+            $festivos = true;
+        }
+        $esFestivo = false;
+        $dia = date('N', strtotime($horasextras['fecha']));
+        $festivos = FechaEspecial::where('fecha', $horasextras['fecha'])->first();
+        // Condicional para saber si el dia es festivo
+        if (($dia == 7) || (!empty($festivos))) {
+            $esFestivo = true;
+        }
+        // Caso en que este habilitado para recibir festivos pero no es un dia festivo
+        if ($festivos == true && $esFestivo == false) {
+            $msg = "la fecha ingresada no esta dentro de las fechas especiales";
             return ($msg);
         }
-        if (($horasextras['hf_registrada'] > $solicitud['hora_fin']) || ($horasextras['hf_registrada'] < $horasextras['hi_registrada'])) {
-            $msg = "la hora final no corresponde con la solicitud";
+        // Caso en que sea un dia festivo pero no esta habilitado para recibir festivos
+        if ($festivos == false && $esFestivo == true) {
+            $msg = "solo se pueden ingresar días festivos si la solicitud tiene ese tipo de hora";
             return ($msg);
         }
-        // Consulta para saber si la franja del tiempo se encuentra disponible
-        $horasTrabajadas = Hora::where([['fecha', '=', $horasextras['fecha']], ['solicitud_id', '=', $horasextras['solicitud_id']]])->get();
-        foreach ($horasTrabajadas as $horasNoDisponibles) {
-            if (($horasextras['hf_registrada'] >= $horasNoDisponibles['hi_registrada']) && ($horasextras['hf_registrada'] <= $horasNoDisponibles['hf_registrada']) && ($id != $horasNoDisponibles['id'])) {
-                $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
-                return ($msg);
-            }
-            if (($horasextras['hf_registrada'] >= $horasNoDisponibles['hi_registrada']) && ($horasextras['hf_registrada'] >= $horasNoDisponibles['hf_registrada']) && ($id != $horasNoDisponibles['id'])) {
-                $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
-                return ($msg);
-            }
-        }
-        $horasSolicitud = Hora::where('solicitud_id', $horasextras['solicitud_id'])->sum('horas_trabajadas');
-        $horasSolicitud = $horasSolicitud + $horasextras['horas_trabajadas'];
-        // Caso en que el total de horas sea superior
-        if ($horasSolicitud > $solicitud['total_horas']) {
-            $msg = "la cantidad de horas registradas supera al total de horas solicitadas";
-            return ($msg);
-        }
-        $dia = date('D', strtotime($horasextras['fecha']));
-        $tipoHora = TipoHora::find($solicitud['tipo_hora_id']);
-        $fechasEspeciales = FechaEspecial::all();
-        if ($tipoHora['festivo'] == 1) {
-            $i = 0;
-            foreach ($fechasEspeciales as $fechaEspecial) {
-                if (($fechaEspecial['fecha_inicio'] >= $horasextras['fecha']) && ($fechaEspecial['fecha_fin'] <= $horasextras['fecha'])) {
+        // Consulta para buscar todas las horas del usuario de un día
+        $horasNoDisponibles = Hora::where('fecha', $horasextras['fecha'])
+            ->where('cargo_user_id', $solicitud['cargo_user_id'])
+            ->where('horas.id','!=',$id)
+            ->join('solicitudes', 'solicitudes.id', 'horas.solicitud_id')
+            ->join('cargo_user', 'cargo_user.id', 'solicitudes.cargo_user_id')
+            ->join('users', 'users.id', 'cargo_user.user_id')->get();
+        if (!empty($horasNoDisponibles)) {
+            // Recorre cada hora de la fecha dada para ver si esta dentro del rango horario
+            foreach ($horasNoDisponibles as $horaNoDisponible) {
+                if (($horasextras['hi_registrada'] == $horaNoDisponible['hi_registrada']) && ($horasextras['hf_registrada'] == $horaNoDisponible['hf_registrada'])) {
+                    $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
+                    return ($msg);
+                }
+                if (($horasextras['hi_registrada'] >= $horaNoDisponible['hi_registrada']) && ($horasextras['hf_registrada'] <= $horaNoDisponible['hf_registrada'])) {
+                    $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
+                    return ($msg);
+                }
+                if (($horasextras['hi_registrada'] <= $horaNoDisponible['hi_registrada']) && ($horasextras['hf_registrada'] >= $horaNoDisponible['hf_registrada'])) {
+                    $msg = 'el funcionario ya se encuentra ocupado en ese intervalo de tiempo';
                     return ($msg);
                 }
             }
-            if ($dia == "Sun") {
-                return ($msg);
-            }
-        } else {
-            if ($dia == "Sun") {
-                $msg = "no sé puede registrar horas en un día festivo si la solicitud no lo es";
-                return ($msg);
-            }
-            foreach ($fechasEspeciales as $fechaEspecial) {
-                if (($fechaEspecial['fecha_inicio'] >= $horasextras['fecha']) && ($fechaEspecial['fecha_fin'] <= $horasextras['fecha'])) {
-                    $msg = "no sé puede registrar horas en un día festivo si la solicitud no lo es";
-                    return ($msg);
-                }
-            }
         }
-        // // Retorna en caso que no cumpla ninguna de las condiciones y guarda la información
         return ($msg);
     }
     // Trae toda la información del usuario para el modal detalle
     public function detalle($id)
     {
         $hora = Hora::find($id);
+        $horaInicio = new DateTime($hora['hi_registrada']);
+        $horaFin = new DateTime($hora['hf_registrada']);
+        $intervalo = $horaInicio->diff($horaFin);
+        $cantidadHoras = $intervalo->h + ($intervalo->i / 60);
+        $hora['cantidad_horas'] = $cantidadHoras;
+        $usuario['total_horas'] = (float) $cantidadHoras;
         $solicitud = Solicitud::find($hora['solicitud_id']);
         $cargoUser = CargoUser::find($solicitud['cargo_user_id']);
         $cargo = Cargo::find($cargoUser['cargo_id']);
@@ -275,6 +277,7 @@ class horasExtrasController extends Controller
         $tipoHora = TipoHora::find($solicitud['tipo_hora_id']);
         $valores = $this->calcularValorHoras($hora);
         $detalle = [];
+        $detalle['solicitud']=$solicitud;
         $detalle['hora'] = $hora;
         $detalle['cargo'] = $cargo;
         $detalle['cargoUser'] = $cargoUser;
@@ -293,7 +296,6 @@ class horasExtrasController extends Controller
         $horaExtra['fecha'] = $dato["Fecha"];
         $horaExtra['hi_registrada'] = $dato["Inicio"];
         $horaExtra['hf_registrada'] = $dato["Fin"];
-        $horaExtra['horas_trabajadas'] = $dato["Horas"];
         $horaExtra['solicitud_id'] = $hora['solicitud_id'];
         $ok = $this->validatorUpdate($horaExtra);
         if ($ok->fails()) {
@@ -314,26 +316,29 @@ class horasExtrasController extends Controller
             'fecha' => 'required',
             'hi_registrada' => 'required',
             'hf_registrada' => 'required',
-            'horas_trabajadas' => 'required'
         ]);
     }
     // Función para calcular el valor de las horas
     public function calcularValorHoras($horas)
     {
-        $cantidadHoras = $horas['horas_trabajadas'];
+        $horaInicio = new DateTime($horas['hi_registrada']);
+        $horaFin = new DateTime($horas['hf_registrada']);
+        $intervalo = $horaInicio->diff($horaFin);
+        $cantidadHoras = $intervalo->h + ($intervalo->i / 60);
         $solicitud = Solicitud::find($horas['solicitud_id']);
         $cargoUser = CargoUser::find($solicitud['cargo_user_id']);
         $cargo = Cargo::find($cargoUser['cargo_id']);
-        if ($solicitud['tipo_hora_id'] == 1) {
+        $th = TipoHora::find($solicitud['tipo_hora_id']);
+        if ($th['tipo_id'] == 1) {
             $valorTotal = $cantidadHoras * $cargo['valor_diurna'];
             $valor = $cargo['valor_diurna'];
-        } elseif ($solicitud['tipo_hora_id'] == 2) {
+        } elseif ($th['tipo_id'] == 2) {
             $valorTotal = $cantidadHoras * $cargo['valor_nocturna'];
             $valor = $cargo['valor_nocturna'];
-        } elseif ($solicitud['tipo_hora_id'] == 3) {
+        } elseif ($th['tipo_id'] == 4) {
             $valorTotal = $cantidadHoras * $cargo['valor_dominical'];
             $valor = $cargo['valor_dominical'];
-        } elseif ($solicitud['tipo_hora_id'] == 4) {
+        } elseif ($th['tipo_id'] == 3) {
             $valorTotal = $cantidadHoras * $cargo['valor_recargo'];
             $valor = $cargo['valor_recargo'];
         }
@@ -345,7 +350,29 @@ class horasExtrasController extends Controller
     // Función que trae las horas según solicitud_id
     public function horasSolicitud($id)
     {
-        $horas = Hora::where('horas.solicitud_id', $id)->get();
+        $horas['horas'] = Hora::where('horas.solicitud_id', $id)->join('solicitudes', 'solicitudes.id', 'horas.solicitud_id')
+            ->select('horas.id', 'horas.fecha', 'horas.hi_registrada', 'horas.hf_registrada', 'solicitudes.autorizacion')->get();
+        $totalHoras = 0;
+        foreach ($horas['horas'] as $hora) {
+            $horaInicio = new DateTime($hora['hi_registrada']);
+            $horaFin = new DateTime($hora['hf_registrada']);
+            $intervalo = $horaInicio->diff($horaFin);
+            $cantidadHoras = $intervalo->h + ($intervalo->i / 60);
+            $totalHoras += $cantidadHoras;
+        }
+        $solicitud = Solicitud::find($id);
+        $horasFaltantes = $solicitud['total_horas'] - $totalHoras;
+        $horas['faltantes'] = "Se pueden registrar " . $horasFaltantes . " horas en esta solicitud";
         return ($horas);
+    }
+    public function eliminar($data)
+    {
+        if (Auth::User()->roles->id != 1) {
+            $msg = "no tienes el permiso para ejecutar esta acción";
+            return ($msg);
+        }
+        $dato = json_decode($data, true);
+        Hora::where('id', $dato)->delete();
+        return (1);
     }
 }

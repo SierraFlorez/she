@@ -35,7 +35,7 @@ Gestión Horas Extras
                                     data-target="#modalDetallesSolicitud"
                                     onclick="detallesSolicitud({{$solicitud->id}})">Ver Detalles</button>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#modalTableHoras"
-                                    onclick="modalHoras({{$solicitud->id}})">Horas</button>
+                                    onclick="modalHoras({{$solicitud->id}},{{Auth::User()->roles->id}})">Horas</button>
                             </td>
                         </tr>
                         @endforeach

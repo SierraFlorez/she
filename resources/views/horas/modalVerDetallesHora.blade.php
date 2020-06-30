@@ -1,6 +1,6 @@
 <div class="modal fade" id="modalDetallesHora" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
   aria-labelledby="modalRegistrar" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header text-center" style="background: #29913A;">
         <h4 class="modal-title w-100 font-weight-bold" style="color: white">Detalles de Horas</h4>
@@ -16,6 +16,7 @@
               <i class="fas fa-user"></i>
               <label data-error="wrong" data-success="right" for="orangeForm-name">Funcionario</label>
               <input readonly type="text" id="funcionario_h" class="form-control validate">
+              <input hidden type="text" id="solicitud_h" class="form-control validate">
             </div>
             {{-- Input del cargo --}}
             <div class="col">
@@ -68,8 +69,8 @@
           <div class="form-row mb-6">
             <div class="col">
               <i class="fas fa-tag"></i>
-              <label data-error="wrong" data-success="right" for="orangeForm-pass">Horas Trabajadas</label>
-              <input type="number" class="form-control validate" id="horas_h">
+              <label data-error="wrong" data-success="right" for="orangeForm-pass">Cantidad de Horas</label>
+              <input readonly type="number" class="form-control validate" id="horas_h">
             </div>
             {{-- Input del sueldo  --}}
             <div class="col">
@@ -93,7 +94,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-center">
         <button class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="update_h">Editar</button>
+        <button class="btn btn-success" id="update_h">Guardar</button>
       </div>
     </div>
   </div>
