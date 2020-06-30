@@ -16,37 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `auditorias`
---
-
-DROP TABLE IF EXISTS `auditorias`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auditorias` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_user` int(11) NOT NULL,
-  `id_user_cargo` int(11) NOT NULL,
-  `fecha` date NOT NULL,
-  `diurnas` int(3) NOT NULL,
-  `nocturnas` int(3) NOT NULL,
-  `dominicales` int(3) NOT NULL,
-  `nocturnos` int(3) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `auditorias`
---
-
-LOCK TABLES `auditorias` WRITE;
-/*!40000 ALTER TABLE `auditorias` DISABLE KEYS */;
-/*!40000 ALTER TABLE `auditorias` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `cargo_user`
 --
 
@@ -54,18 +23,18 @@ DROP TABLE IF EXISTS `cargo_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cargo_user` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL,
-  `cargo_id` int(10) NOT NULL,
-  `estado` int(1) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `user_id` int(10) unsigned NOT NULL COMMENT 'Foránea que identifica al usuario',
+  `cargo_id` int(10) NOT NULL COMMENT 'Foránea que identifica el cargo',
+  `estado` int(1) NOT NULL COMMENT 'Si el cargo se encuentra vigente en el usuario (solo puede tener un cargo vigente a la vez)',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de creación',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`),
   KEY `id_user` (`user_id`),
   KEY `id_cargo` (`cargo_id`),
   CONSTRAINT `cargo_user_ibfk_2` FOREIGN KEY (`cargo_id`) REFERENCES `cargos` (`id`),
   CONSTRAINT `cargo_user_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registra cada cargo de cada usuario';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,7 +43,7 @@ CREATE TABLE `cargo_user` (
 
 LOCK TABLES `cargo_user` WRITE;
 /*!40000 ALTER TABLE `cargo_user` DISABLE KEYS */;
-INSERT INTO `cargo_user` VALUES (1,5,1,0,'2020-03-17 23:41:31','2020-04-15 19:27:37'),(8,5,23,1,'2020-03-17 23:41:31','2020-04-15 19:27:37');
+INSERT INTO `cargo_user` VALUES (1,1,0,1,'0000-00-00 00:00:00','2020-06-30 18:29:59'),(2,2,0,1,'0000-00-00 00:00:00','2020-06-30 18:29:09');
 /*!40000 ALTER TABLE `cargo_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,18 +55,18 @@ DROP TABLE IF EXISTS `cargos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cargos` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(50) NOT NULL,
-  `sueldo` double NOT NULL,
-  `valor_diurna` double NOT NULL,
-  `valor_nocturna` double NOT NULL,
-  `valor_dominical` double NOT NULL,
-  `valor_recargo` double NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `nombre` varchar(50) NOT NULL COMMENT 'Nombre del cargo',
+  `sueldo` double DEFAULT NULL COMMENT 'Sueldo del cargo',
+  `valor_diurna` double DEFAULT NULL COMMENT 'Valor de la hora diurna del cargo',
+  `valor_nocturna` double DEFAULT NULL COMMENT 'Valor de la hora nocturna del cargo',
+  `valor_dominical` double DEFAULT NULL COMMENT 'Valor de la hora de festivos y dominicales del cargo',
+  `valor_recargo` double DEFAULT NULL COMMENT 'Valor de la hora del recargo nocturno del cargo',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registran la información de cada cargo';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,7 +75,7 @@ CREATE TABLE `cargos` (
 
 LOCK TABLES `cargos` WRITE;
 /*!40000 ALTER TABLE `cargos` DISABLE KEYS */;
-INSERT INTO `cargos` VALUES (1,'Coordinador',6500000,27000,30000,35000,50000,'2020-03-17 17:00:53','2020-03-17 22:00:53'),(23,'Profesional G-02',2500000,9803,10000,12000,15000,'2020-03-18 04:38:43','2020-03-18 04:38:43'),(24,'testeandos',4343434,4343,4342,2211,2223,'2020-05-07 01:49:18','2020-05-07 06:49:18');
+INSERT INTO `cargos` VALUES (0,'Administrador',NULL,NULL,NULL,NULL,NULL,'2020-06-19 19:39:50','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `cargos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,14 +87,13 @@ DROP TABLE IF EXISTS `fechas_especiales`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fechas_especiales` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fecha_inicio` date NOT NULL,
-  `fecha_fin` date NOT NULL,
-  `descripcion` varchar(50) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `fecha` date NOT NULL COMMENT 'Fecha que identifica la fecha especial',
+  `descripcion` varchar(50) NOT NULL COMMENT 'Nombre que identifica la fecha especial',
+  `created_at` timestamp NULL DEFAULT NULL COMMENT 'Fecha de creación',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registran la información de fechas especiales para las horas dominicales y festivas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +102,7 @@ CREATE TABLE `fechas_especiales` (
 
 LOCK TABLES `fechas_especiales` WRITE;
 /*!40000 ALTER TABLE `fechas_especiales` DISABLE KEYS */;
-INSERT INTO `fechas_especiales` VALUES (1,'2020-12-25','2020-12-28','Navidad','0000-00-00 00:00:00','2020-04-15 22:27:49');
+INSERT INTO `fechas_especiales` VALUES (1,'2019-08-07','Batalla de Boyacá 2019','2020-06-23 00:01:57','2020-06-24 19:03:23'),(2,'2019-07-01','San Pedro y San Pablo 2019\r','2020-06-23 00:01:58',NULL),(3,'2019-07-20','Día de la Independencia 2019\r','2020-06-23 00:01:59',NULL),(4,'2019-08-19','La asunción de la Virgen 2019\r','2020-06-23 00:02:00',NULL),(5,'2019-10-14','Día de la Raza 2019\r','2020-06-23 00:02:01',NULL),(6,'2019-11-04','Todos los santos 2019\r','2020-06-23 00:02:02',NULL),(7,'2019-11-11','Independencia Cartagena 2019\r','2020-06-23 00:02:02',NULL),(8,'2020-01-01','Año nuevo 2020\r','2020-06-23 00:02:03',NULL),(9,'2020-01-06','Dia de reyes 2020\r','2020-06-23 00:02:04',NULL),(10,'2020-03-23','Día de San José 2020\r','2020-06-23 00:02:05',NULL),(11,'2020-04-09','Jueves Santo 2020\r','2020-06-23 00:02:05',NULL),(12,'2020-04-10','Viernes Santo 2020\r','2020-06-23 00:02:06',NULL),(13,'2020-05-01','Día de trabajo 2020\r','2020-06-23 00:02:07',NULL),(14,'2020-05-25','Día de la Ascención 2020\r','2020-06-23 00:02:07',NULL),(15,'2020-06-15','Corpus Christi 2020\r','2020-06-23 00:02:08',NULL),(16,'2020-06-22','Sagrado Corazón 2020\r','2020-06-23 00:02:08',NULL),(17,'2020-06-29','San Pedro y San Pablo 2020\r','2020-06-23 00:02:09',NULL),(18,'2020-07-20','Día de la Independencia 2020\r','2020-06-23 00:02:10',NULL),(19,'2020-08-07','Batalla de Boyacá 2020\r','2020-06-23 00:02:11',NULL),(20,'2020-08-17','La Asunción de la Virgen 2020\r','2020-06-23 00:02:11',NULL),(21,'2020-10-12','Día de la Raza 2020\r','2020-06-23 00:02:12',NULL),(22,'2020-11-02','Todos los santos 2020\r','2020-06-23 00:02:13',NULL),(23,'2020-11-16','Independencia Cartagena 2020\r','2020-06-23 00:02:13',NULL),(24,'2020-12-08','Día de la Inmaculada Concepción 2020\r','2020-06-23 00:02:16',NULL),(25,'2020-12-25','Día de Navidad 2020\r','2020-06-23 00:02:14',NULL);
 /*!40000 ALTER TABLE `fechas_especiales` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,18 +114,17 @@ DROP TABLE IF EXISTS `horas`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `horas` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `solicitud_id` int(11) NOT NULL DEFAULT '0',
-  `fecha` date NOT NULL,
-  `hi_registrada` time NOT NULL,
-  `hf_registrada` time NOT NULL,
-  `horas_trabajadas` double NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `solicitud_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Cabecera de la hora extra',
+  `fecha` date NOT NULL COMMENT 'Fecha de ejecución de hora extra',
+  `hi_registrada` time NOT NULL COMMENT 'Hora inicial de la hora extra',
+  `hf_registrada` time NOT NULL COMMENT 'Hora fin de la hora extra',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`),
   KEY `horas_ibfk_6` (`solicitud_id`),
   CONSTRAINT `horas_ibfk_6` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registran las horas extras realizadas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,31 +137,6 @@ LOCK TABLES `horas` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `password_resets`
---
-
-DROP TABLE IF EXISTS `password_resets`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `password_resets` (
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  KEY `password_resets_email_index` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `password_resets`
---
-
-LOCK TABLES `password_resets` WRITE;
-/*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
-INSERT INTO `password_resets` VALUES ('alkonia1@hotmail.com','$2y$10$HsC3a9q4xTujsY.8yBV78OsitN8/wrM07x.PoEofVmNoo.oUPZRZ2','2020-05-07 07:25:37'),('alkonia23@gmail.com','$2y$10$8pb1cm8BU4Ly.Eggl4NHrusGtLwIYwo36zwW1jneZZ24XhHqfzo3W','2020-05-07 09:42:24');
-/*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `presupuestos`
 --
 
@@ -202,15 +144,15 @@ DROP TABLE IF EXISTS `presupuestos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `presupuestos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `presupuesto_inicial` double NOT NULL,
-  `presupuesto_gastado` double DEFAULT NULL,
-  `mes` int(11) NOT NULL DEFAULT '0',
-  `año` int(11) NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `presupuesto_inicial` double NOT NULL COMMENT 'Presupuesto inicial ',
+  `presupuesto_gastado` double DEFAULT NULL COMMENT 'Cantidad de presupuesto gastado',
+  `mes` varchar(10) NOT NULL DEFAULT '0' COMMENT 'Mes del presupuesto',
+  `año` varchar(10) NOT NULL DEFAULT '0' COMMENT 'Año del presupuesto',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de creación',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registran los presupuestos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +161,6 @@ CREATE TABLE `presupuestos` (
 
 LOCK TABLES `presupuestos` WRITE;
 /*!40000 ALTER TABLE `presupuestos` DISABLE KEYS */;
-INSERT INTO `presupuestos` VALUES (0,0,0,0,0,'0000-00-00 00:00:00','0000-00-00 00:00:00'),(2,1000000,0,2,2020,'2020-04-17 02:06:02','2020-05-06 22:11:10'),(3,5656565,0,3,2021,'2020-04-17 04:08:33','2020-04-20 05:06:22'),(4,23332223,0,5,2020,'2020-05-07 06:49:53','2020-05-07 06:49:53'),(5,4554545,0,3,2019,'2020-05-07 06:52:41','2020-05-07 06:52:41');
 /*!40000 ALTER TABLE `presupuestos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -231,12 +172,12 @@ DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `roles` (
-  `id` int(10) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id` int(10) NOT NULL COMMENT 'Campo único consecutivo',
+  `nombre` varchar(50) NOT NULL COMMENT 'Nombre que identifica al rol',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registra la información de cada rol del sistema';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,7 +186,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'Administrador','2020-02-27 19:59:37','0000-00-00 00:00:00'),(2,'Funcionario','2020-02-27 19:59:37','0000-00-00 00:00:00');
+INSERT INTO `roles` VALUES (1,'Administrador','2020-02-27 19:59:37','0000-00-00 00:00:00'),(2,'Funcionario','2020-02-27 19:59:37','0000-00-00 00:00:00'),(3,'Instructor','2020-06-19 21:17:15','0000-00-00 00:00:00'),(4,'Coordinador','2020-06-19 21:17:37','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,25 +198,26 @@ DROP TABLE IF EXISTS `solicitudes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `solicitudes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `presupuesto_id` int(11) NOT NULL DEFAULT '0',
-  `tipo_hora_id` int(11) NOT NULL DEFAULT '0',
-  `cargo_user_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_horas` double NOT NULL DEFAULT '0',
-  `hora_inicio` time NOT NULL DEFAULT '00:00:00',
-  `hora_fin` time NOT NULL,
-  `actividades` varchar(255) NOT NULL,
-  `autorizacion` int(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `presupuesto_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Foránea que identifica el presupuesto',
+  `tipo_hora_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Foránea que identifica el tipo de hora',
+  `cargo_user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foránea que identifica el cargo y el usuario que hizo la solicitud',
+  `total_horas` double NOT NULL DEFAULT '0' COMMENT 'Cantidad de horas de la solicitud',
+  `hora_inicio` time NOT NULL DEFAULT '00:00:00' COMMENT 'Hora inicio de la solicitud',
+  `hora_fin` time NOT NULL COMMENT 'Hora fin de la solicitud',
+  `actividades` varchar(255) NOT NULL COMMENT 'Actividades a ejecutar del funcionaro durante las horas extras',
+  `created_by` int(11) NOT NULL COMMENT 'Usuario que creo la solicitud',
+  `autorizacion` int(11) DEFAULT '0' COMMENT 'Usuario que autorizo la solicitud',
+  `created_at` timestamp NULL DEFAULT NULL COMMENT 'Fecha de creación',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`),
   KEY `presupuesto_id` (`presupuesto_id`),
-  KEY `tipo_hora_id` (`tipo_hora_id`),
   KEY `cargo_user_id` (`cargo_user_id`),
+  KEY `solicitudes_ibfk_2` (`tipo_hora_id`),
   CONSTRAINT `solicitudes_ibfk_1` FOREIGN KEY (`presupuesto_id`) REFERENCES `presupuestos` (`id`),
   CONSTRAINT `solicitudes_ibfk_2` FOREIGN KEY (`tipo_hora_id`) REFERENCES `tipo_horas` (`id`),
   CONSTRAINT `solicitudes_ibfk_3` FOREIGN KEY (`cargo_user_id`) REFERENCES `cargo_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registran las solicitudes de cada cargo_usuario y siendo la cabecera de horas';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,16 +237,17 @@ DROP TABLE IF EXISTS `tipo_horas`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tipo_horas` (
-  `id` int(11) NOT NULL,
-  `nombre_hora` varchar(50) NOT NULL DEFAULT '',
-  `hora_inicio` time NOT NULL,
-  `hora_fin` time NOT NULL,
-  `festivo` int(1) NOT NULL DEFAULT '0',
-  `hora_nocturna` int(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `nombre_hora` varchar(50) NOT NULL DEFAULT '' COMMENT 'Nombre que identifica al tipo de hora',
+  `hora_inicio` time NOT NULL COMMENT 'Hora inicial del tipo de hora',
+  `hora_fin` time NOT NULL COMMENT 'Hora fin del tipo de hora',
+  `tipo_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Tipo que identifica el tipo de hora',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Fecha de última actualización',
+  PRIMARY KEY (`id`),
+  KEY `FK_tipo_horas_tipos` (`tipo_id`),
+  CONSTRAINT `FK_tipo_horas_tipos` FOREIGN KEY (`tipo_id`) REFERENCES `tipos` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registra la información de cada tipo de hora';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -313,8 +256,32 @@ CREATE TABLE `tipo_horas` (
 
 LOCK TABLES `tipo_horas` WRITE;
 /*!40000 ALTER TABLE `tipo_horas` DISABLE KEYS */;
-INSERT INTO `tipo_horas` VALUES (1,'Diurnas','06:00:00','18:00:00',0,0,'2020-04-15 19:33:11','2020-04-15 19:25:26'),(2,'Nocturnas','18:00:00','06:00:00',0,1,'2020-04-15 16:20:02','2020-04-15 03:55:44'),(3,'Dominicales y festivos','00:00:00','00:00:00',1,0,'2020-04-15 16:20:05','2020-04-14 22:00:29'),(4,'Recargo nocturno','18:00:00','06:00:00',0,1,'2020-04-15 16:20:07','2020-04-15 03:56:23');
+INSERT INTO `tipo_horas` VALUES (1,'Diurnas(mañana)','06:00:00','12:00:00',1,'2020-06-27 19:24:55','2020-04-15 19:25:26'),(2,'Diurnas(tarde)','14:00:00','16:00:00',1,'2020-06-22 22:57:12','2020-06-23 03:57:12'),(3,'Nocturnas(noche)','18:00:00','22:00:00',2,'2020-06-19 22:47:21','2020-04-15 03:55:44'),(4,'Nocturnas(madrugada)','00:00:00','06:00:00',2,'2020-06-19 22:47:22','0000-00-00 00:00:00'),(5,'Recargo nocturno(noche)','18:00:00','22:00:00',3,'2020-06-19 22:47:23','2020-04-15 03:56:23'),(6,'Recargo nocturno(madrugada)','00:00:00','06:00:00',3,'2020-06-19 22:47:24','0000-00-00 00:00:00'),(7,'Dominicales y festivos','00:00:00','00:00:00',4,'2020-06-19 22:47:24','2020-04-14 22:00:29');
 /*!40000 ALTER TABLE `tipo_horas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tipos`
+--
+
+DROP TABLE IF EXISTS `tipos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tipos` (
+  `id` int(11) NOT NULL COMMENT 'Campo único consecutivo',
+  `descripcion` varchar(50) DEFAULT NULL COMMENT 'Nombre de tipo',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Es la tabla donde se registra cada tipo para el tipo de hora';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipos`
+--
+
+LOCK TABLES `tipos` WRITE;
+/*!40000 ALTER TABLE `tipos` DISABLE KEYS */;
+INSERT INTO `tipos` VALUES (1,'Diurno'),(2,'Nocturno'),(3,'Recargo nocturno'),(4,'Dominicales y festivos');
+/*!40000 ALTER TABLE `tipos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -325,26 +292,26 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `documento` char(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tipo_documento` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nombres` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `apellidos` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `centro` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `regional` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `telefono` char(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role_id` int(10) NOT NULL,
-  `estado` int(1) NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Campo único consecutivo',
+  `documento` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'Número de documento único',
+  `tipo_documento` char(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'Tipo de documento del usuario',
+  `nombres` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nombres completos del usuario',
+  `apellidos` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Apellidos completos del usuario',
+  `centro` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Centro del usuario',
+  `regional` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Regional del usuario',
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Correo electrónico',
+  `telefono` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'Teléfono del usuario',
+  `role_id` int(10) NOT NULL COMMENT 'Rol del usuario',
+  `estado` int(1) NOT NULL COMMENT 'Estado del usuario si se encuentra habilitado para iniciar sesión o no',
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Contraseña encriptada del usuario',
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Token del usuario al presionar "Recordarme"',
+  `created_at` timestamp NULL DEFAULT NULL COMMENT 'Fecha de creación',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT 'Fecha de última actualización',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`),
   KEY `role_id` (`role_id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Es la tabla donde se registran los usuarios del sistema';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,7 +320,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (0,'','','','','','','','',1,0,'$2y$10$AESak5NDlDaIwrcIfCX/bObysNN1fnOROuKW8qx0PjxLS3XuVWVM2',NULL,NULL,NULL),(5,'123456789','Cédula de Ciudadanía','Administrador','del Sistema','CEAI','VALLE','alkonia23@gmail.com','2322122',1,1,'$2y$10$vhKmPbvJOEwosRqFUIyV2eu7.gjOI7KVFJlJRxpbmqdHtPQuKdKp6','DMMWRjYpPC3x5nAdkkyrWjIVbuClEDIibsa4HEGU4u3XRRaxQNMdi7UO8i9B',NULL,'2020-05-07 21:29:58');
+INSERT INTO `users` VALUES (1,'34547371','CC','Diana Pilar','Solarte Astaiza','CEAI','Valle','dsolarte@misena.edu.co 	','',1,1,'$2y$10$vhKmPbvJOEwosRqFUIyV2eu7.gjOI7KVFJlJRxpbmqdHtPQuKdKp6','ikwRkvf66MhsLhIYdcAaLMhewwKzUvn3d0R8JzmsTo0MsjzvA5BhsMCLOzwN','2020-06-20 00:51:49','2020-06-30 22:12:04'),(2,'29667538','CC','Gloria Ines','Leon Palomino','CEAI','VALLE','gileon@sena.edu.co','3157678900',1,1,'$2y$10$vhKmPbvJOEwosRqFUIyV2eu7.gjOI7KVFJlJRxpbmqdHtPQuKdKp6',NULL,'2020-06-20 00:51:49','2020-06-20 02:38:25');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -366,4 +333,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-14 16:46:56
+-- Dump completed on 2020-06-30 13:34:54
